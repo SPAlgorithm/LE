@@ -429,7 +429,7 @@ LE currently supports encryption for the following file types:
 ```
 **GetInfo Folder:**
 ```bash
-./LE -d my_folder -j
+./LE -i my_folder -j
 ```
 
 ---
