@@ -420,3 +420,17 @@ LE currently supports encryption for the following file types:
 ```
 
 ---
+
+## 🔹 6. Get Info on encrypted file and folders
+### 🔹 Info on a File 
+**GetInfo File:**
+```bash
+./LE -i example.letxt
+```
+**GetInfo Folder:**
+```bash
+./LE -d my_folder -j
+```
+
+---
+
