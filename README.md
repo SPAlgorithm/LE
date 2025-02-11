@@ -1,5 +1,7 @@
 # 🔒 Ladhe’s Encryption Utility (LE)
 
+## ✨ Last Updated : 02/11/2025
+
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, quantum-safe encryption tool** designed for **Mac terminals**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
 ---
@@ -133,19 +135,24 @@ LE currently supports encryption for the following file types:
    ```bash
    echo "35.8538,-78.686,2000,43.2381,-72.5786,4000" > location.txt
    ```
-   This password file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters"`.
+
+- **Geo Locations Limit**:
+  - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
+  - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
+
+
+   This location file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters"`.
 
 2. **Encrypt the location file**:
    ```bash
    ./LE -e location.csv -v -j
    ```
-   The location file (location.letxt) is now encrypted and can be used for geo location encrypting files or folders.
+   The location file (location.letxt) is now encrypted and can be used for geo location encrypting files or folders. We add point of enryption to your list.
 
 3. **Decrypt the location file**:
    ```bash
    ./LE -d location.lecsv -j 
    ```
-   To decrypt a password file, the user must **know the password** stored inside the password file.
 
 ---
 
