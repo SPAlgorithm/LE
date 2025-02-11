@@ -84,7 +84,7 @@ LE currently supports encryption for the following file types:
    Or download the zip and extract it.
 
 2. **Install LE**:
-   - Tap on **LE.dmg** and copy/move **LE** to a local folder.
+   - Tap on **LE.dmg** and copy/move **LE** to a local folder and click on le shortcut to enable permissions.
 
 3. **Setup LE**:
    ```bash
