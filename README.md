@@ -2,7 +2,7 @@
 
 ## ✨ Last Updated : 02/11/2025
 
-Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, quantum-safe encryption tool** designed for **Mac terminals**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
+Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac terminals**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
 ---
 
@@ -31,6 +31,8 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
 
+We recommend that you encrypt the folder with recursive flag -j with same type of encryption we support. 
+Otherwise, you will need to decrypt individual files one at a time.
 
 ### 🛡 Additional Features
 - **Metadata & File Info**: Retrieve **detailed encryption metadata**.
