@@ -66,10 +66,10 @@ LE currently supports encryption for the following file types:
 
 - 🔹 **Lightweight** & **Efficient** terminal-based encryption.
 - 🔹 **Protects against modern and quantum-based attacks**.
-- 🔹 **Advanced encryption** with **password & time-lock** security.
+- 🔹 **Advanced encryption** with **password , time-lock & GEO Location-lock** security.
 - 🔹 **Beta Version** available for free, with **Licensed Version** offering extended features.
 
-🔒 **Secure your files today with LE!** If you find it meets your needs, request a **licensed copy** to unlock even more powerful features.
+🔒 **Secure your files today with LE!** If you find it meets your needs, request a **licensed copy** to unlock even more powerful features. Contact **spalgorithm@gmail.com**.
 
 ---
 
@@ -84,7 +84,7 @@ LE currently supports encryption for the following file types:
    Or download the zip and extract it.
 
 2. **Install LE**:
-   - Tap on **LE.dmg** and copy/move **LE** to a local folder and click on le shortcut to enable permissions.
+   - Tap on **LE.dmg** and copy/move **LE** to a local folder and double click on **LELocation shortcut** to enable permissions.
 
 3. **Setup LE**:
    ```bash
@@ -94,7 +94,7 @@ LE currently supports encryption for the following file types:
    ```bash
    ./LE -s
    ```
-   This will create a `cer.le` certificate.
+   This will create a `cer.le` certificate. If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
 
 4. **Encrypt a test file**:
    ```bash
