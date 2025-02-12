@@ -135,7 +135,7 @@ LE currently supports encryption for the following file types:
 
 1. **Create a location file**:
    ```bash
-   echo "35.8538,-78.686,2000,43.2381,-72.5786,4000" > location.txt
+   echo "35.8538,-78.686,2000,43.2381,-72.5786,4000" > location.csv
    ```
 
 - **Geo Locations Limit**:
