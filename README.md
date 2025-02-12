@@ -143,13 +143,13 @@ LE currently supports encryption for the following file types:
   - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
 
 
-   This location file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters"`.
+   This location file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters".
 
 2. **Encrypt the location file**:
    ```bash
    ./LE -e location.csv -v -j
    ```
-   The location file (location.letxt) is now encrypted and can be used for geo location encrypting files or folders. We add point of enryption to your list.
+   The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders. We add point of enryption to your list.
 
 3. **Decrypt the location file**:
    ```bash
