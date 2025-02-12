@@ -72,7 +72,7 @@ LE currently supports encryption for the following file types:
 - 🔹 **Lightweight** & **Efficient** terminal-based encryption.
 - 🔹 **Protects against modern and quantum-based attacks**.
 - 🔹 **Advanced encryption** with **password , time-lock & GEO Location-lock** security.
-- 🔹 **Beta Version** available for free, with **Licensed Version** offering extended features.
+- 🔹 **Beta Version** available for free for limited time, with **Licensed Version** offering extended features.
 
 🔒 **Secure your files today with LE!** If you find it meets your needs, request a **licensed copy** to unlock even more powerful features. Contact **spalgorithm@gmail.com**.
 
@@ -136,7 +136,8 @@ LE currently supports encryption for the following file types:
 
 1. **Create a location file**:
    ```bash
-   echo "35.8538,-78.686,2000,43.2381,-72.5786,4000" > location.csv
+   echo "35.8538,-78.686,2000" > location.csv
+   echo "38.1233,-88.249,100" >> location.csv
    ```
 
 - **Geo Locations Limit**:
@@ -145,6 +146,7 @@ LE currently supports encryption for the following file types:
 
 
    This location file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters".
+**One Geo Location point per line.**
 
 2. **Encrypt the location file**:
    ```bash
