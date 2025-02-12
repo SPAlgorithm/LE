@@ -11,17 +11,18 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 ### 🔑 Advanced Encryption Capabilities
 - **Symmetric Key Generation**: Secure **AES-like** encryption. _(Licensed version)_
 - **Asymmetric Key Generation**: **RSA-style** encryption for enhanced security. _(Licensed version)_
-- **Versatile Encryption Options**: Encrypt **plaintext, pipelined text, and entire files**. _(Licensed version)_
+- **Versatile Encryption Options**: Encrypt **plaintext, pipelined text**. _(Licensed version)_
 - **Flexible Decryption**: Decrypt data encrypted with **symmetric or asymmetric** keys. _(Licensed version)_
+- **Encryption Options for Files/Folder**: Encrypt **file/folder recursively with any of supported encryption 
+types like Password Lock, Time Lock or Geo Location Lock**.
+
 
 ### 🗂 File & Folder Encryption
 - **Encrypt/Decrypt Files & Folders**: Apply strong encryption to both files and directories.
 - **Recursive Folder Encryption**: Encrypt entire directories with **subfolder support**.
-- **Trio Mode**: Use **Force, Clean, and Recursive** encryption in a single command.
-
-### 🔄 Force & Clean Mode
 - **Force Mode**: Overwrites existing encrypted files.
 - **Clean Mode**: Restores **.leXXX** files to their **original** format upon decryption.
+- **Trio Mode**: Use **Force, Clean, and Recursive** encryption in a single command.
 
 ### 🔑 Password , Time-Lock Security , Geo Location Security
 - **Password Encryption**: Encrypt files with a **secure password file**.
