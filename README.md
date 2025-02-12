@@ -72,7 +72,7 @@ LE currently supports encryption for the following file types:
 - 🔹 **Lightweight** & **Efficient** terminal-based encryption.
 - 🔹 **Protects against modern and quantum-based attacks**.
 - 🔹 **Advanced encryption** with **password , time-lock & GEO Location-lock** security.
-- 🔹 **Beta Version** available for free, with **Licensed Version** offering extended features.
+- 🔹 **Beta Version** available for free for limited time, with **Licensed Version** offering extended features.
 
 🔒 **Secure your files today with LE!** If you find it meets your needs, request a **licensed copy** to unlock even more powerful features. Contact **spalgorithm@gmail.com**.
 
