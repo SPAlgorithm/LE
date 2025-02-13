@@ -149,10 +149,22 @@ LE currently supports encryption for the following file types:
 **One Geo Location point per line.**
 
 2. **Encrypt the location file**:
+**Without encrypted geo location point.**
    ```bash
    ./LE -e location.csv -v -j
    ```
-   The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders. We add point of enryption to your list.
+
+The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It does not include current location, only geo points you specified. 
+   
+**With encrypted geo location point and custom distance.**
+To add current location of enryption and distance of 200 meters to your list 
+
+   ```bash
+   ./LE -e location.csv -v -g -m 200 -j
+   ```
+
+The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
+
 
 3. **Decrypt the location file**:
    ```bash
