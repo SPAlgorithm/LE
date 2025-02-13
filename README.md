@@ -165,6 +165,12 @@ To add current location of enryption and distance of 200 meters to your list
 
 The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
 
+**Get Info on encrypted location file**
+
+   ```bash
+   ./LE -i location.lecsv 
+   ```
+
 
 3. **Decrypt the location file**:
    ```bash
