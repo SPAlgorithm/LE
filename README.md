@@ -176,6 +176,7 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 
 3. **Decrypt the location file**:
+
    ```bash
    ./LE -d location.lecsv -j 
    ```
