@@ -99,7 +99,9 @@ LE currently supports encryption for the following file types:
    ```bash
    ./LE -s
    ```
-   This will create a `cer.le` certificate. If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
+
+This will create a `cer.le` certificate.You may be prompted to enter password of your machine in key chain.
+If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
 
 4. **Encrypt a test file**:
    ```bash
@@ -461,3 +463,14 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ---
 
+7. **Repair LE**:
+   ```bash
+   ./LE –repair
+   ```
+   Or:
+   ```bash
+   ./LE -y
+   ```
+   This will recreate a `cer.le` certificate and clean up some of the current location information.You may be prompted to enter password of your machine in key chain.
+
+---
