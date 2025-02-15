@@ -61,7 +61,7 @@ LE currently supports encryption for the following file types:
 | **Apple Development** | `storyboard`, `swift`, `xib`            |
 | **Miscellaneous**   | `asp`, `class`, `m`, `h`                   |
 
-💡 **Need support for additional file types?** Contact **spalgorithm@gmail.com**.
+💡 **Need support for additional file types?** Please contact **spalgorithm@gmail.com**.
 
 ---
 
