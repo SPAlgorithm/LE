@@ -32,6 +32,8 @@ types like Password Lock, Time Lock or Geo Location Lock**.
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
 
+![LE](LEMarkdown.png)
+
 We recommend that you encrypt the folder with recursive flag -j with same type of encryption we support. 
 Otherwise, you will need to decrypt individual files one at a time.
 
