@@ -4,6 +4,8 @@
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac terminals**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
+![LE](LEMarkdown.png)
+
 ---
 
 ## ✨ Key Features
