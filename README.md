@@ -4,8 +4,6 @@
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac terminals**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
-![LE](LEMarkdown.png)
-
 ---
 
 ## ✨ Key Features
@@ -33,6 +31,8 @@ types like Password Lock, Time Lock or Geo Location Lock**.
   - 🔹 **Decrypt only after** a specified date.
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
+
+![LE](LEMarkdown.png)
 
 We recommend that you encrypt the folder with recursive flag -j with same type of encryption we support. 
 Otherwise, you will need to decrypt individual files one at a time.
