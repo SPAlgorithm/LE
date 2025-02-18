@@ -140,11 +140,29 @@ If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgo
 ## 🔹 Create a Location Encryption File
 
 1. **Create a location file**:
+
+If you know Latitude and Longitude:
+
    ```bash
    echo "35.8538,-78.686,2000" > location.csv
    echo "38.1233,-88.249,100" >> location.csv
    ```
 
+If you don'know Latitude and Longitude but have address:
+
+You can build location file using precise Geo Points and distance using LE. You can append Geo location into location
+file and build accurate location file.
+
+   ```bash
+      ./LE -x "Address you want Geo Location for" -m 100 >> location.csv
+   ```
+    
+   ```bash
+   ./LE -x "Another Address you want Geo Location for" -m 500 >> location.csv
+   ```
+  
+Location.csv will contain 2 Geo Location points now if valid addresses are provided.
+  
 - **Geo Locations Limit**:
   - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
   - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
@@ -476,22 +494,4 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
    ```
    This will recreate a `cer.le` certificate and clean up some of the current location information.You may be prompted to enter password of your machine in key chain.
 
----
-
-7. **Get Geo Location for Address**:
-
-You can build location file using precise Geo Points and distance using LE. You can append Geo location into location
-file and build accurate location file.
-
-   ```bash
-      ./LE -x "Address you want Geo Location for" -m 100 >> location.csv
-   ```
-    
-   ```bash
-   ./LE -x "Another Address you want Geo Location for" -m 500 >> location.csv
-   ```
-  
-Location.csv will contain 2 Geo Location points now if valid addresses are provided.
-  
-  
 ---
