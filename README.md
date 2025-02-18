@@ -484,11 +484,12 @@ You can build location file using precise Geo Points and distance using LE. You 
 file and build accurate location file.
 
    ```bash
-   ./LE -x "Address you want Geo Location for" -m 100 >> location.csv
+      ./LE -x "Address you want Geo Location for" -m 100 >> location.csv
    ```
-     To append another Geo Location into location.csv:
-     
-  ```bash
+    
+    To append another Geo Location into location.csv:
+   
+   ```bash
    ./LE -x "Another Address you want Geo Location for" -m 500 >> location.csv
    ```
   
