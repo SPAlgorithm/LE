@@ -41,6 +41,7 @@ Otherwise, you will need to decrypt individual files one at a time.
 - **Metadata & File Info**: Retrieve **detailed encryption metadata**.
 - **Auto-Generated Comments**: LE **embeds encryption details** into file properties.
 - **Tamper Detection**: _(Licensed version)_ Prevents **date manipulation** using online validation.
+- **Geo Location for any address**: _(Available in both Beta and Licensed version for now)_ **Pipeline proper geo location to build proper Geo Location file.**
 - **File Size Limit**:
   - ⚡ **Beta Version**: Supports **up to 4MB**.
   - 🚀 **Licensed Version**: Supports **up to 100MB**.
@@ -475,4 +476,21 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
    ```
    This will recreate a `cer.le` certificate and clean up some of the current location information.You may be prompted to enter password of your machine in key chain.
 
+---
+
+7. **Get Geo Location for Address**:
+
+You can build location file using precise Geo Points and distance using LE. You can append Geo location into location
+file and build accurate location file.
+
+   ```bash
+   ./LE -x "Address you want Geo Location for" -m 100 >> location.csv
+   ```
+     ```bash
+   ./LE -x "Another Address you want Geo Location for" -m 500 >> location.csv
+   ```
+  
+Location.csv will contain 3 Geo Location points now if valid addresses are provided.
+  
+  
 ---
