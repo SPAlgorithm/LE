@@ -145,8 +145,12 @@ If you know Latitude and Longitude:
 
    ```bash
    echo "35.8538,-78.686,2000" > location.csv
+   ```
+
+   ```bash
    echo "38.1233,-88.249,100" >> location.csv
    ```
+
 
 If you don'know Latitude and Longitude but have address:
 
@@ -154,8 +158,12 @@ You can build location file using precise Geo Points and distance using LE. You 
 file and build accurate location file.
 
    ```bash
-      ./LE -x "Address you want Geo Location for" -m 100 >> location.csv
-      ./LE -x "Another Address you want Geo Location for" -m 500 >> location.csv
+      ./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -m 100 >> location.csv
+   ```
+   
+
+   ```bash
+      ./LE -x "1560 Broadway, Manhattan, NY 10036 usa" -m 500 >> location.csv
    ```
     
 Location.csv will contain 2 Geo Location points now if valid addresses are provided.
