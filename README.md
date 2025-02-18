@@ -155,12 +155,9 @@ file and build accurate location file.
 
    ```bash
       ./LE -x "Address you want Geo Location for" -m 100 >> location.csv
+      ./LE -x "Another Address you want Geo Location for" -m 500 >> location.csv
    ```
     
-   ```bash
-   ./LE -x "Another Address you want Geo Location for" -m 500 >> location.csv
-   ```
-  
 Location.csv will contain 2 Geo Location points now if valid addresses are provided.
   
 - **Geo Locations Limit**:
