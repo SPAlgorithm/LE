@@ -141,7 +141,7 @@ If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgo
 
 1. **Create a location file**:
 
-If you know Latitude and Longitude:
+If you know Latitude,Longitude and distance in meters:
 
    ```bash
    echo "35.8538,-78.686,2000" > location.csv
@@ -151,6 +151,8 @@ If you know Latitude and Longitude:
    echo "38.1233,-88.249,100" >> location.csv
    ```
 
+   This location file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters".
+**One Geo Location point per line.**
 
 If you don'know Latitude and Longitude but have address:
 
@@ -172,9 +174,6 @@ Location.csv will contain 2 Geo Location points now if valid addresses are provi
   - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
   - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
 
-
-   This location file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters".
-**One Geo Location point per line.**
 
 2. **Encrypt the location file**:
 
