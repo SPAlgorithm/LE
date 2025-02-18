@@ -486,7 +486,9 @@ file and build accurate location file.
    ```bash
    ./LE -x "Address you want Geo Location for" -m 100 >> location.csv
    ```
-     ```bash
+     To append another Geo Location into location.csv:
+     
+  ```bash
    ./LE -x "Another Address you want Geo Location for" -m 500 >> location.csv
    ```
   
