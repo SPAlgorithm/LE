@@ -1,6 +1,6 @@
 # 🔒 Ladhe’s Encryption Utility (LE)
 
-## ✨ Last Updated : 02/11/2025
+## ✨ Last Updated : 02/19/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac terminals**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
@@ -50,6 +50,11 @@ Otherwise, you will need to decrypt individual files one at a time.
   - ⚡ **Beta Version**: Supports **up to 2000 Files**.
   - 🚀 **Licensed Version**: Supports **up to 100,000 Files**.
 
+- **Geo Locations Limit**:
+
+  - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
+  - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
+
 ---
 
 ## 📂 Supported File Extensions
@@ -92,9 +97,12 @@ LE currently supports encryption for the following file types:
    Or download the zip and extract it.
 
 2. **Install LE**:
-   - Tap on **LE.dmg** and copy/move **LE** to a local folder and double click on **LELocation shortcut** to enable permissions.
+
+   - Tap on **LE.dmg** and copy/move **LE** to a local folder.
+   - Double click on **LELocation shortcut** to enable permissions.
 
 3. **Setup LE**:
+
    ```bash
    ./LE –setup
    ```
@@ -107,10 +115,15 @@ This will create a `cer.le` certificate.You may be prompted to enter password of
 If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
 
 4. **Encrypt a test file**:
-   ```bash
-   echo Testing > example.txt
-   ./LE -e example.txt -j
-   ```
+
+```bash
+echo Testing > example.txt
+```
+   
+```bash
+./LE -e example.txt -j
+```   
+   
    You should see **example.letxt** in the folder.
 
 ---
@@ -118,18 +131,21 @@ If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgo
 ## 🔹 Create a Password Encryption File
 
 1. **Create a password file**:
+
    ```bash
    echo TestingPassword > pass.txt
    ```
    This password file now contains the password `"TestingPassword"`.
 
 2. **Encrypt the password file**:
+
    ```bash
    ./LE -e pass.txt -q -j
    ```
    The password file (pass.letxt) is now encrypted and can be used for encrypting files or folders.
 
 3. **Decrypt the password file**:
+
    ```bash
    ./LE -d pass.letxt -j -w TestingPassword
    ```
@@ -162,7 +178,6 @@ file and build accurate location file.
    ```bash
       ./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -m 100 >> location.csv
    ```
-   
 
    ```bash
       ./LE -x "1560 Broadway, Manhattan, NY 10036 usa" -m 500 >> location.csv
@@ -171,6 +186,7 @@ file and build accurate location file.
 Location.csv will contain 2 Geo Location points now if valid addresses are provided.
   
 - **Geo Locations Limit**:
+
   - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
   - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
 
@@ -214,20 +230,24 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ## 🔹 1. Basic Encryption & Decryption
 ### 🔹 Encrypt & Decrypt a File
+
 **Encrypt:**
 ```bash
 ./LE -e example.txt -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d example.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder
+
 **Encrypt:**
 ```bash
 ./LE -e my_folder -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d my_folder -j
@@ -237,20 +257,24 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ## 🔹 2. Encryption & Decryption with Password Protection
 ### 🔹 Encrypt & Decrypt a File with a Password
+
 **Encrypt:**
 ```bash
 ./LE -e example.txt -w pass.letxt -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder with a Password
+
 **Encrypt:**
 ```bash
 ./LE -e my_folder -w pass.letxt -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d my_folder -w pass.letxt -j
@@ -260,60 +284,72 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ## 🔹 3. Encryption & Decryption with Time Lock
 ### 🔹 Encrypt & Decrypt a File Until a Specific Date
+
 **Encrypt (available for decryption after this date):**
 ```bash
 ./LE -e example.txt -t "2025/01/31 19:10" -j
 ```
+
 **Decrypt (after the specified date):**
 ```bash
 ./LE -d example.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder Until a Specific Date
+
 **Encrypt (available for decryption after this date):**
 ```bash
 ./LE -e my_folder -t "2025/01/31 19:10" -j
 ```
+
 **Decrypt (after the specified date):**
 ```bash
 ./LE -d my_folder -j
 ```
 
 ### 🔹 Encrypt & Decrypt a File From a Specific Date
+
 **Encrypt (only decryptable after this date):**
 ```bash
 ./LE -e example.txt -l "2025/01/31 19:10" -j
 ```
+
 **Decrypt (after the specified date):**
 ```bash
 ./LE -d example.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder From a Specific Date
+
 **Encrypt (only decryptable after this date):**
 ```bash
 ./LE -e my_folder -l "2025/01/31 19:10" -j
 ```
+
 **Decrypt (after the specified date):**
 ```bash
 ./LE -d my_folder -j
 ```
 
 ### 🔹 Encrypt & Decrypt a File with a Date Range
+
 **Encrypt (only decryptable between the specified dates):**
 ```bash
 ./LE -e example.txt -l "2025/01/31 19:10" -r "2026/02/01 14:10" -j
 ```
+
 **Decrypt (within the allowed date range):**
 ```bash
 ./LE -d example.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder with a Date Range
+
 **Encrypt (only decryptable between the specified dates):**
 ```bash
 ./LE -e my_folder -l "2025/01/31 19:10" -r "2026/02/01 14:10" -j
 ```
+
 **Decrypt (within the allowed date range):**
 ```bash
 ./LE -d my_folder -j
@@ -323,20 +359,24 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ## 🔹 4. Encryption & Decryption with Password & Time Lock
 ### 🔹 Encrypt & Decrypt a File with a Password Until a Specific Date
+
 **Encrypt (only decryptable after this date with a password):**
 ```bash
 ./LE -e example.txt -w pass.letxt -t "2025/01/31 19:10" -j
 ```
+
 **Decrypt (with password after the specified date):**
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder with a Password Until a Specific Date
+
 **Encrypt (only decryptable after this date with a password):**
 ```bash
 ./LE -e my_folder -w pass.letxt -t "2025/01/31 19:10" -j
 ```
+
 **Decrypt (with password after the specified date):**
 ```bash
 ./LE -d my_folder -w pass.letxt -j
@@ -346,20 +386,24 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ## 🔹 5. Encryption & Decryption with Geo Location Protection
 ### 🔹 Encrypt & Decrypt a File with a Geo Location
+
 **Encrypt:**
 ```bash
 ./LE -e example.txt -b location.lecsv -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d example.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location
+
 **Encrypt:**
 ```bash
 ./LE -e my_folder -b location.lecsv -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d my_folder -j
@@ -368,20 +412,24 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ---
 
 ### 🔹 Encrypt & Decrypt a File with a Geo Location and password 
+
 **Encrypt:**
 ```bash
 ./LE -e example.txt -b location.lecsv -w pass.letxt  -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location and password 
+
 **Encrypt:**
 ```bash
 ./LE -e my_folder -b location.lecsv -w pass.letxt -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d my_folder -w pass.letxt -j
@@ -389,23 +437,25 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ---
 
----
-
 ### 🔹 Encrypt & Decrypt a File with a Time Lock, Geo Location and password 
+
 **Encrypt:**
 ```bash
 ./LE -e example.txt -b location.lecsv -w pass.letxt  -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location and password 
+
 **Encrypt:**
 ```bash
 ./LE -e my_folder -b location.lecsv -w pass.letxt -j
 ```
+
 **Decrypt:**
 ```bash
 ./LE -d my_folder -w pass.letxt -j
@@ -414,40 +464,50 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ---
 
 ### 🔹 Encrypt & Decrypt a File Until a Specific Date with a Geo Location and password 
+
 **Encrypt (available for decryption after this date):**
+
 ```bash
 ./LE -e example.txt -t "2025/03/31 19:10" -b location.lecsv -w pass.letxt -j
 ```
+
 **Decrypt (after the specified date):**
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder Until a Specific Date with a Geo Location and password
+
 **Encrypt (available for decryption after this date):**
 ```bash
 ./LE -e my_folder -t "2025/03/31 19:10" -b location.lecsv -w pass.letxt -j
 ```
+
 **Decrypt (after the specified date):**
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a File From a Specific Date with a Geo Location and password
+
 **Encrypt (only decryptable after this date):**
+
 ```bash
 ./LE -e example.txt -l "2025/02/20 19:10" -b location.lecsv -w pass.letxt -j
 ```
+
 **Decrypt (after the specified date):**
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a Folder From a Specific Date with a Geo Location and password
+
 **Encrypt (only decryptable after this date):**
 ```bash
 ./LE -e my_folder -l "2025/02/20 19:10" -b location.lecsv -w pass.letxt -j
 ```
+
 **Decrypt (after the specified date):**
 ```bash
 ./LE -d my_folder -w pass.letxt -j
@@ -455,9 +515,11 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location and password
 **Encrypt (only decryptable between the specified dates):**
+
 ```bash
 ./LE -e example.txt -l "2025/02/20 19:10" -r "2026/02/01 14:10" -b location.lecsv -w pass.letxt -j
 ```
+
 **Decrypt (within the allowed date range):**
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
@@ -465,9 +527,11 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location and password
 **Encrypt (only decryptable between the specified dates):**
+
 ```bash
 ./LE -e my_folder -l "2025/02/20 19:10" -r "2026/02/01 14:10" -b location.lecsv -w pass.letxt -j
 ```
+
 **Decrypt (within the allowed date range):**
 ```bash
 ./LE -d my_folder -w pass.letxt -j
@@ -477,10 +541,12 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 ## 🔹 6. Get Info on encrypted file and folders
 ### 🔹 Info on a File 
+
 **GetInfo File:**
 ```bash
 ./LE -i example.letxt
 ```
+
 **GetInfo Folder:**
 ```bash
 ./LE -i my_folder -j
@@ -489,13 +555,21 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ---
 
 7. **Repair LE**:
-   ```bash
-   ./LE –repair
+
+```bash
+./LE –repair
    ```
-   Or:
-   ```bash
-   ./LE -y
-   ```
-   This will recreate a `cer.le` certificate and clean up some of the current location information.You may be prompted to enter password of your machine in key chain.
+Or:
+
+```bash
+./LE -y
+```
+
+This will recreate a `cer.le` certificate and clean up some of the current location information.You may be prompted
+to enter password of your machine in key chain.
+
+---
+
+**Enjoy LE!**
 
 ---
