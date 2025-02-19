@@ -571,4 +571,5 @@ to enter password of your machine in key chain.
 
 **Enjoy LE!**
 
+© Ladhe's Encryption 2025!
 ---
