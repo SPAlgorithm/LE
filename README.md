@@ -50,6 +50,11 @@ Otherwise, you will need to decrypt individual files one at a time.
   - ⚡ **Beta Version**: Supports **up to 2000 Files**.
   - 🚀 **Licensed Version**: Supports **up to 100,000 Files**.
 
+- **Geo Locations Limit**:
+
+  - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
+  - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
+
 ---
 
 ## 📂 Supported File Extensions
