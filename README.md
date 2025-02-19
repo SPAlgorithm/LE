@@ -116,10 +116,14 @@ If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgo
 
 4. **Encrypt a test file**:
 
-   ```bash
-   echo Testing > example.txt
-   ./LE -e example.txt -j
-   ```
+```bash
+echo Testing > example.txt
+```
+   
+```bash
+./LE -e example.txt -j
+```   
+   
    You should see **example.letxt** in the folder.
 
 ---
@@ -174,7 +178,6 @@ file and build accurate location file.
    ```bash
       ./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -m 100 >> location.csv
    ```
-   
 
    ```bash
       ./LE -x "1560 Broadway, Manhattan, NY 10036 usa" -m 500 >> location.csv
