@@ -29,7 +29,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 - **Versatile Encryption Options**: Encrypt **plaintext, pipelined text**. _(Licensed version)_
 - **Flexible Decryption**: Decrypt data encrypted with **symmetric or asymmetric** keys. _(Licensed version)_
 - **Encryption Options for Files/Folder**: Encrypt recursively with any combination of supported encryption 
-types like Password Lock, Time Lock or Geo Location Lock**.
+types like **Password Lock, Time Lock or Geo Location Lock**.
 
 ![LE](LEMarkdown.png)
 
@@ -90,9 +90,10 @@ LE currently supports encryption for the following file types:
 ## 🔹 Install Steps:
 
 1. **Clone the repository** or **download the zip**:
-   ```bash
-   git clone https://github.com/SPAlgorithm/LE.git
-   ```
+   
+```bash
+git clone https://github.com/SPAlgorithm/LE.git
+```
    Or download the zip and extract it.
 
 2. **Install LE**:
@@ -102,13 +103,13 @@ LE currently supports encryption for the following file types:
 
 3. **Setup LE**:
 
-   ```bash
-   ./LE –setup
-   ```
+```bash
+./LE –setup
+```
    Or:
-   ```bash
-   ./LE -s
-   ```
+```bash
+./LE -s
+```
 
 This will create a `cer.le` certificate.You may be prompted to enter password of your machine in key chain.
 If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
@@ -131,23 +132,23 @@ echo Testing > example.txt
 
 1. **Create a password file**:
 
-   ```bash
-   echo TestingPassword > pass.txt
-   ```
+```bash
+echo TestingPassword > pass.txt
+```
    This password file now contains the password `"TestingPassword"`.
 
 2. **Encrypt the password file**:
 
-   ```bash
-   ./LE -e pass.txt -q -j
-   ```
+```bash
+./LE -e pass.txt -q -j
+```
    The password file (pass.letxt) is now encrypted and can be used for encrypting files or folders.
 
 3. **Decrypt the password file**:
 
-   ```bash
-   ./LE -d pass.letxt -j -w TestingPassword
-   ```
+```bash
+./LE -d pass.letxt -j -w TestingPassword
+```
    To decrypt a password file, the user must **know the password** stored inside the password file.
 
 ---
@@ -158,13 +159,13 @@ echo Testing > example.txt
 
 If you know Latitude,Longitude and distance in meters:
 
-   ```bash
-   echo "35.8538,-78.686,2000" > location.csv
-   ```
+```bash
+echo "35.8538,-78.686,2000" > location.csv
+```
 
-   ```bash
-   echo "38.1233,-88.249,100" >> location.csv
-   ```
+```bash
+echo "38.1233,-88.249,100" >> location.csv
+```
 
    This location file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters".
 **One Geo Location point per line.**
@@ -174,13 +175,13 @@ If you don'know Latitude and Longitude but have address:
 You can build location file using precise Geo Points and distance using LE. You can append Geo location into location
 file and build accurate location file.
 
-   ```bash
-      ./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -m 100 >> location.csv
-   ```
+```bash
+./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -m 100 >> location.csv
+```
 
-   ```bash
-      ./LE -x "1560 Broadway, Manhattan, NY 10036 usa" -m 500 >> location.csv
-   ```
+```bash
+./LE -x "1560 Broadway, Manhattan, NY 10036 usa" -m 500 >> location.csv
+```
     
 Location.csv will contain 2 Geo Location points now if valid addresses are provided.
   
@@ -194,9 +195,9 @@ Location.csv will contain 2 Geo Location points now if valid addresses are provi
 
 **Without encrypted geo location point.**
 
-   ```bash
-   ./LE -e location.csv -v -j
-   ```
+```bash
+./LE -e location.csv -v -j
+```
 
 The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It does not include current location, only geo points you specified. 
    
@@ -204,24 +205,24 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 
 To add current location of enryption and distance of 200 meters to your list 
 
-   ```bash
-   ./LE -e location.csv -v -g -m 200 -j
-   ```
+```bash
+./LE -e location.csv -v -g -m 200 -j
+```
 
 The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
 
 **Get Info on encrypted location file**
 
-   ```bash
-   ./LE -i location.lecsv 
-   ```
+```bash
+./LE -i location.lecsv 
+```
 
 
 3. **Decrypt the location file**:
 
-   ```bash
-   ./LE -d location.lecsv -j 
-   ```
+```bash
+./LE -d location.lecsv -j 
+```
 
 ---
 
