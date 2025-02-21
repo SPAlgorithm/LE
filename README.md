@@ -58,16 +58,16 @@ Otherwise, you will need to decrypt individual files one at a time.
 
 ## 📂 Supported File Extensions
 
-LE currently supports encryption for the following file types:
+LE currently supports encryption for the following file types, we are actively adding support for many more types of files:
 
-| **Category**        | **File Extensions**                         |
-|---------------------|---------------------------------------------|
-| **Text Files**      | `txt`, `rtf`, `csv`, `log`, `json`, `xml`   |
-| **Programming**     | `java`, `c`, `vb`, `cs`, `php`, `py`, `sql` |
-| **Web Files**       | `html`, `htm`, `js`, `aspx`, `xhtml` , `md` |
-| **Apple Development** | `storyboard`, `swift`, `xib`              |
-| **Miscellaneous**   | `asp`, `class`, `m`, `h`                    |
-
+| **Category**          | **File Extensions**                         |
+|-----------------------|---------------------------------------------|
+| **Text Files**        | `txt`, `rtf`, `csv`, `log`, `json`, `xml`   |
+| **Programming**       | `java`, `c`, `vb`, `cs`, `php`, `py`, `sql` |
+| **Web Files**         | `html`, `htm`, `js`, `aspx`, `xhtml` , `md` |
+| **Apple Development** | `storyboard`, `swift`, `xib`                |
+| **Miscellaneous**     | `asp`, `class`, `m`, `h`                    |
+ 
 💡 **Need support for additional file types?** Please contact **spalgorithm@gmail.com**.
 
 ---
