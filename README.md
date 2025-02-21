@@ -1,6 +1,6 @@
 # 🔒 Ladhe’s Encryption Utility (LE)
 
-## ✨ Last Updated : 02/19/2025
+## ✨ Last Updated : 02/21/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
@@ -557,7 +557,7 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 7. **Repair LE**:
 
 ```bash
-./LE –repair
+./LE --repair
    ```
 Or:
 
