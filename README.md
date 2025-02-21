@@ -4,11 +4,11 @@
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
-**Given Ladhe's Encryption, orgs/users and developers gain unmatched security.
+**Given Ladhe's Encryption, orgs/users and developers gain unmatched security.**
 
-When access requires a password, is within a specified time range, and is restricted to a defined geo-location,
+**When access requires a password, is within a specified time range, and is restricted to a defined geo-location,**
 
-Then only authorized users, at the right time and place, can unlock the data!**
+**Then only authorized users, at the right time and place, can unlock the data!**
 
 ---
 
