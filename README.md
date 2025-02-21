@@ -570,6 +570,13 @@ to enter password of your machine in key chain.
 
 ---
 
+**Challenge to break LE**:
+
+While Ladhe’s Encryption may be at stage ZERO, but we boldly challenge QUANTUM computers, AI, ChatGPT, and the world's
+smartest minds to break it! Our goal is to keep world safer!
+
+---
+
 **Enjoy LE!**
 
 © Ladhe's Encryption 2025!
