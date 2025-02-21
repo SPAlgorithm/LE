@@ -67,6 +67,8 @@ LE currently supports encryption for the following file types, we are actively a
 | **Web Files**         | `html`, `htm`, `js`, `aspx`, `xhtml` , `md` |
 | **Apple Development** | `storyboard`, `swift`, `xib`                |
 | **Miscellaneous**     | `asp`, `class`, `m`, `h`                    |
+
+**We almost support more than 900 types of files, if you need any extension that we don't support, please contact us.**
  
 💡 **Need support for additional file types?** Please contact **spalgorithm@gmail.com**.
 
@@ -579,5 +581,5 @@ smartest minds to break it! Our goal is to keep world safer!
 
 **Enjoy LE!**
 
-© Ladhe's Encryption 2025!
+© Ladhe's Encryption 2025! All rights reserved.
 ---
