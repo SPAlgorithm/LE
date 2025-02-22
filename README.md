@@ -29,14 +29,6 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 - **Clean Mode**: Restores **.leXXX** files to their **original** format upon decryption.
 - **Trio Mode**: Use **Force, Clean, and Recursive** encryption in a single command.
 
-### 🔑 Advanced Encryption Capabilities
-- **Symmetric Key Generation**: Secure **AES-like** encryption. _(Licensed version)_
-- **Asymmetric Key Generation**: **RSA-style** encryption for enhanced security. _(Licensed version)_
-- **Versatile Encryption Options**: Encrypt **plaintext, pipelined text**. _(Licensed version)_
-- **Flexible Decryption**: Decrypt data encrypted with **symmetric or asymmetric** keys. _(Licensed version)_
-- **Encryption Options for Files/Folder**: Encrypt recursively with any combination of supported encryption 
-types like **Password Lock, Time Lock or Geo Location Lock**.
-
 ![LE](LEMarkdown.png)
 
 We recommend that you encrypt the folder with recursive flag -j with same type of encryption we support. 
@@ -112,7 +104,7 @@ git clone https://github.com/SPAlgorithm/LE.git
 3. **Setup LE**:
 
 ```bash
-./LE –setup
+./LE --setup
 ```
    Or:
 ```bash
