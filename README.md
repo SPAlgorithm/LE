@@ -1,6 +1,6 @@
 # 🔒 Ladhe’s Encryption Utility (LE)
 
-## ✨ Last Updated : 02/21/2025
+## ✨ Last Updated : 02/23/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
@@ -610,6 +610,8 @@ protect their critical data before it’s too late.
 While Ladhe’s Encryption may be at stage ZERO, but we boldly challenge QUANTUM computers, AI, ChatGPT, and the world's
 smartest minds to break it! Our goal is to keep world safer!
 
+[LE Hackathon!](https://www.facebook.com/share/161epYoBB7/?mibextid=wwXIfr)
+ 
 ---
 
 **Enjoy LE!**
