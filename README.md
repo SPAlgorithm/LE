@@ -176,7 +176,7 @@ Also,to decrypt a password file, the user must **4 digit pin**
 
 
 ```bash
-./LE -e pass.txt -q -j -1 1234 -3 "123456"
+./LE -d pass.letxt  -j -w TestingPassword -1 1234 -3 "123456"
 ```
 
 To decrypt a password file, the user must **know the password** stored inside the password file.
