@@ -56,6 +56,11 @@ Otherwise, you will need to decrypt individual files one at a time.
   - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
   - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
 
+- **MFA/Static OTP Phone numbers Limit**:
+
+  - ⚡ **Beta Version**: Supports **up to 2 Phone numbers**.
+  - 🚀 **Licensed Version**: Supports **up to 5 Phone numbers**.
+
 ---
 
 ## 📂 Supported File Extensions
