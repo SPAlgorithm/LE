@@ -1,6 +1,8 @@
 # 🔒 Ladhe’s Encryption Utility (LE)
 
-## ✨ Last Updated : 02/23/2025
+## ✨ Version : 1.1
+
+## ✨ Last Updated : 03/02/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
@@ -8,14 +10,16 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 **When access requires a password, is within a specified time range, and is restricted to a defined geo-location,**
 
-**Then only authorized users, at the right time and place, can unlock the data!**
+**Then only authorized users, at the right time and place, with correct pin and MFA/static OTP can unlock the data!**
 
 ---
 
 ## ✨ Key Features
 
-### 🔑 Password Lock Security, Time-Lock Security , Geo Location Security
+### 🔑 Password Lock Security, Pin Security, Time-Lock Security , Geo Location Security
 - **Password Encryption**: Encrypt files with a **secure password file**.
+- **Pin Encryption**: Encrypt files with a **4 digit pin**.
+- **MFA Encryption**: Encrypt files with a **MFA or static OTP**.
 - **Time-Lock Encryption**:
   - 🔹 **Decrypt only before** a specified date.
   - 🔹 **Decrypt only after** a specified date.
@@ -111,6 +115,9 @@ git clone https://github.com/SPAlgorithm/LE.git
 ./LE -s
 ```
 
+If you run setup, then you are agreeing to all the terms and conditions! LE uses location and messages services, please
+enable these if you are using Geo Location and MFA capabilities.
+ 
 This will create a `cer.le` certificate.You may be prompted to enter password of your machine in key chain.
 If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
 
@@ -139,23 +146,45 @@ echo TestingPassword > pass.txt
 
 2. **Encrypt the password file**:
 
+**The password file needs to be encrypted/decrypted with 4 digit pin , optional MFA enabled.**
+
 ```bash
-./LE -e pass.txt -q -j
+./LE -e pass.txt -q -j -1 1234
 ```
-   The password file (pass.letxt) is now encrypted and can be used for encrypting files or folders.
+   The password file (pass.letxt) is now encrypted with pin 1234 and can be used for encrypting files or folders.
+
+```bash
+./LE -e pass.txt -q -j -1 1234 -2 "+1XXXXXXXXX"
+```
+The password file (pass.letxt) is now encrypted with pin 1234 and MFA where you will provide a valid phone
+number (with +Country Code) where static otp can be send at the time of decrypting and can be used for encrypting files or folders.
+
 
 3. **Decrypt the password file**:
 
 ```bash
-./LE -d pass.letxt -j -w TestingPassword
+./LE -d pass.letxt -j -w TestingPassword -1 1234
 ```
-   To decrypt a password file, the user must **know the password** stored inside the password file.
+
+To decrypt a password file, the user must **know the password** stored inside the password file.
+Also,to decrypt a password file, the user must **4 digit pin**
+
+
+```bash
+./LE -e pass.txt -q -j -1 1234 -3 "123456"
+```
+
+To decrypt a password file, the user must **know the password** stored inside the password file.
+Also,to decrypt a password file, the user must **4 digit pin**, static OTP (123456) send to your phone. 
+
 
 ---
 
 ## 🔹 Create a Location Encryption File
 
 1. **Create a location file**:
+
+**Location files needs to be encrypted/decrypted with 4 digit pin.**
 
 If you know Latitude,Longitude and distance in meters:
 
@@ -196,20 +225,29 @@ Location.csv will contain 2 Geo Location points now if valid addresses are provi
 **Without encrypted geo location point.**
 
 ```bash
-./LE -e location.csv -v -j
+./LE -e location.csv -v -1 1234 -j
 ```
 
-The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It does not include current location, only geo points you specified. 
+The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It does not include current location, only geo points you specified. 
    
 **With encrypted geo location point and custom distance.**
 
 To add current location of enryption and distance of 200 meters to your list 
 
 ```bash
-./LE -e location.csv -v -g -m 200 -j
+./LE -e location.csv -v -1 1234 -g -m 200 -j
 ```
 
-The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
+To Encrypt location file with pin and MFA :
+
+
+```bash
+./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX"
+```
+
+
+
+The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
 
 **Get Info on encrypted location file**
 
@@ -221,8 +259,16 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 3. **Decrypt the location file**:
 
 ```bash
-./LE -d location.lecsv -j 
+./LE -d location.lecsv -j -1 1234
 ```
+
+You will need a valid pin to decrypt location file.
+
+```bash
+./LE -d location.lecsv -j -1 1234 -3 "123456"
+```
+
+You will need a valid pin and static OTP (123456) send to valid phone number you provided to decrypt location file.
 
 ---
 
@@ -252,6 +298,29 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ```bash
 ./LE -d my_folder -j
 ```
+
+**Encrypt with Pin:**
+```bash
+./LE -e example.txt -j  -1 1234
+```
+
+**Decrypt with Pin:**
+```bash
+./LE -d example.letxt -j -1 1234
+```
+
+### 🔹 Encrypt & Decrypt a Folder
+
+**Encrypt with Pin:**
+```bash
+./LE -e my_folder -j -1 1234
+```
+
+**Decrypt with Pin:**
+```bash
+./LE -d my_folder -j -1 1234
+```
+
 
 ---
 
