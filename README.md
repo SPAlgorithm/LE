@@ -26,6 +26,8 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
 
+**If you use MFA option, you must enable 4 digit pin option.**
+
 ### 🗂 File & Folder Encryption
 - **Encrypt/Decrypt Files & Folders**: Apply strong encryption to both files and directories.
 - **Recursive Folder Encryption**: Encrypt entire directories with **subfolder support**.
@@ -41,7 +43,7 @@ Otherwise, you will need to decrypt individual files one at a time.
 ### 🛡 Additional Features
 
 - **Metadata & File Info**: Retrieve **detailed encryption metadata**.
-- **.le ignore support**: You can configure .leignore to exclude some files from LE**.
+- **.le ignore support**: You can configure .leignore to **exclude some files from LE**.
 - **Auto-Generated Comments**: LE **embeds encryption details** into file properties.
 - **Tamper Detection**: _(Licensed version)_ Prevents **date manipulation** using online validation.
 - **Geo Location for any address**: _(Available in both Beta and Licensed version for now)_ **Pipeline proper geo location to build proper Geo Location file.**
@@ -96,7 +98,7 @@ be ignored by the LE.
 
 - 🔹 **Lightweight** & **Efficient** terminal-based encryption.
 - 🔹 **Protects against modern and quantum-based attacks**.
-- 🔹 **Advanced encryption** with **password , time-lock & GEO Location-lock** security.
+- 🔹 **Advanced encryption** with **password , time-lock , pin-lock , MFA lock, & GEO Location-lock** security.
 - 🔹 **Beta Version** available for free for limited time, with **Licensed Version** offering extended features.
 
 🔒 **Secure your files today with LE!** If you find it meets your needs, request a **licensed copy** to unlock even more powerful features. Contact **spalgorithm@gmail.com**.
@@ -170,8 +172,10 @@ echo TestingPassword > pass.txt
 ```bash
 ./LE -e pass.txt -q -j -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
 ```
+
 The password file (pass.letxt) is now encrypted with pin 1234 and MFA where you will provide a valid phone
-number (with +Country Code) where static otp can be send at the time of decrypting and can be used for encrypting files or folders.
+number (with +Country Code) where static otp can be send at the time of decrypting and can be used for encrypting files
+or folders. If you use MFA option, you must use pin option. 
 
 
 3. **Decrypt the password file**:
@@ -183,6 +187,12 @@ number (with +Country Code) where static otp can be send at the time of decrypti
 To decrypt a password file, the user must **know the password** stored inside the password file.
 Also,to decrypt a password file, the user must **4 digit pin**
 
+
+```bash
+./LE -4 pass.letxt -1 pin
+```
+
+To receive OTP, use above command.
 
 ```bash
 ./LE -d pass.letxt  -j -w TestingPassword -1 1234 -3 "123456"
