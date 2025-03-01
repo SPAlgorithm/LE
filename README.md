@@ -16,7 +16,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 ## ✨ Key Features
 
-### 🔑 Password Lock Security, Pin Security, Time-Lock Security , Geo Location Security
+### 🔑 Password Lock Security, Pin Security, MFA Security,Time-Lock Security , Geo Location Security
 - **Password Encryption**: Encrypt files with a **secure password file**.
 - **Pin Encryption**: Encrypt files with a **4 digit pin**.
 - **MFA Encryption**: Encrypt files with a **MFA or static OTP**.
