@@ -10,7 +10,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 **When access requires a password, is within a specified time range, and is restricted to a defined geo-location,**
 
-**Then only authorized users, at the right time and place, with correct pin and MFA/static OTP can unlock the data!**
+**Then only authorized users, at the right time and place, with correct pin and MFA/static OTP (non expiring) can unlock the data!**
 
 ---
 
@@ -39,10 +39,13 @@ We recommend that you encrypt the folder with recursive flag -j with same type o
 Otherwise, you will need to decrypt individual files one at a time.
 
 ### 🛡 Additional Features
+
 - **Metadata & File Info**: Retrieve **detailed encryption metadata**.
+- **.le ignore support**: You can configure .leignore to exclude some files from LE**.
 - **Auto-Generated Comments**: LE **embeds encryption details** into file properties.
 - **Tamper Detection**: _(Licensed version)_ Prevents **date manipulation** using online validation.
 - **Geo Location for any address**: _(Available in both Beta and Licensed version for now)_ **Pipeline proper geo location to build proper Geo Location file.**
+
 - **File Size Limit**:
   - ⚡ **Beta Version**: Supports **up to 4MB**.
   - 🚀 **Licensed Version**: Supports **up to 100MB**.
@@ -81,6 +84,12 @@ LE currently supports encryption for the following file types, we are actively a
 
 ---
 
+## 📂 Support .leignore
+
+.leignore file is used to ignore the files and directories which are unnecessary to project this will
+be ignored by the LE.
+
+---
 ## 🎯 Why Choose LE?
 
 🚀 **Ladhe’s Encryption Utility (LE)** is at the **forefront of post-quantum cryptography**, ensuring **future-proof** security for your sensitive data.
@@ -159,7 +168,7 @@ echo TestingPassword > pass.txt
    The password file (pass.letxt) is now encrypted with pin 1234 and can be used for encrypting files or folders.
 
 ```bash
-./LE -e pass.txt -q -j -1 1234 -2 "+1XXXXXXXXX"
+./LE -e pass.txt -q -j -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
 ```
 The password file (pass.letxt) is now encrypted with pin 1234 and MFA where you will provide a valid phone
 number (with +Country Code) where static otp can be send at the time of decrypting and can be used for encrypting files or folders.
@@ -247,10 +256,8 @@ To Encrypt location file with pin and MFA :
 
 
 ```bash
-./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX"
+./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
 ```
-
-
 
 The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
 
@@ -259,7 +266,6 @@ The location file (location.lecsv) is now encrypted with pin 1234 and can be use
 ```bash
 ./LE -i location.lecsv 
 ```
-
 
 3. **Decrypt the location file**:
 
@@ -326,7 +332,6 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ./LE -d my_folder -j -1 1234
 ```
 
-
 ---
 
 ## 🔹 2. Encryption & Decryption with Password Protection
@@ -360,11 +365,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File Until a Specific Date
 
 **Encrypt (available for decryption after this date):**
+
 ```bash
 ./LE -e example.txt -t "2025/01/31 19:10" -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -372,11 +379,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder Until a Specific Date
 
 **Encrypt (available for decryption after this date):**
+
 ```bash
 ./LE -e my_folder -t "2025/01/31 19:10" -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d my_folder -j
 ```
@@ -384,11 +393,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File From a Specific Date
 
 **Encrypt (only decryptable after this date):**
+
 ```bash
 ./LE -e example.txt -l "2025/01/31 19:10" -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -396,11 +407,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder From a Specific Date
 
 **Encrypt (only decryptable after this date):**
+
 ```bash
 ./LE -e my_folder -l "2025/01/31 19:10" -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d my_folder -j
 ```
@@ -408,11 +421,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File with a Date Range
 
 **Encrypt (only decryptable between the specified dates):**
+
 ```bash
 ./LE -e example.txt -l "2025/01/31 19:10" -r "2026/02/01 14:10" -j
 ```
 
 **Decrypt (within the allowed date range):**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -420,11 +435,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder with a Date Range
 
 **Encrypt (only decryptable between the specified dates):**
+
 ```bash
 ./LE -e my_folder -l "2025/01/31 19:10" -r "2026/02/01 14:10" -j
 ```
 
 **Decrypt (within the allowed date range):**
+
 ```bash
 ./LE -d my_folder -j
 ```
@@ -435,11 +452,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File with a Password Until a Specific Date
 
 **Encrypt (only decryptable after this date with a password):**
+
 ```bash
 ./LE -e example.txt -w pass.letxt -t "2025/01/31 19:10" -j
 ```
 
 **Decrypt (with password after the specified date):**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -447,11 +466,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder with a Password Until a Specific Date
 
 **Encrypt (only decryptable after this date with a password):**
+
 ```bash
 ./LE -e my_folder -w pass.letxt -t "2025/01/31 19:10" -j
 ```
 
 **Decrypt (with password after the specified date):**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -462,11 +483,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File with a Geo Location
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -b location.lecsv -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -474,11 +497,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -b location.lecsv -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -j
 ```
@@ -488,11 +513,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File with a Geo Location and password 
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -b location.lecsv -w pass.letxt  -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -500,11 +527,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location and password 
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -b location.lecsv -w pass.letxt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -514,11 +543,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File with a Time Lock, Geo Location and password 
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -b location.lecsv -w pass.letxt  -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -526,11 +557,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location and password 
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -b location.lecsv -w pass.letxt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -546,6 +579,7 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -553,11 +587,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder Until a Specific Date with a Geo Location and password
 
 **Encrypt (available for decryption after this date):**
+
 ```bash
 ./LE -e my_folder -t "2025/03/31 19:10" -b location.lecsv -w pass.letxt -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -571,6 +607,7 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -578,11 +615,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder From a Specific Date with a Geo Location and password
 
 **Encrypt (only decryptable after this date):**
+
 ```bash
 ./LE -e my_folder -l "2025/02/20 19:10" -b location.lecsv -w pass.letxt -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -595,6 +634,7 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ```
 
 **Decrypt (within the allowed date range):**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -607,6 +647,7 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ```
 
 **Decrypt (within the allowed date range):**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -617,11 +658,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Info on a File 
 
 **GetInfo File:**
+
 ```bash
 ./LE -i example.letxt
 ```
 
 **GetInfo Folder:**
+
 ```bash
 ./LE -i my_folder -j
 ```
