@@ -808,8 +808,10 @@ Or:
 ./LE -y
 ```
 
+**Note: Please backup your .leignore file, repair will recreate .leignore file.**
+
 This will recreate a `cer.le` certificate and clean up some of the current location information.You may be prompted
-to enter password of your machine in key chain.
+to enter password of your machine in key chain. 
 
 ---
 
