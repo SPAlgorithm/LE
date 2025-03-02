@@ -707,6 +707,7 @@ Use that OTP to decrypt :
 ```
 
 ### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location and password
+
 **Encrypt (only decryptable between the specified dates):**
 
 ```bash
@@ -730,6 +731,51 @@ Use that OTP to decrypt :
 
 ```bash
 ./LE -d my_folder -w pass.letxt -j
+```
+
+---
+
+### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location , 4 digit pin , MFA and password
+
+**Encrypt (only decryptable between the specified dates):**
+
+```bash
+./LE -e example.txt -l "2025/02/20 19:10" -r "2026/02/01 14:10" -b location.lecsv -w pass.letxt -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY" -j
+```
+
+**Decrypt (within the allowed date range):**
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 example.letxt -1 1234 
+```
+
+Use that OTP to decrypt :
+
+```bash
+./LE -d example.letxt -w pass.letxt -j -1 1234 -3 "123456"
+```
+
+### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location and password
+**Encrypt (only decryptable between the specified dates):**
+
+```bash
+./LE -e my_folder -l "2025/02/20 19:10" -r "2026/02/01 14:10" -b location.lecsv -w pass.letxt -j
+```
+
+**Decrypt (within the allowed date range):**
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 my_folder -1 1234 
+```
+
+Use that OTP to decrypt :
+
+```bash
+./LE -d my_folder -w pass.letxt -1 1234 -3 "123456" -j 
 ```
 
 ---
