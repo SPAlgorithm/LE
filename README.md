@@ -179,7 +179,6 @@ or folders. If you use MFA option, you must use pin option.
 
 **Note: Please make sure that you have enabled messages app on your Mac.**
 
-
 3. **Decrypt the password file**:
 
 ```bash
@@ -188,7 +187,6 @@ or folders. If you use MFA option, you must use pin option.
 
 To decrypt a password file, the user must **know the password** stored inside the password file.
 Also,to decrypt a password file, the user must **4 digit pin**
-
 
 ```bash
 ./LE -4 pass.letxt -1 pin
@@ -202,7 +200,6 @@ To receive OTP, use above command.
 
 To decrypt a password file, the user must **know the password** stored inside the password file.
 Also,to decrypt a password file, the user must **4 digit pin**, static OTP (123456) send to your phone. 
-
 
 ---
 
@@ -300,7 +297,7 @@ You will need a valid pin to decrypt location file.
 
 You will need a valid pin and static OTP (123456) send to valid phone number you provided to decrypt location file.
 
-**Note: Please make sure that you have enabled locations on your Mac.**
+**Note: Please make sure that you have enabled locations and messages app on your Mac.**
 
 ---
 
@@ -310,11 +307,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -322,21 +321,25 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -j
 ```
 
 **Encrypt with Pin:**
+
 ```bash
 ./LE -e example.txt -j  -1 1234
 ```
 
 **Decrypt with Pin:**
+
 ```bash
 ./LE -d example.letxt -j -1 1234
 ```
@@ -344,11 +347,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder
 
 **Encrypt with Pin:**
+
 ```bash
 ./LE -e my_folder -j -1 1234
 ```
 
 **Decrypt with Pin:**
+
 ```bash
 ./LE -d my_folder -j -1 1234
 ```
@@ -359,11 +364,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a File with a Password
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -w pass.letxt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -371,11 +378,13 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ### 🔹 Encrypt & Decrypt a Folder with a Password
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -w pass.letxt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
