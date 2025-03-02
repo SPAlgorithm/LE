@@ -177,6 +177,8 @@ The password file (pass.letxt) is now encrypted with pin 1234 and MFA where you 
 number (with +Country Code) where static otp can be send at the time of decrypting and can be used for encrypting files
 or folders. If you use MFA option, you must use pin option. 
 
+**Note: Please make sure that you have enabled messages app on your Mac.**
+
 
 3. **Decrypt the password file**:
 
@@ -290,6 +292,8 @@ You will need a valid pin to decrypt location file.
 ```
 
 You will need a valid pin and static OTP (123456) send to valid phone number you provided to decrypt location file.
+
+**Note: Please make sure that you have enabled locations on your Mac.**
 
 ---
 
