@@ -134,7 +134,7 @@ git clone https://github.com/SPAlgorithm/LE.git
 If you run setup, then you are agreeing to all the terms and conditions! LE uses location and messages services, please
 enable these if you are using Geo Location and MFA capabilities.
  
-This will create a `cer.le` certificate.You may be prompted to enter password of your machine in key chain.
+This will create a **`cer.le` certificate**. This will also create **.leignore** file in current folder. You may be prompted to enter password of your machine in key chain.
 If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
 
 4. **Encrypt a test file**:
