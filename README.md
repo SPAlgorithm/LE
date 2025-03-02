@@ -266,9 +266,16 @@ To add current location of enryption and distance of 200 meters to your list
 
 To Encrypt location file with pin and MFA :
 
+Without current Geo Location:
 
 ```bash
 ./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+```
+
+With current Geo Location:
+
+```bash
+./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY" -g -m 200
 ```
 
 The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
