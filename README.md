@@ -344,6 +344,18 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ./LE -d example.letxt -j -1 1234
 ```
 
+**Encrypt with MFA/OTP:**
+
+```bash
+./LE -e example.txt -j  -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+```
+
+**Decrypt with MFA/OTP:**
+
+```bash
+./LE -d example.letxt -j -1 1234 -3 "123456"
+```
+
 ### 🔹 Encrypt & Decrypt a Folder
 
 **Encrypt with Pin:**
@@ -356,6 +368,18 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 
 ```bash
 ./LE -d my_folder -j -1 1234
+```
+
+**Encrypt with MFA/OTP:**
+
+```bash
+./LE -e my_folder -j  -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+```
+
+**Decrypt with MFA/OTP:**
+
+```bash
+./LE -d my_folder -j -1 1234 -3 "123456"
 ```
 
 ---
