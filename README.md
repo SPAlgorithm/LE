@@ -188,11 +188,13 @@ or folders. If you use MFA option, you must use pin option.
 To decrypt a password file, the user must **know the password** stored inside the password file.
 Also,to decrypt a password file, the user must **4 digit pin**
 
+To get OTP to your configured phone:
+
 ```bash
-./LE -4 pass.letxt -1 pin
+./LE -4 pass.letxt -1 1234 
 ```
 
-To receive OTP, use above command.
+Use that OTP to decrypt :
 
 ```bash
 ./LE -d pass.letxt  -j -w TestingPassword -1 1234 -3 "123456"
@@ -291,6 +293,14 @@ The location file (location.lecsv) is now encrypted with pin 1234 and can be use
 
 You will need a valid pin to decrypt location file.
 
+To get OTP to your configured phone:
+
+```bash
+./LE -4 location.lecsv -1 1234 
+```
+
+Use that OTP to decrypt :
+
 ```bash
 ./LE -d location.lecsv -j -1 1234 -3 "123456"
 ```
@@ -352,6 +362,14 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 
 **Decrypt with MFA/OTP:**
 
+To get OTP to your configured phone:
+
+```bash
+./LE -4 example.letxt -1 1234 
+```
+
+Use that OTP to decrypt :
+
 ```bash
 ./LE -d example.letxt -j -1 1234 -3 "123456"
 ```
@@ -377,6 +395,14 @@ You will need a valid pin and static OTP (123456) send to valid phone number you
 ```
 
 **Decrypt with MFA/OTP:**
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 my_folder -1 1234 
+```
+
+Use that OTP to decrypt :
 
 ```bash
 ./LE -d my_folder -j -1 1234 -3 "123456"
