@@ -1,6 +1,8 @@
 # 🔒 Ladhe’s Encryption Utility (LE)
 
-## ✨ Last Updated : 02/23/2025
+## ✨ Version : 1.1
+
+## ✨ Last Updated : 03/02/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
@@ -8,19 +10,23 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 **When access requires a password, is within a specified time range, and is restricted to a defined geo-location,**
 
-**Then only authorized users, at the right time and place, can unlock the data!**
+**Then only authorized users, at the right time and place, with correct pin and MFA/static OTP (non expiring) can unlock the data!**
 
 ---
 
 ## ✨ Key Features
 
-### 🔑 Password Lock Security, Time-Lock Security , Geo Location Security
+### 🔑 Password Lock Security, Pin Security, MFA Security,Time-Lock Security , Geo Location Security
 - **Password Encryption**: Encrypt files with a **secure password file**.
+- **Pin Encryption**: Encrypt files with a **4 digit pin**.
+- **MFA Encryption**: Encrypt files with a **MFA or static OTP**.
 - **Time-Lock Encryption**:
   - 🔹 **Decrypt only before** a specified date.
   - 🔹 **Decrypt only after** a specified date.
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
+
+**If you use MFA option, you must enable 4 digit pin option.**
 
 ### 🗂 File & Folder Encryption
 - **Encrypt/Decrypt Files & Folders**: Apply strong encryption to both files and directories.
@@ -35,10 +41,13 @@ We recommend that you encrypt the folder with recursive flag -j with same type o
 Otherwise, you will need to decrypt individual files one at a time.
 
 ### 🛡 Additional Features
+
 - **Metadata & File Info**: Retrieve **detailed encryption metadata**.
+- **.le ignore support**: You can configure .leignore to **exclude some files from LE**.
 - **Auto-Generated Comments**: LE **embeds encryption details** into file properties.
 - **Tamper Detection**: _(Licensed version)_ Prevents **date manipulation** using online validation.
 - **Geo Location for any address**: _(Available in both Beta and Licensed version for now)_ **Pipeline proper geo location to build proper Geo Location file.**
+
 - **File Size Limit**:
   - ⚡ **Beta Version**: Supports **up to 4MB**.
   - 🚀 **Licensed Version**: Supports **up to 100MB**.
@@ -51,6 +60,11 @@ Otherwise, you will need to decrypt individual files one at a time.
 
   - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
   - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
+
+- **MFA/Static OTP Phone numbers Limit**:
+
+  - ⚡ **Beta Version**: Supports **up to 2 Phone numbers**.
+  - 🚀 **Licensed Version**: Supports **up to 5 Phone numbers**.
 
 ---
 
@@ -72,13 +86,19 @@ LE currently supports encryption for the following file types, we are actively a
 
 ---
 
+## 📂 Support .leignore
+
+.leignore file is used to ignore the files and directories which are unnecessary to project this will
+be ignored by the LE.
+
+---
 ## 🎯 Why Choose LE?
 
 🚀 **Ladhe’s Encryption Utility (LE)** is at the **forefront of post-quantum cryptography**, ensuring **future-proof** security for your sensitive data.
 
 - 🔹 **Lightweight** & **Efficient** terminal-based encryption.
 - 🔹 **Protects against modern and quantum-based attacks**.
-- 🔹 **Advanced encryption** with **password , time-lock & GEO Location-lock** security.
+- 🔹 **Advanced encryption** with **password , time-lock , pin-lock , MFA lock, & GEO Location-lock** security.
 - 🔹 **Beta Version** available for free for limited time, with **Licensed Version** offering extended features.
 
 🔒 **Secure your files today with LE!** If you find it meets your needs, request a **licensed copy** to unlock even more powerful features. Contact **spalgorithm@gmail.com**.
@@ -111,7 +131,10 @@ git clone https://github.com/SPAlgorithm/LE.git
 ./LE -s
 ```
 
-This will create a `cer.le` certificate.You may be prompted to enter password of your machine in key chain.
+If you run setup, then you are agreeing to all the terms and conditions! LE uses location and messages services, please
+enable these if you are using Geo Location and MFA capabilities.
+ 
+This will create a **`cer.le` certificate**. This will also create **.leignore** file in current folder. You may be prompted to enter password of your machine in key chain.
 If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
 
 4. **Encrypt a test file**:
@@ -139,23 +162,54 @@ echo TestingPassword > pass.txt
 
 2. **Encrypt the password file**:
 
+**The password file needs to be encrypted/decrypted with 4 digit pin , optional MFA enabled.**
+
 ```bash
-./LE -e pass.txt -q -j
+./LE -e pass.txt -q -j -1 1234
 ```
-   The password file (pass.letxt) is now encrypted and can be used for encrypting files or folders.
+   The password file (pass.letxt) is now encrypted with pin 1234 and can be used for encrypting files or folders.
+
+```bash
+./LE -e pass.txt -q -j -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+```
+
+The password file (pass.letxt) is now encrypted with pin 1234 and MFA where you will provide a valid phone
+number (with +Country Code) where static otp can be send at the time of decrypting and can be used for encrypting files
+or folders. If you use MFA option, you must use pin option. 
+
+**Note: Please make sure that you have enabled messages app on your Mac.**
 
 3. **Decrypt the password file**:
 
 ```bash
-./LE -d pass.letxt -j -w TestingPassword
+./LE -d pass.letxt -j -w TestingPassword -1 1234
 ```
-   To decrypt a password file, the user must **know the password** stored inside the password file.
+
+To decrypt a password file, the user must **know the password** stored inside the password file.
+Also,to decrypt a password file, the user must **4 digit pin**
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 pass.letxt -1 1234 
+```
+
+Use that OTP to decrypt :
+
+```bash
+./LE -d pass.letxt  -j -w TestingPassword -1 1234 -3 "123456"
+```
+
+To decrypt a password file, the user must **know the password** stored inside the password file.
+Also,to decrypt a password file, the user must **4 digit pin**, static OTP (123456) send to your phone. 
 
 ---
 
 ## 🔹 Create a Location Encryption File
 
 1. **Create a location file**:
+
+**Location files needs to be encrypted/decrypted with 4 digit pin.**
 
 If you know Latitude,Longitude and distance in meters:
 
@@ -196,20 +250,34 @@ Location.csv will contain 2 Geo Location points now if valid addresses are provi
 **Without encrypted geo location point.**
 
 ```bash
-./LE -e location.csv -v -j
+./LE -e location.csv -v -1 1234 -j
 ```
 
-The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It does not include current location, only geo points you specified. 
+The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It does not include current location, only geo points you specified. 
    
 **With encrypted geo location point and custom distance.**
 
 To add current location of enryption and distance of 200 meters to your list 
 
 ```bash
-./LE -e location.csv -v -g -m 200 -j
+./LE -e location.csv -v -1 1234 -g -m 200 -j
 ```
 
-The location file (location.lecsv) is now encrypted and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
+To Encrypt location file with pin and MFA :
+
+Without current Geo Location:
+
+```bash
+./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+```
+
+With current Geo Location:
+
+```bash
+./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY" -g -m 200
+```
+
+The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
 
 **Get Info on encrypted location file**
 
@@ -217,12 +285,29 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ./LE -i location.lecsv 
 ```
 
-
 3. **Decrypt the location file**:
 
 ```bash
-./LE -d location.lecsv -j 
+./LE -d location.lecsv -j -1 1234
 ```
+
+You will need a valid pin to decrypt location file.
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 location.lecsv -1 1234 
+```
+
+Use that OTP to decrypt :
+
+```bash
+./LE -d location.lecsv -j -1 1234 -3 "123456"
+```
+
+You will need a valid pin and static OTP (123456) send to valid phone number you provided to decrypt location file.
+
+**Note: Please make sure that you have enabled locations and messages app on your Mac.**
 
 ---
 
@@ -232,11 +317,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -244,13 +331,81 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -j
+```
+
+**Encrypt with Pin:**
+
+```bash
+./LE -e example.txt -j  -1 1234
+```
+
+**Decrypt with Pin:**
+
+```bash
+./LE -d example.letxt -j -1 1234
+```
+
+**Encrypt with MFA/OTP:**
+
+```bash
+./LE -e example.txt -j  -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+```
+
+**Decrypt with MFA/OTP:**
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 example.letxt -1 1234 
+```
+
+Use that OTP to decrypt :
+
+```bash
+./LE -d example.letxt -j -1 1234 -3 "123456"
+```
+
+### 🔹 Encrypt & Decrypt a Folder
+
+**Encrypt with Pin:**
+
+```bash
+./LE -e my_folder -j -1 1234
+```
+
+**Decrypt with Pin:**
+
+```bash
+./LE -d my_folder -j -1 1234
+```
+
+**Encrypt with MFA/OTP:**
+
+```bash
+./LE -e my_folder -j  -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+```
+
+**Decrypt with MFA/OTP:**
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 my_folder -1 1234 
+```
+
+Use that OTP to decrypt :
+
+```bash
+./LE -d my_folder -j -1 1234 -3 "123456"
 ```
 
 ---
@@ -259,11 +414,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File with a Password
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -w pass.letxt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -271,11 +428,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder with a Password
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -w pass.letxt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -286,11 +445,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File Until a Specific Date
 
 **Encrypt (available for decryption after this date):**
+
 ```bash
 ./LE -e example.txt -t "2025/01/31 19:10" -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -298,11 +459,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder Until a Specific Date
 
 **Encrypt (available for decryption after this date):**
+
 ```bash
 ./LE -e my_folder -t "2025/01/31 19:10" -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d my_folder -j
 ```
@@ -310,11 +473,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File From a Specific Date
 
 **Encrypt (only decryptable after this date):**
+
 ```bash
 ./LE -e example.txt -l "2025/01/31 19:10" -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -322,11 +487,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder From a Specific Date
 
 **Encrypt (only decryptable after this date):**
+
 ```bash
 ./LE -e my_folder -l "2025/01/31 19:10" -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d my_folder -j
 ```
@@ -334,11 +501,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File with a Date Range
 
 **Encrypt (only decryptable between the specified dates):**
+
 ```bash
 ./LE -e example.txt -l "2025/01/31 19:10" -r "2026/02/01 14:10" -j
 ```
 
 **Decrypt (within the allowed date range):**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -346,11 +515,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder with a Date Range
 
 **Encrypt (only decryptable between the specified dates):**
+
 ```bash
 ./LE -e my_folder -l "2025/01/31 19:10" -r "2026/02/01 14:10" -j
 ```
 
 **Decrypt (within the allowed date range):**
+
 ```bash
 ./LE -d my_folder -j
 ```
@@ -361,11 +532,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File with a Password Until a Specific Date
 
 **Encrypt (only decryptable after this date with a password):**
+
 ```bash
 ./LE -e example.txt -w pass.letxt -t "2025/01/31 19:10" -j
 ```
 
 **Decrypt (with password after the specified date):**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -373,11 +546,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder with a Password Until a Specific Date
 
 **Encrypt (only decryptable after this date with a password):**
+
 ```bash
 ./LE -e my_folder -w pass.letxt -t "2025/01/31 19:10" -j
 ```
 
 **Decrypt (with password after the specified date):**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -388,11 +563,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File with a Geo Location
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -b location.lecsv -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -j
 ```
@@ -400,11 +577,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -b location.lecsv -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -j
 ```
@@ -414,11 +593,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File with a Geo Location and password 
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -b location.lecsv -w pass.letxt  -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -426,11 +607,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location and password 
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -b location.lecsv -w pass.letxt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -440,11 +623,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a File with a Time Lock, Geo Location and password 
 
 **Encrypt:**
+
 ```bash
 ./LE -e example.txt -b location.lecsv -w pass.letxt  -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -452,11 +637,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder with a Geo Location and password 
 
 **Encrypt:**
+
 ```bash
 ./LE -e my_folder -b location.lecsv -w pass.letxt -j
 ```
 
 **Decrypt:**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -472,6 +659,7 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -479,11 +667,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder Until a Specific Date with a Geo Location and password
 
 **Encrypt (available for decryption after this date):**
+
 ```bash
 ./LE -e my_folder -t "2025/03/31 19:10" -b location.lecsv -w pass.letxt -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
@@ -497,6 +687,7 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -504,16 +695,19 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Encrypt & Decrypt a Folder From a Specific Date with a Geo Location and password
 
 **Encrypt (only decryptable after this date):**
+
 ```bash
 ./LE -e my_folder -l "2025/02/20 19:10" -b location.lecsv -w pass.letxt -j
 ```
 
 **Decrypt (after the specified date):**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
 ```
 
 ### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location and password
+
 **Encrypt (only decryptable between the specified dates):**
 
 ```bash
@@ -521,6 +715,7 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ```
 
 **Decrypt (within the allowed date range):**
+
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
@@ -533,8 +728,54 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ```
 
 **Decrypt (within the allowed date range):**
+
 ```bash
 ./LE -d my_folder -w pass.letxt -j
+```
+
+---
+
+### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location , 4 digit pin , MFA and password
+
+**Encrypt (only decryptable between the specified dates):**
+
+```bash
+./LE -e example.txt -l "2025/02/20 19:10" -r "2026/02/01 14:10" -b location.lecsv -w pass.letxt -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY" -j
+```
+
+**Decrypt (within the allowed date range):**
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 example.letxt -1 1234 
+```
+
+Use that OTP to decrypt :
+
+```bash
+./LE -d example.letxt -w pass.letxt -j -1 1234 -3 "123456"
+```
+
+### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location , 4 digit pin , MFA and password
+**Encrypt (only decryptable between the specified dates):**
+
+```bash
+./LE -e my_folder -l "2025/02/20 19:10" -r "2026/02/01 14:10" -b location.lecsv -w pass.letxt -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY" -j
+```
+
+**Decrypt (within the allowed date range):**
+
+To get OTP to your configured phone:
+
+```bash
+./LE -4 my_folder -1 1234 
+```
+
+Use that OTP to decrypt :
+
+```bash
+./LE -d my_folder -w pass.letxt -1 1234 -3 "123456" -j 
 ```
 
 ---
@@ -543,11 +784,13 @@ The location file (location.lecsv) is now encrypted and can be used for geo loca
 ### 🔹 Info on a File 
 
 **GetInfo File:**
+
 ```bash
 ./LE -i example.letxt
 ```
 
 **GetInfo Folder:**
+
 ```bash
 ./LE -i my_folder -j
 ```
@@ -565,8 +808,10 @@ Or:
 ./LE -y
 ```
 
+**Note: Please backup your .leignore file, repair will recreate .leignore file.**
+
 This will recreate a `cer.le` certificate and clean up some of the current location information.You may be prompted
-to enter password of your machine in key chain.
+to enter password of your machine in key chain. 
 
 ---
 
