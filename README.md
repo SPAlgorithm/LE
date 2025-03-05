@@ -37,6 +37,13 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 ![LE](LEMarkdown.png)
 
+💡 **LE can solve this riddle in one command!**
+
+### 🛡 Meet our new Bob and Alice after 1977!
+
+![LE](NewBobNAliceAfter1977.png)
+
+
 We recommend that you encrypt the folder with recursive flag -j with same type of encryption we support. 
 Otherwise, you will need to decrypt individual files one at a time.
 
