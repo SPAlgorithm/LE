@@ -35,6 +35,9 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 - **Clean Mode**: Restores **.leXXX** files to their **original** format upon decryption.
 - **Trio Mode**: Use **Force, Clean, and Recursive** encryption in a single command.
 
+We recommend that you encrypt the folder with recursive flag -j with same type of encryption we support. 
+Otherwise, you will need to decrypt individual files one at a time.
+
 ![LE](LEMarkdown.png)
 
 💡 **LE can solve this riddle in one command!**
@@ -42,10 +45,6 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 ### 🛡 Meet our new Bob and Alice after 1977!
 
 ![LE](NewBobNAliceAfter1977.png)
-
-
-We recommend that you encrypt the folder with recursive flag -j with same type of encryption we support. 
-Otherwise, you will need to decrypt individual files one at a time.
 
 ### 🛡 Additional Features
 
