@@ -40,7 +40,7 @@ Otherwise, you will need to decrypt individual files one at a time.
 
 ![LE](LEMarkdown.png)
 
-### 🛡 Meet our new Bob and Alice after 1977!
+### 🛡 Meet our new Quantum safe Bob and Alice after 1977!
 
 Bob wants to distribute 1 Billion $ to family members. He gives 
 each one, one lock and encrypts details (Plain Text) and gives it to Alice. Alice will need every one to share their
