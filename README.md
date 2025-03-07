@@ -50,6 +50,7 @@ lock to unlock cipher text! Everyone is locked into it 😃!
 
 💡 **LE can solve above riddle in one command!**
 
+![LE](LEComparison.png)
 
 ### 🛡 Additional Features
 
