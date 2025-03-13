@@ -223,7 +223,6 @@ or folders.
 ```
 
 To decrypt a password file, the user must **know the password** stored inside the password file.
-Also,to decrypt a password file, the user must **4 digit pin**
 
 To get OTP to your configured phone:
 
@@ -238,7 +237,8 @@ Use that OTP to decrypt :
 ```
 
 To decrypt a password file, the user must **know the password** stored inside the password file.
-Also,to decrypt a password file, the user must **4 digit pin**, static OTP (123456) send to your phone. 
+
+**Either Pin or MFA should be enabled for Password/Location file**
 
 ---
 
