@@ -26,7 +26,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
 
-**If you use MFA option, you must enable 4 digit pin option.**
+**Either Pin or MFA should be enabled for Password/Location file**
 
 ### 🗂 File & Folder Encryption
 - **Encrypt/Decrypt Files & Folders**: Apply strong encryption to both files and directories.
@@ -165,6 +165,27 @@ echo Testing > example.txt
 
 ---
 
+## 🔹 Verify Phone number for MFA
+
+1. **Register Phone number for OTP**:
+
+```bash
+LE -2 "+1XXXXXXXXXX" -5
+```
+   This will send you OTP to your phone number.
+
+2. **Verify OTP from valid phone number**:
+
+Lets say your received OTP - 597349
+
+```bash
+./LE -6 597349
+```
+
+If otp is correct, LE will be able to send OTP for MFA.
+
+---
+
 ## 🔹 Create a Password Encryption File
 
 1. **Create a password file**:
@@ -189,9 +210,11 @@ echo TestingPassword > pass.txt
 
 The password file (pass.letxt) is now encrypted with pin 1234 and MFA where you will provide a valid phone
 number (with +Country Code) where static otp can be send at the time of decrypting and can be used for encrypting files
-or folders. If you use MFA option, you must use pin option. 
+or folders. 
 
 **Note: Please make sure that you have enabled messages app on your Mac.**
+
+**Either Pin or MFA should be enabled for Password/Location file**
 
 3. **Decrypt the password file**:
 
@@ -282,6 +305,10 @@ To Encrypt location file with pin and MFA :
 Without current Geo Location:
 
 ```bash
+./LE -e location.csv -v -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+```
+
+```bash
 ./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
 ```
 
@@ -292,6 +319,8 @@ With current Geo Location:
 ```
 
 The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
+
+**Either Pin or MFA should be enabled for Password/Location file**
 
 **Get Info on encrypted location file**
 
