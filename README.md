@@ -2,7 +2,7 @@
 
 ## ✨ Version : 1.1
 
-## ✨ Last Updated : 03/02/2025
+## ✨ Last Updated : 03/15/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
@@ -170,7 +170,7 @@ echo Testing > example.txt
 1. **Register Phone number for OTP**:
 
 ```bash
-LE -2 "+1XXXXXXXXXX" -5
+./LE -2 "+1XXXXXXXXXX" -5
 ```
    This will send you OTP to your phone number.
 
