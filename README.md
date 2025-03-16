@@ -275,7 +275,13 @@ file and build accurate location file.
 ```
     
 Location.csv will contain 2 Geo Location points now if valid addresses are provided.
-  
+
+**To get current address**
+
+```bash
+./LE -7 
+```
+
 - **Geo Locations Limit**:
 
   - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
