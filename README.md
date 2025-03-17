@@ -282,6 +282,12 @@ Location.csv will contain 2 Geo Location points now if valid addresses are provi
 ./LE -7 
 ```
 
+**To find distance of address from current location**
+
+```bash
+./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -8 
+```
+
 - **Geo Locations Limit**:
 
   - ⚡ **Beta Version**: Supports **up to 5 Geo Locations**.
