@@ -197,7 +197,7 @@ echo TestingPassword > pass.txt
 
 2. **Encrypt the password file**:
 
-**The password file needs to be encrypted/decrypted with 4 digit pin , optional MFA enabled.**
+**The password file needs to be encrypted/decrypted with 4 digit pin or  MFA enabled.**
 
 ```bash
 ./LE -e pass.txt -q -j -1 1234
@@ -218,6 +218,14 @@ or folders.
 
 3. **Decrypt the password file**:
 
+Only MFA/OTP
+
+```bash
+./LE -d pass.letxt -j -w TestingPassword -3 "123456"
+```
+
+Only Pin
+
 ```bash
 ./LE -d pass.letxt -j -w TestingPassword -1 1234
 ```
@@ -226,11 +234,21 @@ To decrypt a password file, the user must **know the password** stored inside th
 
 To get OTP to your configured phone:
 
+Only MFA/OTP
+
+```bash
+./LE -4 pass.letxt 
+```
+
+Only Pin
+
 ```bash
 ./LE -4 pass.letxt -1 1234 
 ```
 
 Use that OTP to decrypt :
+
+Pin and MFA/OTP
 
 ```bash
 ./LE -d pass.letxt  -j -w TestingPassword -1 1234 -3 "123456"
@@ -316,10 +334,13 @@ To Encrypt location file with pin and MFA :
 
 Without current Geo Location:
 
+Only MFA/OTP
+
 ```bash
 ./LE -e location.csv -v -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
 ```
 
+Pin and MFA/OTP
 ```bash
 ./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
 ```
