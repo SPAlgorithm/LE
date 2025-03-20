@@ -303,7 +303,27 @@ Location.csv will contain 2 Geo Location points now if valid addresses are provi
 **To find distance of address from current location**
 
 ```bash
-./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -8 
+./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -8  >> location.csv
+```
+
+**To find distance of address in FILE (address.txt) from current location**
+
+```bash
+echo "1560 Broadway, Manhattan, NY 10036 usa" >> address.txt
+```
+
+```bash
+echo "1 Infinite Loop. Cupertino, CA 95014 United States" >> address.txt
+```
+
+```bash
+./LE -9 "address.txt" -8  >> location.csv
+```
+
+**To remove comments '# lines' from (location.csv)**
+
+```bash
+./LE --LocationFileClean location.csv
 ```
 
 - **Geo Locations Limit**:
