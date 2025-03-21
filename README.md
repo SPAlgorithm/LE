@@ -26,6 +26,8 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
 
+![LE Applications in future ...](LEApplications.md)
+
 **Either Pin or MFA should be enabled for Password/Location file**
 
 ### 🗂 File & Folder Encryption
