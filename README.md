@@ -2,7 +2,7 @@
 
 ## ✨ Version : 1.1
 
-## ✨ Last Updated : 03/24/2025
+## ✨ Last Updated : 04/01/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
