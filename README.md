@@ -82,6 +82,11 @@ lock to unlock cipher text! Everyone is locked into it 😃!
   - ⚡ **Beta Version**: Supports **up to 2 Phone numbers**.
   - 🚀 **Licensed Version**: Supports **up to 5 Phone numbers**.
 
+- **Number of unsuccessful attempts Limit**:
+
+  - ⚡ **Beta Version**: 5 attempts**.
+  - 🚀 **Licensed Version**: 25 attempts**.
+                                
 ---
 
 ## 📂 Supported File Extensions
