@@ -80,7 +80,7 @@ Otherwise, you will need to decrypt individual files one at a time.
   - ⚡ **Beta Version**: 5 attempts**.
   - 🚀 **Licensed Version**: 25 attempts**.
               
-    **File will be deleted once you exceed Number of unsuccessful attempts Limit**
+    **File will be deleted once you exceed number of unsuccessful attempts limit**
 ---
 
 ## 📂 Supported File Extensions
