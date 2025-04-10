@@ -42,17 +42,10 @@ Otherwise, you will need to decrypt individual files one at a time.
 
 ![LE](LEMarkdown.png)
 
-### 🛡 Meet our new Quantum safe Bob and Alice after 1977!
 
-Bob wants to distribute $ 1 Billion to family members. He gives 
-each one, one lock and encrypts details (Plain Text) and gives it to Alice. Alice will need every one to share their
-lock to unlock cipher text! Everyone is locked into it 😃!
+![Bob and Alice in Quantum Era ...](LEBobNAlice.md)
 
-[Bob and Alice Quantum Safe!](https://youtu.be/mxgTygs2KE8) 
 
-![LE](NewBobNAliceAfter1977.png)
-
-💡 **LE can solve above riddle in one command!**
 
 ![LE](LEComparison.png)
 
@@ -86,7 +79,8 @@ lock to unlock cipher text! Everyone is locked into it 😃!
 
   - ⚡ **Beta Version**: 5 attempts**.
   - 🚀 **Licensed Version**: 25 attempts**.
-                                
+              
+    **File will be deleted once you exceed number of unsuccessful attempts limit**
 ---
 
 ## 📂 Supported File Extensions
