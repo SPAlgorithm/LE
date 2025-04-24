@@ -90,6 +90,7 @@ LE currently supports encryption for the following file types, we are actively a
 | **Category**          | **File Extensions**                         |
 |-----------------------|---------------------------------------------|
 | **Text Files**        | `txt`, `rtf`, `csv`, `log`, `json`, `xml`   |
+| **Image Files**       | `png`, `jpg`                                |
 | **Programming**       | `java`, `c`, `vb`, `cs`, `php`, `py`, `sql` |
 | **Web Files**         | `html`, `htm`, `js`, `aspx`, `xhtml` , `md` |
 | **Apple Development** | `storyboard`, `swift`, `xib`                |
@@ -952,7 +953,7 @@ protect their critical data before it’s too late.
 While Ladhe’s Encryption may be at stage ZERO, but we boldly challenge QUANTUM computers, AI, ChatGPT, and the world's
 smartest minds to break it! Our goal is to keep world safer!
 
-[LE Hackathon!](https://www.facebook.com/share/161epYoBB7/?mibextid=wwXIfr)
+[LE Hackathon!](https://www.facebook.com/share/1KrDHa6M4x/)
  
 ---
 
