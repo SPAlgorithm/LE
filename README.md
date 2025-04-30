@@ -8,7 +8,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 **Given Ladhe's Encryption, orgs/users and developers gain unmatched security.**
 
-**When access requires a password, is within a specified time range, and is restricted to a defined geo-location,**
+**When access requires a PasswordKey, is within a specified time range, and is restricted to a defined geo-location,**
 
 **Then only authorized users, at the right time and place, with correct pin and MFA/static OTP (non expiring) can unlock the data!**
 
@@ -16,8 +16,8 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 ## ✨ Key Features
 
-### 🔑 Password Lock Security, Pin Security, MFA Security,Time-Lock Security , Geo Location Security
-- **Password Encryption**: Encrypt files with a **secure password file**.
+### 🔑 PasswordKey Lock Security, Pin Security, MFA Security,Time-Lock Security , Geo Location Security
+- **Password Encryption**: Encrypt files with a **secure PasswordKey file**.
 - **Pin Encryption**: Encrypt files with a **4 digit pin**.
 - **MFA Encryption**: Encrypt files with a **MFA or static OTP**.
 - **Time-Lock Encryption**:
@@ -28,7 +28,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 ![LE Applications in future ...](LEApplications.md)
 
-**Either Pin or MFA should be enabled for Password/Location file**
+**Either Pin or MFA should be enabled for PasswordKey/Location file**
 
 ### 🗂 File & Folder Encryption
 - **Encrypt/Decrypt Files & Folders**: Apply strong encryption to both files and directories.
@@ -114,7 +114,7 @@ be ignored by the LE.
 
 - 🔹 **Lightweight** & **Efficient** terminal-based encryption.
 - 🔹 **Protects against modern and quantum-based attacks**.
-- 🔹 **Advanced encryption** with **password , time-lock , pin-lock , MFA lock, & GEO Location-lock** security.
+- 🔹 **Advanced encryption** with **PasswordKey , time-lock , pin-lock , MFA lock, & GEO Location-lock** security.
 - 🔹 **Beta Version** available for free for limited time, with **Licensed Version** offering extended features.
 
 🔒 **Secure your files today with LE!** If you find it meets your needs, request a **licensed copy** to unlock even more powerful features. Contact **spalgorithm@gmail.com**.
@@ -188,37 +188,37 @@ If otp is correct, LE will be able to send OTP for MFA.
 
 ---
 
-## 🔹 Create a Password Encryption File
+## 🔹 Create a PasswordKey Encryption File
 
-1. **Create a password file**:
+1. **Create a PasswordKey file**:
 
 ```bash
 echo TestingPassword > pass.txt
 ```
-   This password file now contains the password `"TestingPassword"`.
+   This PasswordKey file now contains the password `"TestingPassword"`.
 
-2. **Encrypt the password file**:
+2. **Encrypt the PasswordKey file**:
 
-**The password file needs to be encrypted/decrypted with 4 digit pin or  MFA enabled.**
+**The PasswordKey file needs to be encrypted/decrypted with 4 digit pin or  MFA enabled.**
 
 ```bash
 ./LE -e pass.txt -q -j -1 1234
 ```
-   The password file (pass.letxt) is now encrypted with pin 1234 and can be used for encrypting files or folders.
+   The PasswordKey file (pass.letxt) is now encrypted with pin 1234 and can be used for encrypting files or folders.
 
 ```bash
 ./LE -e pass.txt -q -j -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
 ```
 
-The password file (pass.letxt) is now encrypted with pin 1234 and MFA where you will provide a valid phone
+The PasswordKey file (pass.letxt) is now encrypted with pin 1234 and MFA where you will provide a valid phone
 number (with +Country Code) where static otp can be send at the time of decrypting and can be used for encrypting files
 or folders. 
 
 **Note: Please make sure that you have enabled messages app on your Mac.**
 
-**Either Pin or MFA should be enabled for Password/Location file**
+**Either Pin or MFA should be enabled for PasswordKey/Location file**
 
-3. **Decrypt the password file**:
+3. **Decrypt the PasswordKey file**:
 
 Only MFA/OTP
 
@@ -232,7 +232,7 @@ Only Pin
 ./LE -d pass.letxt -j -w TestingPassword -1 1234
 ```
 
-To decrypt a password file, the user must **know the password** stored inside the password file.
+To decrypt a PasswordKey file, the user must **know the password** stored inside the password file.
 
 To get OTP to your configured phone:
 
@@ -256,9 +256,9 @@ Pin and MFA/OTP
 ./LE -d pass.letxt  -j -w TestingPassword -1 1234 -3 "123456"
 ```
 
-To decrypt a password file, the user must **know the password** stored inside the password file.
+To decrypt a PasswordKey file, the user must **know the password** stored inside the PasswordKey file.
 
-**Either Pin or MFA should be enabled for Password/Location file**
+**Either Pin or MFA should be enabled for PasswordKey/Location file**
 
 ---
 
@@ -375,7 +375,7 @@ With current Geo Location:
 
 The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
 
-**Either Pin or MFA should be enabled for Password/Location file**
+**Either Pin or MFA should be enabled for PasswordKey/Location file**
 
 **Get Info on encrypted location file**
 
@@ -508,8 +508,8 @@ Use that OTP to decrypt :
 
 ---
 
-## 🔹 2. Encryption & Decryption with Password Protection
-### 🔹 Encrypt & Decrypt a File with a Password
+## 🔹 2. Encryption & Decryption with PasswordKey Protection
+### 🔹 Encrypt & Decrypt a File with a PasswordKey
 
 **Encrypt:**
 
@@ -523,7 +523,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Password
+### 🔹 Encrypt & Decrypt a Folder with a PasswordKey
 
 **Encrypt:**
 
@@ -626,30 +626,30 @@ Use that OTP to decrypt :
 
 ---
 
-## 🔹 4. Encryption & Decryption with Password & Time Lock
-### 🔹 Encrypt & Decrypt a File with a Password Until a Specific Date
+## 🔹 4. Encryption & Decryption with PasswordKey & Time Lock
+### 🔹 Encrypt & Decrypt a File with a PasswordKey Until a Specific Date
 
-**Encrypt (only decryptable after this date with a password):**
+**Encrypt (only decryptable after this date with a PasswordKey):**
 
 ```bash
 ./LE -e example.txt -w pass.letxt -t "2025/01/31 19:10" -j
 ```
 
-**Decrypt (with password after the specified date):**
+**Decrypt (with PasswordKey after the specified date):**
 
 ```bash
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Password Until a Specific Date
+### 🔹 Encrypt & Decrypt a Folder with a PasswordKey Until a Specific Date
 
-**Encrypt (only decryptable after this date with a password):**
+**Encrypt (only decryptable after this date with a PasswordKey):**
 
 ```bash
 ./LE -e my_folder -w pass.letxt -t "2025/01/31 19:10" -j
 ```
 
-**Decrypt (with password after the specified date):**
+**Decrypt (with PasswordKey after the specified date):**
 
 ```bash
 ./LE -d my_folder -w pass.letxt -j
@@ -688,7 +688,7 @@ Use that OTP to decrypt :
 
 ---
 
-### 🔹 Encrypt & Decrypt a File with a Geo Location and password 
+### 🔹 Encrypt & Decrypt a File with a Geo Location and PasswordKey 
 
 **Encrypt:**
 
@@ -702,7 +702,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Geo Location and password 
+### 🔹 Encrypt & Decrypt a Folder with a Geo Location and PasswordKey 
 
 **Encrypt:**
 
@@ -718,7 +718,7 @@ Use that OTP to decrypt :
 
 ---
 
-### 🔹 Encrypt & Decrypt a File with a Time Lock, Geo Location and password 
+### 🔹 Encrypt & Decrypt a File with a Time Lock, Geo Location and PasswordKey 
 
 **Encrypt:**
 
@@ -732,7 +732,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Geo Location and password 
+### 🔹 Encrypt & Decrypt a Folder with a Geo Location and PasswordKey 
 
 **Encrypt:**
 
@@ -748,7 +748,7 @@ Use that OTP to decrypt :
 
 ---
 
-### 🔹 Encrypt & Decrypt a File Until a Specific Date with a Geo Location and password 
+### 🔹 Encrypt & Decrypt a File Until a Specific Date with a Geo Location and PasswordKey 
 
 **Encrypt (available for decryption after this date):**
 
@@ -762,7 +762,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder Until a Specific Date with a Geo Location and password
+### 🔹 Encrypt & Decrypt a Folder Until a Specific Date with a Geo Location and PasswordKey
 
 **Encrypt (available for decryption after this date):**
 
@@ -776,7 +776,7 @@ Use that OTP to decrypt :
 ./LE -d my_folder -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a File From a Specific Date with a Geo Location and password
+### 🔹 Encrypt & Decrypt a File From a Specific Date with a Geo Location and PasswordKey
 
 **Encrypt (only decryptable after this date):**
 
@@ -790,7 +790,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder From a Specific Date with a Geo Location and password
+### 🔹 Encrypt & Decrypt a Folder From a Specific Date with a Geo Location and PasswordKey
 
 **Encrypt (only decryptable after this date):**
 
@@ -804,7 +804,7 @@ Use that OTP to decrypt :
 ./LE -d my_folder -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location and password
+### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location and PasswordKey
 
 **Encrypt (only decryptable between the specified dates):**
 
@@ -818,7 +818,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location and password
+### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location and PasswordKey
 **Encrypt (only decryptable between the specified dates):**
 
 ```bash
@@ -833,7 +833,7 @@ Use that OTP to decrypt :
 
 ---
 
-### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location , 4 digit pin , MFA and password
+### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location , 4 digit pin , MFA and PasswordKey
 
 **Encrypt (only decryptable between the specified dates):**
 
@@ -855,7 +855,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j -1 1234 -3 "123456"
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location , 4 digit pin , MFA and password
+### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location , 4 digit pin , MFA and PasswordKey
 **Encrypt (only decryptable between the specified dates):**
 
 ```bash
