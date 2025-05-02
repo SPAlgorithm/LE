@@ -49,7 +49,7 @@ or folders.
 
 **Note: Please make sure that you have enabled messages app on your Mac.**
 
-**Either Pin or MFA should be enabled for PasswordKey/Location file**
+**Either Pin or MFA should be enabled for PasswordKey/LocationKey file**
 
 3. **Decrypt the PasswordKey file**:
 
@@ -95,11 +95,11 @@ To decrypt a PasswordKey file, the user must **know the password** stored inside
 
 ---
 
-## 🔹 Create a Location Encryption File
+## 🔹 Create a Location Key Encryption File
 
-1. **Create a location file**:
+1. **Create a location key file**:
 
-**Location files needs to be encrypted/decrypted with 4 digit pin.**
+**Location key files needs to be encrypted/decrypted with 4 digit pin.**
 
 If you know Latitude,Longitude and distance in meters:
 
@@ -111,12 +111,12 @@ echo "35.8538,-78.686,2000" > location.csv
 echo "38.1233,-88.249,100" >> location.csv
 ```
 
-   This location file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters".
+   This location key file now contains the array of geo locations `"Lattitude,Longitude,Distance to allow decrypt in meters".
 **One Geo Location point per line.**
 
 If you don'know Latitude and Longitude but have address:
 
-You can build location file using precise Geo Points and distance using LE. You can append Geo location into location
+You can build location key file using precise Geo Points and distance using LE. You can append Geo location into location
 file and build accurate location file.
 
 ```bash
@@ -167,7 +167,7 @@ echo "1 Infinite Loop. Cupertino, CA 95014 United States" >> address.txt
   - 🚀 **Licensed Version**: Supports **up to 100 Geo Locations**.
 
 
-2. **Encrypt the location file**:
+2. **Encrypt the location key file**:
 
 **Without encrypted geo location point.**
 
@@ -175,7 +175,7 @@ echo "1 Infinite Loop. Cupertino, CA 95014 United States" >> address.txt
 ./LE -e location.csv -v -1 1234 -j
 ```
 
-The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It does not include current location, only geo points you specified. 
+The location key file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It does not include current location, only geo points you specified. 
    
 **With encrypted geo location point and custom distance.**
 
@@ -185,7 +185,7 @@ To add current location of enryption and distance of 200 meters to your list
 ./LE -e location.csv -v -1 1234 -g -m 200 -j
 ```
 
-To Encrypt location file with pin and MFA :
+To Encrypt location key file with pin and MFA :
 
 Without current Geo Location:
 
@@ -206,11 +206,11 @@ With current Geo Location:
 ./LE -e location.csv -v -1 1234 -j -2 "+1XXXXXXXXX,+1YYYYYYYYYY" -g -m 200
 ```
 
-The location file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
+The location key file (location.lecsv) is now encrypted with pin 1234 and can be used for geo location encrypting files or folders.It will add current geo location and distance of 200 meters.
 
-**Either Pin or MFA should be enabled for PasswordKey/Location file**
+**Either Pin or MFA should be enabled for PasswordKey/LocationKey file**
 
-**Get Info on encrypted location file**
+**Get Info on encrypted location key file**
 
 ```bash
 ./LE -i location.lecsv 
@@ -236,7 +236,7 @@ Use that OTP to decrypt :
 ./LE -d location.lecsv -j -1 1234 -3 "123456"
 ```
 
-You will need a valid pin and static OTP (123456) send to valid phone number you provided to decrypt location file.
+You will need a valid pin and static OTP (123456) send to valid phone number you provided to decrypt location key file.
 
 **Note: Please make sure that you have enabled locations and messages app on your Mac.**
 
@@ -491,7 +491,7 @@ Use that OTP to decrypt :
 ---
 
 ## 🔹 5. Encryption & Decryption with Geo Location Protection
-### 🔹 Encrypt & Decrypt a File with a Geo Location
+### 🔹 Encrypt & Decrypt a File with a Geo Location Key
 
 **Encrypt:**
 
@@ -505,7 +505,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Geo Location
+### 🔹 Encrypt & Decrypt a Folder with a Geo Location Key
 
 **Encrypt:**
 
@@ -521,7 +521,7 @@ Use that OTP to decrypt :
 
 ---
 
-### 🔹 Encrypt & Decrypt a File with a Geo Location and PasswordKey 
+### 🔹 Encrypt & Decrypt a File with a Geo LocationKey and PasswordKey 
 
 **Encrypt:**
 
@@ -535,7 +535,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Geo Location and PasswordKey 
+### 🔹 Encrypt & Decrypt a Folder with a Geo LocationKey and PasswordKey 
 
 **Encrypt:**
 
@@ -551,7 +551,7 @@ Use that OTP to decrypt :
 
 ---
 
-### 🔹 Encrypt & Decrypt a File with a Time Lock, Geo Location and PasswordKey 
+### 🔹 Encrypt & Decrypt a File with a Time Lock, Geo LocationKey and PasswordKey 
 
 **Encrypt:**
 
@@ -565,7 +565,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Geo Location and PasswordKey 
+### 🔹 Encrypt & Decrypt a Folder with a Geo LocationKey and PasswordKey 
 
 **Encrypt:**
 
@@ -581,7 +581,7 @@ Use that OTP to decrypt :
 
 ---
 
-### 🔹 Encrypt & Decrypt a File Until a Specific Date with a Geo Location and PasswordKey 
+### 🔹 Encrypt & Decrypt a File Until a Specific Date with a Geo LocationKey and PasswordKey 
 
 **Encrypt (available for decryption after this date):**
 
@@ -595,7 +595,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder Until a Specific Date with a Geo Location and PasswordKey
+### 🔹 Encrypt & Decrypt a Folder Until a Specific Date with a Geo LocationKey and PasswordKey
 
 **Encrypt (available for decryption after this date):**
 
@@ -609,7 +609,7 @@ Use that OTP to decrypt :
 ./LE -d my_folder -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a File From a Specific Date with a Geo Location and PasswordKey
+### 🔹 Encrypt & Decrypt a File From a Specific Date with a Geo LocationKey and PasswordKey
 
 **Encrypt (only decryptable after this date):**
 
@@ -623,7 +623,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder From a Specific Date with a Geo Location and PasswordKey
+### 🔹 Encrypt & Decrypt a Folder From a Specific Date with a Geo LocationKey and PasswordKey
 
 **Encrypt (only decryptable after this date):**
 
@@ -637,7 +637,7 @@ Use that OTP to decrypt :
 ./LE -d my_folder -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location and PasswordKey
+### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo LocationKey and PasswordKey
 
 **Encrypt (only decryptable between the specified dates):**
 
@@ -651,7 +651,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location and PasswordKey
+### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo LocationKey and PasswordKey
 **Encrypt (only decryptable between the specified dates):**
 
 ```bash
@@ -666,7 +666,7 @@ Use that OTP to decrypt :
 
 ---
 
-### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo Location , 4 digit pin , MFA and PasswordKey
+### 🔹 Encrypt & Decrypt a File with a Date Range with a Geo LocationKey , 4 digit pin , MFA and PasswordKey
 
 **Encrypt (only decryptable between the specified dates):**
 
@@ -688,7 +688,7 @@ Use that OTP to decrypt :
 ./LE -d example.letxt -w pass.letxt -j -1 1234 -3 "123456"
 ```
 
-### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo Location , 4 digit pin , MFA and PasswordKey
+### 🔹 Encrypt & Decrypt a Folder with a Date Range with a Geo LocationKey , 4 digit pin , MFA and PasswordKey
 **Encrypt (only decryptable between the specified dates):**
 
 ```bash
