@@ -8,7 +8,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 **Given Ladhe's Encryption, orgs/users and developers gain unmatched security.**
 
-**When access requires a PasswordKey, is within a specified time range, and is restricted to a defined geo-location,**
+**When access requires a PasswordKey, is within a specified time range, and is restricted to a defined geo-locationKey,**
 
 **Then only authorized users, at the right time and place, with correct pin and MFA/static OTP (non expiring) can unlock the data!**
 
@@ -16,7 +16,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 ## ✨ Key Features
 
-### 🔑 PasswordKey Lock Security, Pin Security, MFA Security,Time-Lock Security , Geo Location Security
+### 🔑 PasswordKey Lock Security, Pin Security, MFA Security,Time-Lock Security , Geo Location Key Security
 - **Password Encryption**: Encrypt files with a **secure PasswordKey file**.
 - **Pin Encryption**: Encrypt files with a **4 digit pin**.
 - **MFA Encryption**: Encrypt files with a **MFA or static OTP**.
@@ -28,7 +28,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 ![LE Applications in future ...](LEApplications.md)
 
-**Either Pin or MFA should be enabled for PasswordKey/Location file**
+**Either Pin or MFA should be enabled for PasswordKey/LocationKey file**
 
 ### 🗂 File & Folder Encryption
 - **Encrypt/Decrypt Files & Folders**: Apply strong encryption to both files and directories.
@@ -217,9 +217,9 @@ echo TestingPassword > pass.txt
 ```
 
 
-## 🔹 Create a Location Encryption File
+## 🔹 Create a Location key Encryption File
 
-1. **Create a location file**:
+1. **Create a location key file**:
 
 **Location files needs to be encrypted/decrypted with 4 digit pin.**
 
@@ -234,7 +234,7 @@ echo TestingPassword > pass.txt
     
 Location.csv will contain 2 Geo Location points now if valid addresses are provided.
 
-2. **Encrypt the location file**:
+2. **Encrypt the location key file**:
 
 
 ```bash
