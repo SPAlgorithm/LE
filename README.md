@@ -46,6 +46,7 @@ Otherwise, you will need to decrypt individual files one at a time.
 
 ![LE](LEComparison.png)
 
+![Ladhe’s Paradox – The Cryptographic Chicken-or-Egg ...](LEParadox.md)
 ### 🛡 Additional Features
 
 - **Metadata & File Info**: Retrieve **detailed encryption metadata**.
