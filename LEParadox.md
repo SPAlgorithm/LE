@@ -12,7 +12,7 @@ This forms a mutual dependency, much like how:
 
 •    The egg (reproduction) depends on the chicken, but
 •    The chicken had to come from the egg.
- 
+
 🔐 Philosophical/Cryptographic Implications
 
 •    If Ladhe’s Conjecture is unpublished or unproven, then LE is secure by obscurity of the conjecture.
