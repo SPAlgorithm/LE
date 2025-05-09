@@ -295,7 +295,8 @@ While Ladhe’s Encryption may be at stage ZERO, but we boldly challenge QUANTUM
 smartest minds to break it! Our goal is to keep world safer!
 
 [LE Hackathon!](https://www.facebook.com/share/1KrDHa6M4x/)
- 
+
+![LE Hackathon results submission ...](LESubmit.md)
 ---
 
 **Enjoy LE!**
