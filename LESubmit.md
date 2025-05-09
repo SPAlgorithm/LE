@@ -34,7 +34,6 @@ If you believe you've found a vulnerability or breakthrough, please submit your 
 | Time-Lock                          |                          |
 | Pin                                |                          |
 | Plaintext                          |                          |
-|------------------------------------|--------------------------|
 
 
 ![LE decrypt workflow...](LEDecryptFlow.png)
