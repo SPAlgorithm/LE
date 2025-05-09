@@ -9,8 +9,7 @@ Unlike traditional encryption methods like **RSA**, where discovering the two pr
 Each security layer adds exponential complexity for any adversary attempting to break the encryption:
 
 |-------------------------|--------------|----------------------------------------------------------|
-| **Security Layer**      | **Complexity |                                                          |
-|                         | Points**     | **Description**                                          |                  
+| Security Layer          | Points       | Description                                              |
 |-------------------------|--------------|----------------------------------------------------------|
 | Encrypt/Decrypt Math    | 40           | Advanced mathematics used to encrypt and decrypt the data|
 | Finding Keys            | 10           | Involves locating Public and Private Keys                |                  
