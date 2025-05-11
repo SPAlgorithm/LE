@@ -40,4 +40,5 @@ If you believe you've found a vulnerability or breakthrough, please submit your 
 
 ## 🔐 LE Decrypt Flowchart.
 
-![LE decrypt workflow...](LEDecryptFlow.png)
+![LE encrypt workflow...](LEEncryptFlow.png)   ![LE decrypt workflow...](LEDecryptFlow.png)
+
