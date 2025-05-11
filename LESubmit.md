@@ -42,4 +42,4 @@ If you believe you've found a vulnerability or breakthrough, please submit your 
 
 ![LE encrypt workflow...](LEEncryptFlow.png)             ![LE decrypt workflow...](LEDecryptFlow.png)
 
-<img src="LEEncryptFlow.png" width="325"/> <img src="LEDecryptFlow.png" width="325"/> 
+<img src="LEEncryptFlow.png" width="375"/> <img src="LEDecryptFlow.png" width="375"/> 
