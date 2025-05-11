@@ -38,6 +38,6 @@ If you believe you've found a vulnerability or breakthrough, please submit your 
 | Plaintext                          |                          |
 
 
-## 🔐 LE Decrypt Flowchart.
+## 🔐 LE Encrypt/Decrypt Flowchart.
 
-![LE decrypt workflow...](LEDecryptFlow.png)
+<img src="LEEncryptFlow.png" width="375"/> <img src="LEDecryptFlow.png" width="375"/> 
