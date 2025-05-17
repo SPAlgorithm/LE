@@ -1,8 +1,8 @@
 # 🔒 Ladhe’s Encryption Utility (LE)
 
-## ✨ Version : 1.1
+## ✨ Version : 1.2
 
-## ✨ Last Updated : 04/01/2025
+## ✨ Last Updated : 05/17/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
 
@@ -25,6 +25,10 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
   - 🔹 **Decrypt only after** a specified date.
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
+
+-- **LE-AIGPT** is LE AI powered command generator utility.No need to type **LE commands on terminal**, you can build LE command using this tool and just paste command in terminal window.
+
+![LE-AIGPT](LE-AIGPT.png)
 
 ![LE Applications in future ...](LEApplications.md)
 
@@ -90,7 +94,7 @@ LE currently supports encryption for the following file types, we are actively a
 | **Text Files**        | `txt`, `rtf`, `csv`, `log`, `json`, `xml`   |
 | **Image Files**       | `png`, `jpg`                                |
 | **Audio Files**       | `wav`,`mp3`,`aac`,`flac`,`aif`              |
-| **Video Files**       | `mp4`,`mov`,`avi,`wmv`,`mkv`,`webm`         |
+| **Video Files**       | `mp4`,`mov`,`avi`,`wmv`,`mkv`,`webm`        |
 | **Programming**       | `java`, `c`, `vb`, `cs`, `php`, `py`, `sql` |
 | **Web Files**         | `html`, `htm`, `js`, `aspx`, `xhtml` , `md` |
 | **Apple Development** | `storyboard`, `swift`, `xib`                |
@@ -134,8 +138,10 @@ git clone https://github.com/SPAlgorithm/LE.git
 
 2. **Install LE**:
 
-   - Tap on **LE.dmg** and copy/move **LE** to a local folder.
+   - Tap on **LE.dmg** and copy/move **LE** and **LE-AIGPT** to a local folder.
+   
    - Double click on **LELocation shortcut** to enable permissions.
+   
 
 3. **Setup LE**:
 
