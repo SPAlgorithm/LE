@@ -25,8 +25,7 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
   - 🔹 **Decrypt only after** a specified date.
   - 🔹 **Decrypt within** a date range.
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
-
--- **LE-AIGPT** is LE AI powered command generator utility.No need to type **LE commands on terminal**, you can build LE command using this tool and just paste command in terminal window.
+- **LE-AIGPT** is LE AI powered command generator utility.No need to type **LE commands on terminal**, you can build LE command using this tool and just paste command in terminal window.
 
 ![LE-AIGPT](LE-AIGPT.png)
 
