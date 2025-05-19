@@ -313,3 +313,4 @@ smartest minds to break it! Our goal is to keep world safer!
 © Ladhe's Encryption 2025! All rights reserved.
 
 ---
+
