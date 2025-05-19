@@ -27,6 +27,8 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
 - **LE-AIGPT** is LE AI powered command generator utility.No need to type **LE commands on terminal**, you can build LE command using this tool and just paste command in terminal window.
 
+![LE-AIGPT in App Store ->](https://apps.apple.com/by/app/le-aigpt/id6746082278)
+
 ![LE-AIGPT](LE-AIGPT.png)
 
 ![LE Applications in future ...](LEApplications.md)
