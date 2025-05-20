@@ -93,7 +93,7 @@ LE currently supports encryption for the following file types, we are actively a
 | **Category**          | **File Extensions**                         |
 |-----------------------|---------------------------------------------|
 | **Text Files**        | `txt`, `rtf`, `csv`, `log`, `json`, `xml`   |
-| **Image Files**       | `png`, `jpg`                                |
+| **Image Files**       | `png`, `jpg` , `svg`                        |
 | **Audio Files**       | `wav`,`mp3`,`aac`,`flac`,`aif`              |
 | **Video Files**       | `mp4`,`mov`,`avi`,`wmv`,`mkv`,`webm`        |
 | **Programming**       | `java`, `c`, `vb`, `cs`, `php`, `py`, `sql` |
