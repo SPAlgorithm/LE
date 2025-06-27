@@ -135,6 +135,14 @@ Location.csv will contain 2 Geo Location points now if valid addresses are provi
 ./LE -7 
 ```
 
+```bash
+./LE -wai 
+```
+
+```bash
+./LE -whereami 
+```
+
 **To find distance of address from current location**
 
 ```bash
