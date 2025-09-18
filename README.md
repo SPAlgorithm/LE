@@ -145,10 +145,17 @@ git clone https://github.com/SPAlgorithm/LE.git
    Or download the zip and extract it.
 
 2. **Install LE**:
-
+ 
+   - For Mac
+   
    - Tap on **LE.dmg** and copy/move **LE** and **LE-AIGPT** to a local folder.
    
    - Double click on **LELocation shortcut** to enable permissions.
+   
+   - For Windows
+   
+   - Tap on **LE Windows** and extract **LE**  to a local folder.
+   - Instead of ./LE use LE for Windows.
    
 
 3. **Setup LE**:
