@@ -1,10 +1,16 @@
 # 🔒 Ladhe’s Encryption Utility (LE)
 
-## ✨ Version : 1.2
+## ✨ Version : 1.3
 
-## ✨ Last Updated : 05/17/2025
+## ✨ Last Updated : 09/21/2025
 
 Experience the next generation of **data security** with **Ladhe’s Encryption Utility (LE)**—a **cutting-edge, post- quantum-safe encryption tool** designed for **Mac Terminal**. Built with advanced features and unparalleled encryption power, **LE** ensures your sensitive data remains **protected** from modern and future threats.
+
+Now that LE is **cross-platform**, you can encrypt and decrypt files seamlessly on both **macOS and Windows.**
+
+**Open door hacking challenge!** LE secures your data, information, and files on your PC or server—even if hackers try to attack through the front door. Unlike traditional encryption, LE is built to withstand the rising threats of AI-powered attacks and future quantum computing capabilities.
+
+**With LE, you’re not just protecting files—you’re helping to eradicate hacking and safeguard the digital world for the years to come.**
 
 **Given Ladhe's Encryption, orgs/users and developers gain unmatched security.**
 
@@ -16,7 +22,8 @@ Experience the next generation of **data security** with **Ladhe’s Encryption 
 
 ## ✨ Key Features
 
-### 🔑 PasswordKey Lock Security, Pin Security, MFA Security,Time-Lock Security , Geo Location Key Security
+### 🔑 Cross Platfor, PasswordKey Lock Security, Pin Security, MFA Security,Time-Lock Security , Geo Location Key Security
+- **Cross Platform**: Encrypt/Decrypt files in Mac/Windows OS seemlessly! **Make your files/folders LE Safe from AI/PQC/Classical threats!**.
 - **Password Encryption**: Encrypt files with a **secure PasswordKey file**.
 - **Pin Encryption**: Encrypt files with a **4 digit pin**.
 - **MFA Encryption**: Encrypt files with a **MFA or static OTP**.
