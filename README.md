@@ -183,8 +183,32 @@ echo Testing > example.txt
 ```bash
 ./LE -e example.txt -j
 ```   
+
+
    
    You should see **example.letxt** in the folder.
+
+**Encrypt a plain text**:   
+
+```bash
+./LE  -e "Testing" --PlainText
+``` 
+
+**Encrypt a plain text with Pin:**:
+
+```bash
+./LE  -e "Testing" -1 1122 --PlainText
+``` 
+
+**Decrypt a plain text cypher**:   
+
+```bash
+./LE  -d LeCipher --PlainText
+``` 
+
+```bash
+./LE  -d LeCipher -1 1122 --PlainText
+```
 
 ---
 ![LE Detailed Readme ...](LEDetailed.md)
