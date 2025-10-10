@@ -719,7 +719,31 @@ Use that OTP to decrypt :
 
 ---
 
-## 🔹 6. Get Info on encrypted file and folders
+## 🔹 6. Encrypt config files
+### 🔹 Config File 
+
+ Lets say you have a config file like - keys.txt
+ 
+ConnectionString1=Server=myServerName\myInstanceName;Database=myDataBase;User Id=myUsername;Password=myPassword;
+ConnectionString2=Server=192.168.1.100,1433;Database=myDataBase;
+User Id=myUsername;
+Password=myPassword;
+
+**Encrypt Config File:**
+
+```bash
+./le  -e  keys.txt --deliminatedBy = -j
+```
+
+**Decrypt Config File:**
+
+```bash
+./le  -d  keys.letxt --deliminatedBy = -j
+```
+
+---
+
+## 🔹 7. Get Info on encrypted file and folders
 ### 🔹 Info on a File 
 
 **GetInfo File:**
@@ -735,7 +759,7 @@ Use that OTP to decrypt :
 ```
 
 ---
-7. **Repair LE**:
+8. **Repair LE**:
 
 ```bash
 ./LE --repair
