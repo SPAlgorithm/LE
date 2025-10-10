@@ -756,6 +756,7 @@ Password===AOyQDOyc
 ./le  -d  keys.letxt --deliminatedBy = -j
 ```
 
+
 ---
 
 ## 🔹 7. Get Info on encrypted file and folders
