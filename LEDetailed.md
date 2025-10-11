@@ -726,7 +726,6 @@ Use that OTP to decrypt :
  
 ConnectionString1=Server=myServerName\myInstanceName;Database=myDataBase;User Id=myUsername;Password=myPassword;
 
-
 ConnectionString2=Server=192.168.1.100,1433;Database=myDataBase;
 
 User Id=myUsername;
