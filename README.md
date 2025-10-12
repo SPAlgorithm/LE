@@ -155,12 +155,11 @@ git clone https://github.com/SPAlgorithm/LE.git
    - For Windows
    
    - Tap on **LE Windows** and extract **LE**  to a local folder.
-   - Instead of LE use LE for Windows.
    
 
 3. **Setup LE**:
 
-On Mac, add current folder to the Path, so that you can execute le instead of LE
+On Mac, add current folder to the Path, so that you can execute le instead of ./LE
 
 
 ```bash
