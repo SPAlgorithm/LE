@@ -155,17 +155,24 @@ git clone https://github.com/SPAlgorithm/LE.git
    - For Windows
    
    - Tap on **LE Windows** and extract **LE**  to a local folder.
-   - Instead of ./LE use LE for Windows.
+   - Instead of LE use LE for Windows.
    
 
 3. **Setup LE**:
 
+On Mac, add current folder to the Path, so that you can execute le instead of LE
+
+
 ```bash
-./LE --setup
+PATH="$PATH:."
+```
+
+```bash
+LE --setup
 ```
    Or:
 ```bash
-./LE -s
+LE -s
 ```
 
 If you run setup, then you are agreeing to all the terms and conditions! LE uses location and messages services, please
@@ -181,7 +188,7 @@ echo Testing > example.txt
 ```
    
 ```bash
-./LE -e example.txt -j
+LE -e example.txt -j
 ```   
 
 
@@ -191,23 +198,23 @@ echo Testing > example.txt
 **Encrypt a plain text**:   
 
 ```bash
-./LE  -e "Testing" --PlainText
+LE  -e "Testing" --PlainText
 ``` 
 
 **Encrypt a plain text with Pin:**:
 
 ```bash
-./LE  -e "Testing" -1 1122 --PlainText
+LE  -e "Testing" -1 1122 --PlainText
 ``` 
 
 **Decrypt a plain text cypher**:   
 
 ```bash
-./LE  -d LeCipher --PlainText
+LE  -d LeCipher --PlainText
 ``` 
 
 ```bash
-./LE  -d LeCipher -1 1122 --PlainText
+LE  -d LeCipher -1 1122 --PlainText
 ```
 
 ---
@@ -225,7 +232,7 @@ echo Testing > example.txt
 ```
 
 ```bash
-./LE -e example.txt -l "2025/04/20 19:10" -r "2026/04/01 14:10" -b location.lecsv -w pass.letxt -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY" -j
+LE -e example.txt -l "2025/04/20 19:10" -r "2026/04/01 14:10" -b location.lecsv -w pass.letxt -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY" -j
 ```
 
 **Decrypt (within the allowed date range):**
@@ -233,13 +240,13 @@ echo Testing > example.txt
 To get OTP to your configured phone:
 
 ```bash
-./LE -4 example.letxt -1 1234 
+LE -4 example.letxt -1 1234 
 ```
 
 Use that OTP to decrypt :
 
 ```bash
-./LE -d example.letxt -w pass.letxt -j -1 1234 -3 "123456"
+LE -d example.letxt -w pass.letxt -j -1 1234 -3 "123456"
 ```
 
 ## 🔹 Create a PasswordKey Encryption File
@@ -256,12 +263,12 @@ echo TestingPassword > pass.txt
 **The PasswordKey file needs to be encrypted/decrypted with 4 digit pin or  MFA enabled.**
 
 ```bash
-./LE -e pass.txt -q -j -1 1234
+LE -e pass.txt -q -j -1 1234
 ```
    The PasswordKey file (pass.letxt) is now encrypted with pin 1234 and can be used for encrypting files or folders.
 
 ```bash
-./LE -e pass.txt -q -j -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
+LE -e pass.txt -q -j -1 1234 -2 "+1XXXXXXXXX,+1YYYYYYYYYY"
 ```
 
 
@@ -273,11 +280,11 @@ echo TestingPassword > pass.txt
 
 
 ```bash
-./LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -m 100 >> location.csv
+LE -x "1 Infinite Loop. Cupertino, CA 95014 United States" -m 100 >> location.csv
 ```
 
 ```bash
-./LE -x "1560 Broadway, Manhattan, NY 10036 usa" -m 500 >> location.csv
+LE -x "1560 Broadway, Manhattan, NY 10036 usa" -m 500 >> location.csv
 ```
     
 Location.csv will contain 2 Geo Location points now if valid addresses are provided.
@@ -286,12 +293,12 @@ Location.csv will contain 2 Geo Location points now if valid addresses are provi
 
 
 ```bash
-./LE -e location.csv -v -1 1234 -g -m 200 -j
+LE -e location.csv -v -1 1234 -g -m 200 -j
 ```
 
 
 ```bash
-./LE -i location.lecsv 
+LE -i location.lecsv 
 ```
 
 **Note: Please backup your .leignore file, repair will recreate .leignore file.**
