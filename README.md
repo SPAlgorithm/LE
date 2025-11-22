@@ -206,7 +206,7 @@ LE  -e "Testing" --PlainText
 LE  -e "Testing" -1 1122 --PlainText
 ``` 
 
-**Decrypt a plain text cypher**:   
+**Decrypt a plain text Cipher**:   
 
 ```bash
 LE  -d LeCipher --PlainText
