@@ -773,6 +773,12 @@ LE -i example.letxt
 LE -i my_folder -j
 ```
 
+**GetInfo Cipher:**
+
+```bash
+LE -i gMyUTM0IDNwgjOwoTRMNHdw1WZ0RXQuVkO60C... --PlainText
+```
+
 ---
 ## 🔹 8. **Repair LE**:
 
