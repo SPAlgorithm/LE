@@ -149,7 +149,7 @@
     },
     {
       "parameters": {
-        "command": "=/bin/bash -lc '\n\n\n# ----------------------------\n# Build WFLAG\n# ----------------------------\nWFLAG=\"\"\nif [ -n \"{{$json.Password.filename}}\" ]; then\n  WFLAG=\"-w {{$json.Password.filename}}\"\nfi\n\n# ----------------------------\n# Build PFLAG\n# ----------------------------\nPFLAG=\"\"\nif [ -n \"{{$json.Pin}}\" ] && [ \"{{$json.Pin}}\" != \"0\" ]; then\n  # Validate PIN\n  if ! [[ \"{{$json.Pin}}\" =~ ^[0-9]{4}$ ]]; then\n    echo \"{\\\"Error\\\": \\\"Please enter a 4-digit PIN\\\"}\"\n    exit 0\n  fi\n  PFLAG=\"-1 {{$json.Pin}}\"\nelse\n  PFLAG=\"\"\nfi\n\n# ----------------------------\n# Build LFLAG\n# ----------------------------\n\nPhoneFLAG=\"\"\nif [ -n \"{{$json.Otp}}\" ]; then\n  PhoneFLAG=\"-3 {{$json.Otp}}\"\nfi\n\n\n\n# ----------------------------\n# EXECUTION LOGIC\n# ----------------------------\n\n   FINAL_CMD=\"/Users/pankajladhe/Pankaj/2018/LETesting1/LE -d {{$json.ciphertext}} $PFLAG $WFLAG $PhoneFLAG --PlainText\"\n\n\n# DEBUG\necho \"DEBUG: FINAL_CMD=$FINAL_CMD\" >&2\n\neval $FINAL_CMD </dev/null 2>&1\n'\n"
+        "command": "=/bin/bash -lc '\n\n# ----------------------------\n# Inputs from n8n\n# ----------------------------\nCIPHER=\"{{ $json.ciphertext }}\"\nPIN=\"{{ $json.Pin }}\"\n\n# ----------------------------\n# Build argument list (array)\n# ----------------------------\nARGS=(-d \"$CIPHER\")\n\n# PIN (no regex validation for now; just pass it through)\nif [ -n \"$PIN\" ] && [ \"$PIN\" != \"0\" ]; then\n  ARGS+=(-1 \"$PIN\")\nfi\n\n# ----------------------------\n# Final command (array)\n# ----------------------------\nCMD=(/Users/pankajladhe/Pankaj/2018/LETesting1/LE \"${ARGS[@]}\" --PlainText)\n\n# DEBUG – shows exactly what will run\nprintf \"DEBUG: CMD=\" >&2\nprintf \"%q \" \"${CMD[@]}\" >&2\nprintf \"\\n\" >&2\n\n# ----------------------------\n# Run LE\n# ----------------------------\n# Redirect stdin from /dev/null to guarantee LE cannot wait for input.\n\"${CMD[@]}\" </dev/null\n\n# Marker so we know script definitely finished\necho \"__SCRIPT_DONE__\" >&2\n\n# End script\nexit 0\n'"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -268,7 +268,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "14f13f2d-3001-49ca-b57c-ba07c595e81f",
+  "versionId": "0d7976d9-a278-4ab4-a276-192c43c92617",
   "meta": {
     "instanceId": "f9e94a71326017e7149426a4e09a0f665b51d626c371e5e7a1144485b6c897fd"
   },
