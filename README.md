@@ -34,7 +34,7 @@ Now that LE is **cross-platform**, you can encrypt and decrypt files seamlessly 
 - **Geo Location Encryption**: Encrypt files with a **Geo Location file**.
 - **LE-AIGPT** is LE AI powered command generator utility.No need to type **LE commands on terminal**, you can build LE command using this tool and just paste command in terminal window.
 - **LE-AI Agent** LE AI agent is  available now on your local where you can give prompts in 50 languages to secure your data with LE.
-![LE-AI Agent](LEAIAgent.md)
+![LE-AI Agent](LEAiAgent.md)
 
 [LE-AIGPT in App Store!](https://apps.apple.com/by/app/le-aigpt/id6746082278)
 
