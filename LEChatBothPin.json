@@ -1,0 +1,277 @@
+{
+  "name": "LEChatBothPin",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -288,
+        -880
+      ],
+      "id": "1e85bbe1-e635-4168-b480-f6bb3d7722c3",
+      "name": "When chat message received",
+      "webhookId": "2041cfeb-7234-4acd-94c9-acc8b85f0694"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Function node\n// Input: items[0].json.chatInput\n// Output: one item with JSON for either ENCRYPT or DECRYPT\n\nconst raw = (items[0].json.chatInput || \"\").trim();\n\n// Global workflow memory (persists across executions)\nconst workflowStaticData = $getWorkflowStaticData('global');\nconst previousCipher = workflowStaticData.lastCipher || null;\n\n// ---------- Shared helpers (NEW: digit normalizer) ----------\nfunction normalizeDigits(str) {\n  // Convert Devanagari digits ०१२३४५६७८९ -> 0123456789\n  const dev = \"०१२३४५६७८९\";\n  return String(str).replace(/[०-९]/g, (d) => {\n    const idx = dev.indexOf(d);\n    return idx >= 0 ? String(idx) : d;\n  });\n}\n\n// ---------- Mode detection (multilingual) ----------\n// EN: encrypt, encode, lock...\n// ES: cifrar, encriptar, bloquear\n// FR: chiffrer, crypter, verrouiller\n// HI/MR (Latin): encrypt, lock (most people use English terms)\nlet mode = \"encrypt\"; // default\n\nif (\n  /\\b(decrypt|decode|unlock|unseal|break|unravel|crack|descifrar|desencriptar|décrypter|déchiffrer|desbloquear)\\b/i.test(\n    raw\n  )\n) {\n  mode = \"decrypt\";\n} else if (\n  /\\b(encrypt|encode|lock|plaintext|secure|scramble|protect|shackle|defend|safeguard|cifrar|encriptar|bloquear|chiffrer|crypter|verrouiller)\\b/i.test(\n    raw\n  )\n) {\n  mode = \"encrypt\";\n}\n\n// ---------- ENCRYPT helpers ----------\n\nfunction cleanPlaintext(raw) {\n  if (!raw) return raw;\n\n  let text = raw.trim();\n\n  // Remove trailing \"lock\" phrases in multiple languages:\n  // EN: lock it / lock this (with pin ####)\n  // ES: bloquear(lo| esto) (con pin ####)\n  // FR: verrouiller (le|cela) (avec pin ####)\n  text = text\n    .replace(\n      /\\s*[—-]\\s*(?:lock|bloquear|verrouiller)(?: (?:it|this|lo|esto|le|cela))?\\s*(?:with|con|avec)?\\s*(?:pin\\s*\\d{3,8})?\\s*$/i,\n      \"\"\n    )\n    .replace(\n      /\\s*(?:lock|bloquear|verrouiller)(?: (?:it|this|lo|esto|le|cela))?\\s*(?:with|con|avec)?\\s*(?:pin\\s*\\d{3,8})?\\s*$/i,\n      \"\"\n    )\n    .trim();\n\n  // 1) Specific patterns like: \"last 4 of ssn 0233\" or \"4 of ssn 0233\"\n  let m = text.match(\n    /(?:last\\s+4\\s+of\\s+ssn|4\\s+of\\s+ssn)\\s+(\\d{3,6}|\\S+)$/i\n  );\n  if (m) return m[1];\n\n  // 2) Optional: only collapse to digits when the *whole* string is like \"code 0233\" or \"pin 1234\"\n  m = text.match(/^(?:code|pin|otp|token|passcode)\\s+(\\d{3,8})$/i);\n  if (m) return m[1];\n\n  // 3) Fallback: return cleaned text as-is\n  return text;\n}\n\n// Allow small filler words before plaintext\nconst fillerBlock =\n  \"(?:(?:is|this|message|the|it|esto|este|mensaje|ce|cet|cette)?\\\\s*)?\";\n\n// Multilingual stopwords that mark the end of plaintext:\nconst stopWords =\n  \"(with|using|con|avec|pin|पिन|password|पासवर्ड|contraseña|mot\\\\s+de\\\\s+passe|location|ubicaci[oó]n|emplacement|phone|t[eé]l[eé]fono|t[eé]l[eé]phone|geo|mfa|otp|valid|v[aá]lido|valide|from|desde|until|till|to|hasta|jusqu(?:'|e))\";\nconst lookahead = new RegExp(`(?=\\\\s+${stopWords}\\\\b|$)`, \"i\");\n\n// Multilingual plaintext parser\nfunction parsePlaintext(input) {\n  let m;\n\n  // 0) Special-case Marathi/Hindi style: \"एन्क्रिप्ट ३४५६ ...\"\n  m = input.match(/एन्क्रिप्ट\\s+([0-9०-९]+)/i);\n  if (m) {\n    return m[1].trim(); // e.g. \"३४५६\"\n  }\n\n  // 1) \"plaintext ...\" (EN / a bit of FR/ES conceptually but mostly EN)\n  m = input.match(\n    new RegExp(\n      `(?:plaintext|plain\\\\s+text|texte\\\\s+brut|texto\\\\s+plano)\\\\s+${fillerBlock}([\\\\s\\\\S]+?)${lookahead.source}`,\n      \"i\"\n    )\n  );\n  if (m) return cleanPlaintext(m[1]);\n\n  // 2) \"encrypt/cifrar/encriptar/chiffrer/crypter/एन्क्रिप्ट ...\"\n  m = input.match(\n    new RegExp(\n      `(?:encrypt|encode|cifrar|encriptar|chiffrer|crypter|एन्क्रिप्ट)\\\\s+${fillerBlock}([\\\\s\\\\S]+?)${lookahead.source}`,\n      \"i\"\n    )\n  );\n  if (m) return cleanPlaintext(m[1]);\n\n  // 3) \"lock/bloquear/verrouiller message ...\" or just \"lock ...\"\n  m = input.match(\n    new RegExp(\n      `(?:lock\\\\s+message|lock|bloquear\\\\s+mensaje|bloquear|verrouiller(?:\\\\s+le\\\\s+message)?)\\\\s+${fillerBlock}([\\\\s\\\\S]+?)${lookahead.source}`,\n      \"i\"\n    )\n  );\n  if (m) return cleanPlaintext(m[1]);\n\n  return null;\n}\n\n// Multilingual PIN: Latin + Devanagari digits\nfunction parsePin(input) {\n  const m = input.match(/(?:pin|पिन)[\\s:,.]*([0-9०-९]{3,8})/i);\n  if (!m) return null;\n  return normalizeDigits(m[1]);\n}\n\n\n// ---------- DECRYPT helpers ----------\n\nfunction parseCiphertext(input) {\n  if (!input) return null;\n\n  // Added \"|and\" at the end\n  const stopWordsDec =\n    \"(with|using|con|avec|pin|password|contraseña|mot\\\\s+de\\\\s+passe|otp|mfa|geo|valid|v[aá]lido|valide|from|desde|to|hasta|jusqu(?:'|e)|and)\";\n  const lookaheadDec = new RegExp(`(?=\\\\s+${stopWordsDec}\\\\b|$)`, \"i\");\n\n  // Only treat \"=\" as a separator if it looks like \" = <ciphertext>\"\n  const assignmentPart = \"\\\\s*(?:=\\\\s+)?\";\n\n  // Case 1: after the word \"cipher\" or \"ciphertext\"\n  let m = input.match(\n    new RegExp(\n      `(?:ciphertext|cipher)${assignmentPart}([A-Za-z0-9+=/]+)${lookaheadDec.source}`,\n      \"i\"\n    )\n  );\n  if (m) return m[1].trim();\n\n  // Case 2: after \"decrypt/...\" followed by ciphertext directly\n  m = input.match(\n    new RegExp(\n      `(?:decrypt|descifrar|desencriptar|d[eé]crypter|d[eé]chiffrer)${assignmentPart}([A-Za-z0-9+=/]+)${lookaheadDec.source}`,\n      \"i\"\n    )\n  );\n  if (m) return m[1].trim();\n\n  return null;\n}\n\n// ---------- Build output ----------\nlet out;\n\nif (mode === \"encrypt\") {\n  const plaintext = parsePlaintext(raw);\n  const pin = parsePin(raw);\n\n  out = {\n    mode: \"encrypt\",\n    plaintext,\n    Pin: pin,\n    submittedAt: new Date().toISOString(),\n    formMode: \"test\",\n  };\n} else {\n  // mode === \"decrypt\"\n  let ciphertext = parseCiphertext(raw);\n  const pin = parsePin(raw);\n\n  if (!ciphertext && previousCipher) {\n    ciphertext = previousCipher;\n    console.log(\n      \"DEBUG using previousCipher as ciphertext:\",\n      previousCipher\n    );\n  }\n\n  out = {\n    mode: \"decrypt\",\n    ciphertext,\n    Pin: pin != null ? pin : 0,\n    submittedAt: new Date().toISOString(),\n    formMode: \"test\",\n  };\n}\n\nreturn [{ json: out }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        -960
+      ],
+      "id": "40354df5-2f3a-448b-9d88-d9c0a7e3f757",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "command": "=/bin/bash -lc '\n\n\n# ----------------------------\n# Build WFLAG\n# ----------------------------\nWFLAG=\"\"\nif [ -n \"{{$json.Password.filename}}\" ]; then\n  WFLAG=\"-w {{$json.Password.filename}}\"\nfi\n\n# ----------------------------\n# Build PFLAG\n# ----------------------------\nPFLAG=\"\"\nif [ -n \"{{$json.Pin}}\" ] && [ \"{{$json.Pin}}\" != \"0\" ]; then\n  # Validate PIN\n  if ! [[ \"{{$json.Pin}}\" =~ ^[0-9]{4}$ ]]; then\n    echo \"{\\\"Error\\\": \\\"Please enter a 4-digit PIN\\\"}\"\n    exit 0\n  fi\n  PFLAG=\"-1 {{$json.Pin}}\"\nelse\n  PFLAG=\"\"\nfi\n\n# ----------------------------\n# EXECUTION LOGIC\n# ----------------------------\n\n   FINAL_CMD=\"/Users/pankajladhe/Pankaj/2018/LETesting1/LE -e \\\"{{$json.plaintext}}\\\" $PFLAG --PlainText\"\n\n\n# DEBUG\necho \"DEBUG: FINAL_CMD=$FINAL_CMD\" >&2\n\neval $FINAL_CMD </dev/null 2>&1\n'\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        656,
+        -1088
+      ],
+      "id": "915a5590-04ff-478e-8732-c9ae35c09754",
+      "name": "LEEncrypt",
+      "alwaysOutputData": true,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "message": "={{\n  (() => {\n    const src = $('Code in JavaScript').item.json;\n    let msg = `Decrypt cipher ${$json.stdout}`;\n\n    // Validate PIN (must exist + be 4 digits)\n    const pin = src.Pin ? String(src.Pin) : \"\";\n    if (/^[0-9]{4}$/.test(pin)) {\n      msg += ` with pin ${pin}`;\n    }\n\n    // Add password if present\n    if (src.Password && src.Password.filename) {\n      msg += ` and password ${src.Password.filename}`;\n    }\n\n// Add otp if present\n    if (src.PhoneNumber) {\n      msg += ` and otp`;\n    }\n\n    return msg;\n  })()\n}}\n",
+        "waitUserReply": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        -960
+      ],
+      "id": "e5831e0b-5eed-44dc-9504-3e56e82c6197",
+      "name": "Respond to Chat"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "37e89154-4b59-40ed-88f4-29df555bab3c",
+              "leftValue": "={{ $json.mode }}",
+              "rightValue": "encrypt",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        -1120
+      ],
+      "id": "616b0155-14d3-4d4b-aa10-00b195db89cc",
+      "name": "If Encrypt"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "facd14a7-1875-452b-88cb-b0d1bc9e112d",
+              "leftValue": "={{ $json.mode }}",
+              "rightValue": "decrypt",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        -832
+      ],
+      "id": "15e5b39f-4912-441e-bf25-cf3e8c3a6956",
+      "name": "If decrypt"
+    },
+    {
+      "parameters": {
+        "message": "={{ $('LEDecrypt').item.json.stdout.replace(/\\r?\\n/g, '<br>') }}\n\n",
+        "waitUserReply": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -768
+      ],
+      "id": "b80cd7b6-f073-45b9-97cf-eda90aa2040a",
+      "name": "Respond to Chat1"
+    },
+    {
+      "parameters": {
+        "command": "=/bin/bash -lc '\n\n\n# ----------------------------\n# Build WFLAG\n# ----------------------------\nWFLAG=\"\"\nif [ -n \"{{$json.Password.filename}}\" ]; then\n  WFLAG=\"-w {{$json.Password.filename}}\"\nfi\n\n# ----------------------------\n# Build PFLAG\n# ----------------------------\nPFLAG=\"\"\nif [ -n \"{{$json.Pin}}\" ] && [ \"{{$json.Pin}}\" != \"0\" ]; then\n  # Validate PIN\n  if ! [[ \"{{$json.Pin}}\" =~ ^[0-9]{4}$ ]]; then\n    echo \"{\\\"Error\\\": \\\"Please enter a 4-digit PIN\\\"}\"\n    exit 0\n  fi\n  PFLAG=\"-1 {{$json.Pin}}\"\nelse\n  PFLAG=\"\"\nfi\n\n# ----------------------------\n# Build LFLAG\n# ----------------------------\n\nPhoneFLAG=\"\"\nif [ -n \"{{$json.Otp}}\" ]; then\n  PhoneFLAG=\"-3 {{$json.Otp}}\"\nfi\n\n\n\n# ----------------------------\n# EXECUTION LOGIC\n# ----------------------------\n\n   FINAL_CMD=\"/Users/pankajladhe/Pankaj/2018/LETesting1/LE -d {{$json.ciphertext}} $PFLAG $WFLAG $PhoneFLAG --PlainText\"\n\n\n# DEBUG\necho \"DEBUG: FINAL_CMD=$FINAL_CMD\" >&2\n\neval $FINAL_CMD </dev/null 2>&1\n'\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        656,
+        -848
+      ],
+      "id": "271a0e16-68c9-4aa5-a778-883cf478caff",
+      "name": "LEDecrypt",
+      "alwaysOutputData": true,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Save Last Cipher after LEEncrypt\n\n// 1. Get global workflow static data\nconst workflowStaticData = $getWorkflowStaticData('global');\n\n// 2. Get LEEncrypt stdout (should be the cipher)\nconst raw = $json.stdout ? String($json.stdout).trim() : \"\";\n\n// 3. Try to find something that looks like an LE cipher\n//    - starts with '=' or '=='\n//    - at least 10 base64ish chars\nlet saved = null;\nconst m = raw.match(/(={1,2}[A-Za-z0-9/+]{10,})/);\n\nif (m) {\n  saved = m[1];\n} else if (raw.length > 0) {\n  // fallback: store raw stdout for debugging\n  saved = raw;\n}\n\n// 4. Store in static data\nworkflowStaticData.lastCipher = saved;\n\n// 5. Also expose it in the normal JSON so we can see it in Output\nreturn [\n  {\n    json: {\n      ...$json,\n      savedLastCipherDebug: saved,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        -1104
+      ],
+      "id": "c630a3a8-ee84-489f-a196-d24054812856",
+      "name": "Save Last Cipher"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If decrypt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LEEncrypt": {
+      "main": [
+        [
+          {
+            "node": "Save Last Cipher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Encrypt": {
+      "main": [
+        [
+          {
+            "node": "LEEncrypt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "If decrypt": {
+      "main": [
+        [
+          {
+            "node": "LEDecrypt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If Encrypt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LEDecrypt": {
+      "main": [
+        [
+          {
+            "node": "Respond to Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Last Cipher": {
+      "main": [
+        [
+          {
+            "node": "Respond to Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "14f13f2d-3001-49ca-b57c-ba07c595e81f",
+  "meta": {
+    "instanceId": "f9e94a71326017e7149426a4e09a0f665b51d626c371e5e7a1144485b6c897fd"
+  },
+  "id": "vcVgxH1b43W2PTi0",
+  "tags": []
+}
