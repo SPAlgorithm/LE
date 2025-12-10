@@ -1,3 +1,5 @@
+## This project is licensed under the terms of the GNU Lesser General Public License v3.0
+
 # 🔒 Ladhe’s Encryption Utility (LE)
 
 ## ✨ Version : 1.3
