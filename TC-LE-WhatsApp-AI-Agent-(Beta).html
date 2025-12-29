@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Terms and Conditions — LE WhatsApp AI Agent (Beta)</title>
+  <meta name="description" content="Terms and Conditions for LE WhatsApp AI Agent (Beta)" />
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#0f1730;
+      --text:#e9ecf5;
+      --muted:#b7bed6;
+      --border:rgba(255,255,255,.12);
+      --accent:#8b5cf6;
+      --warn:#f59e0b;
+      --link:#93c5fd;
+      --max: 980px;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(139,92,246,.25), transparent 60%),
+        radial-gradient(1200px 600px at 90% 10%, rgba(147,197,253,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font: 15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:40px 18px 22px}
+    .wrap{max-width:var(--max); margin:0 auto}
+    .brand{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+    .logo{
+      width:40px; height:40px; border-radius:12px;
+      background:linear-gradient(135deg, rgba(139,92,246,.95), rgba(147,197,253,.9));
+      box-shadow:var(--shadow)
+    }
+    h1{margin:0; font-size:28px}
+    .sub{margin-top:6px; color:var(--muted)}
+    .pillrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .pill{
+      border:1px solid var(--border);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      background:rgba(255,255,255,.04)
+    }
+    .grid{display:grid; gap:16px; padding:0 18px 48px}
+    .card{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow)
+    }
+    .inner{padding:18px}
+    .banner{
+      border-left:5px solid var(--warn);
+      background:rgba(245,158,11,.08);
+      padding:14px;
+      border-radius:12px
+    }
+    h2{margin:0 0 8px; font-size:18px}
+    p{margin:10px 0}
+    ul{margin-left:18px}
+    li{margin:6px 0}
+    footer{padding:0 18px 40px}
+    .footerbox{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:16px;
+      background:rgba(255,255,255,.02)
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>Terms and Conditions — LE WhatsApp AI Agent (Beta)</h1>
+        <div class="sub">Last Updated: <strong>29 Dec 2025</strong></div>
+      </div>
+    </div>
+    <div class="pillrow">
+      <span class="pill">Global template</span>
+      <span class="pill">Enterprise tone</span>
+      <span class="pill">Beta software</span>
+    </div>
+  </div>
+</header>
+
+<main class="grid wrap">
+  <section class="card"><div class="inner banner">
+    <strong>Beta Notice:</strong> This Service is provided as pre‑release software. Features may change, break, or be removed at any time.
+    Do not rely on this Beta as the sole method for securing critical or irreplaceable data.
+  </div></section>
+
+  <section class="card"><div class="inner">
+    <h2>1. Acceptance of Terms</h2>
+    <p>By accessing or using the LE WhatsApp AI Agent (Beta), you agree to be bound by these Terms.
+       If you do not agree, do not use the Service.</p>
+  </div></section>
+
+  <section class="card"><div class="inner">
+    <h2>2. Service Overview</h2>
+    <p>The Service encrypts user‑submitted WhatsApp messages into ciphertext and enables controlled decryption using layered security:</p>
+    <ul>
+      <li>PIN Lock</li>
+      <li>Password Lock</li>
+      <li>Time Lock</li>
+      <li>Multi‑Factor Authentication (OTP)</li>
+    </ul>
+  </div></section>
+
+  <section class="card"><div class="inner">
+    <h2>3. User Responsibilities</h2>
+    <p>You are responsible for safeguarding all credentials. Lost credentials cannot be recovered.
+       LE does not store or reset PINs, passwords, or OTPs.</p>
+  </div></section>
+
+  <section class="card"><div class="inner">
+    <h2>4. Disclaimers</h2>
+    <p>The Service is provided “as‑is” and “as‑available”. LE disclaims all warranties to the maximum extent permitted by law.</p>
+  </div></section>
+
+  <section class="card"><div class="inner">
+    <h2>5. Limitation of Liability</h2>
+    <p>LE shall not be liable for indirect, incidental, or consequential damages arising from use of the Beta Service.</p>
+  </div></section>
+
+  <section class="card"><div class="inner">
+    <h2>6. Governing Law</h2>
+    <p>These Terms are governed by the laws of the applicable operating jurisdiction, without regard to conflict‑of‑law principles.</p>
+  </div></section>
+</main>
+
+<footer>
+  <div class="wrap footerbox">
+    <strong>LE WhatsApp AI Agent (Beta)</strong><br/>
+    © <span id="y"></span> LE. All rights reserved.
+  </div>
+</footer>
+
+<script>
+  document.getElementById("y").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
