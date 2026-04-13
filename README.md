@@ -58,8 +58,6 @@ Otherwise, you will need to decrypt individual files one at a time.
 
 ![LE](LEMarkdown.png)
 
-![Bob and Alice in Quantum Era ...](LEBobNAlice.md)
-
 ![LE](LEComparison.png)
 
 ![Ladhe’s Paradox – The Cryptographic Chicken-or-Egg ...](LEParadox.md)
@@ -177,6 +175,45 @@ LE --setup
 ```bash
 LE -s
 ```
+
+4.## LESecureCl — LESecure Cloud Skills
+
+A Claude Code skill for encrypting and decrypting data via the [LESecure API](https://api.lesecure.ai) using layered locks (pin, password, MFA, time lock).
+
+### Installation
+
+1. Download the [`LESecureCl.skill`](./LESecureCl.skill) file from this repo.
+2. Install it in Claude Code using **one** of the following methods:
+
+   **Option A — via Claude Code command:**
+   ```
+   /plugin install-skill ~/Downloads/LESecureCl.skill
+   ```
+   (or drag and drop the `.skill` file into the Claude Code chat)
+
+   **Option B — manual install:**
+   ```bash
+   unzip ~/Downloads/LESecureCl.skill -d ~/.claude/skills/
+   ```
+
+### Usage
+
+Once installed, just talk to Claude naturally:
+
+- `Encrypt "hello world" with LESecure using pin 1234 and my API key is <YOUR_KEY>`
+- `Decrypt this data with LESecure: <encrypted_blob>, pin is 1234 and my API key is <YOUR_KEY>`
+- `Encrypt "secret" with LESecure using pin 1234 for next 10 min and my API key is <YOUR_KEY>`
+
+### Supported locks
+
+| Flag | Lock Type | Example |
+|------|-----------|---------|
+| `-1` | Pin/Code | `1234 or 12345678` |
+| `-w` | Password | `mypasscode` |
+| `-2` | MFA (phone, E.164) | `+1YourPhoneNumber` |
+| `-l` / `-r` | Time lock window | `2026/04/13 12:36` – `12:46` EST |
+
+> **Note:** You'll need your own LESecure API key. Please reach out us at spalgorithm@gmail.com for API Key. Time locks are always calculated in **EST/EDT** (America/New_York).
 
 If you run setup, then you are agreeing to all the terms and conditions! LE uses location and messages services, please
 enable these if you are using Geo Location and MFA capabilities.
