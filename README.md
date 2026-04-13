@@ -176,7 +176,7 @@ LE --setup
 LE -s
 ```
 
-4.## LESecureCl — LESecure Cloud Skills
+4.  **LESecureCl — LESecure Cloud Skills**:
 
 A Claude Code skill for encrypting and decrypting data via the [LESecure API](https://api.lesecure.ai) using layered locks (pin, password, MFA, time lock).
 
@@ -212,6 +212,52 @@ Once installed, just talk to Claude naturally:
 | `-w` | Password | `mypasscode` |
 | `-2` | MFA (phone, E.164) | `+1YourPhoneNumber` |
 | `-l` / `-r` | Time lock window | `2026/04/13 12:36` – `12:46` EST |
+
+
+5.  **LESecureCl — LESecure Codex Skills**:
+
+A Codex skill for encrypting and decrypting data via the [LESecure API](https://api.lesecure.ai) using layered locks (pin, password, MFA, time lock).
+
+Put the skill in the right folder
+
+Codex looks for skills in either your global skills folder or a repo-local skills folder. OpenAI’s docs show these locations: global at $HOME/.agents/skills and repo-local at .agents/skills inside your project.
+
+Example:
+
+```bash
+mkdir -p ~/.agents/skills/lesecure-cloud
+cp SKILL.md ~/.agents/skills/lesecure-cloud/SKILL.md
+```
+
+Or inside a repo:
+
+```bash
+mkdir -p .agents/skills/lesecure-cloud
+cp SKILL.md .agents/skills/lesecure-cloud/SKILL.md
+```
+
+### Usage
+
+Once installed, just talk to Claude naturally:
+
+- `Encrypt "hello world" with LESecure using pin 1234 and my API key is <YOUR_KEY>`
+- `Decrypt this data with LESecure: <encrypted_blob>, pin is 1234 and my API key is <YOUR_KEY>`
+- `Encrypt "secret" with LESecure using pin 1234 for next 10 min and my API key is <YOUR_KEY>`
+
+### Supported locks
+
+| Flag | Lock Type | Example |
+|------|-----------|---------|
+| `-1` | Pin/Code | `1234 or 12345678` |
+| `-w` | Password | `mypasscode` |
+| `-2` | MFA (phone, E.164) | `+1YourPhoneNumber` |
+| `-l` / `-r` | Time lock window | `2026/04/13 12:36` – `12:46` EST |
+
+
+### Installation
+
+1. Download the [`LESecureCl.skill`](./LESecureCl.skill) file from this repo.
+
 
 > **Note:** You'll need your own LESecure API key. Please reach out us at spalgorithm@gmail.com for API Key. Time locks are always calculated in **EST/EDT** (America/New_York).
 
