@@ -176,96 +176,165 @@ LE --setup
 LE -s
 ```
 
-4.  **LESecureCl — LESecure Cloud Skills**:
+4. LESecureCl — LESecure Cloud Skills (Claude Code)
+A Claude Code skill for encrypting and decrypting plain text data via the LESecure API using layered locks (pin, password, MFA, time lock).
 
-A Claude Code skill for encrypting and decrypting data via the [LESecure API](https://api.lesecure.ai) using layered locks (pin, password, MFA, time lock).
+Installation
+Download the LESecureCl skill folder from this repo.
 
-### Installation
+Install it in Claude Code using one of the following methods:
 
-1. Download the [`LESecureCl.skill`](./LESecureCl.skill) file from this repo.
-2. Install it in Claude Code using **one** of the following methods:
+Option A — via Claude Code command:
 
-   **Option A — via Claude Code command:**
-   ```
-   /plugin install-skill ~/Downloads/LESecureCl.skill
-   ```
-   (or drag and drop the `.skill` file into the Claude Code chat)
+/plugin install-skill ~/Downloads/LESecureCl.skill
 
-   **Option B — manual install:**
-   ```bash
-   unzip ~/Downloads/LESecureCl.skill -d ~/.claude/skills/
-   ```
+(or drag and drop the .skill file into the Claude Code chat)
 
-### Usage
-
-Once installed, just talk to Claude naturally:
-
-- `Encrypt "hello world" with LESecure using pin 1234 and my API key is <YOUR_KEY>`
-- `Decrypt this data with LESecure: <encrypted_blob>, pin is 1234 and my API key is <YOUR_KEY>`
-- `Encrypt "secret" with LESecure using pin 1234 for next 10 min and my API key is <YOUR_KEY>`
-
-### Supported locks
-
-| Flag | Lock Type | Example |
-|------|-----------|---------|
-| `-1` | Pin/Code | `1234 or 12345678` |
-| `-w` | Password | `mypasscode` |
-| `-2` | MFA (phone, E.164) | `+1YourPhoneNumber` |
-| `-l` / `-r` | Time lock window | `2026/04/13 12:36` – `12:46` EST |
-
-
-5.  **LESecureCl — LESecure Codex Skills**:
-
-A Codex skill for encrypting and decrypting data via the [LESecure API](https://api.lesecure.ai) using layered locks (pin, password, MFA, time lock).
-
-Put the skill in the right folder
-
-Codex looks for skills in either your global skills folder or a repo-local skills folder. OpenAI’s docs show these locations: global at $HOME/.agents/skills and repo-local at .agents/skills inside your project.
-
-Example:
+Option B — manual install:
 
 ```bash
-mkdir -p ~/.agents/skills/lesecure-cloud
-cp SKILL.md ~/.agents/skills/lesecure-cloud/SKILL.md
+cp -r LESecureCl ~/.claude/skills/
 ```
 
-Or inside a repo:
-
-```bash
-mkdir -p .agents/skills/lesecure-cloud
-cp SKILL.md .agents/skills/lesecure-cloud/SKILL.md
-```
-
-### Usage
-
+Usage
 Once installed, just talk to Claude naturally:
 
-- `Encrypt "hello world" with LESecure using pin 1234 and my API key is <YOUR_KEY>`
-- `Decrypt this data with LESecure: <encrypted_blob>, pin is 1234 and my API key is <YOUR_KEY>`
-- `Encrypt "secret" with LESecure using pin 1234 for next 10 min and my API key is <YOUR_KEY>`
+```bash
+Encrypt "hello world" with LESecure using pin 1234
+Decrypt this data with LESecure: <encrypted_blob>, pin is 1234
+Encrypt "secret" with LESecure using pin 1234 for next 10 min
+```
 
-### Supported locks
+Note: Claude will ask for your API key on first use and offer to save it for future calls.
 
-| Flag | Lock Type | Example |
-|------|-----------|---------|
-| `-1` | Pin/Code | `1234 or 12345678` |
-| `-w` | Password | `mypasscode` |
-| `-2` | MFA (phone, E.164) | `+1YourPhoneNumber` |
-| `-l` / `-r` | Time lock window | `2026/04/13 12:36` – `12:46` EST |
+Supported Locks
+Flag    Lock Type    Example
+-1    Pin/Code    1234 or 12345678
+-w    Password    mypasscode
+-2    MFA (phone, E.164)    +1YourPhoneNumber
+-l / -r    Time lock window    2026/04/13 12:36 – 12:46 EST
+Note: LESecure Cloud supports plain text only. For file/folder encryption, use LESecureLocal.
+
+5. LESecureLocal — LESecure Local / On-Prem Skills (Claude Code)
+A Claude Code skill for encrypting and decrypting plain text, files, and folders using the LESecure desktop binary. No API key needed — everything runs locally.
+
+Installation
+
+```bash
+cp -r LESecureLocal ~/.claude/skills/
+```
+
+Usage
+Once installed, just talk to Claude naturally:
+
+Plain text:
+
+```bash
+Encrypt "hello world" locally with pin 1234
+```
+
+Decrypt this with LE desktop: <encrypted_blob>, pin is 1234
+
+Files & Folders:
+
+```bash
+Encrypt example.txt with pin 1234 using LE local
+Decrypt example.letxt with pin 1234
+Encrypt my_folder with pin 1234 
+Decrypt my_folder with pin 1234 
+```
+
+Supported Locks
+Flag    Lock Type    Example
+-1    Pin/Code    1234 or 12345678
+-w    Password    pass.letxt or passphrase
+-2    MFA (phone, E.164)    +1YourPhoneNumber
+-l / -r    Time lock window    2026/04/13 12:36 – 12:46 EST
+
+Encrypted File Naming
+Type    Original    Encrypted
+File    example.txt    example.letxt
+
+Folder    my_folder/    my_folder/ (files inside get .le prefix on extensions)
 
 
-### Installation
-
-1. Download the [`LESecureCl.skill`](./LESecureCl.skill) file from this repo.
-
-
-> **Note:** You'll need your own LESecure API key. Please reach out us at spalgorithm@gmail.com for API Key. Time locks are always calculated in **EST/EDT** (America/New_York).
+Note: No API key required. The LE binary path must be configured in the skill file.
 
 If you run setup, then you are agreeing to all the terms and conditions! LE uses location and messages services, please
 enable these if you are using Geo Location and MFA capabilities.
  
 This will create a **`cer.le` certificate**. This will also create **.leignore** file in current folder. You may be prompted to enter password of your machine in key chain.
+
 If you want to buy licenced copy,please share `cer.le` with us. Contact **spalgorithm@gmail.com**.
+
+
+## 6. LESecure Skills (OpenAI Codex)
+
+Codex skills for encrypting and decrypting data via [LESecure](https://api.lesecure.ai) using layered locks (pin, password, MFA, time lock). Includes both **Cloud** (API, plain text only) and **Local** (desktop, plain text + files/folders).
+
+### Installation
+
+**Global install:**
+```bash
+mkdir -p ~/.agents/skills/lesecure-cloud ~/.agents/skills/lesecure-local
+cp LESecureCl/SKILL.md ~/.agents/skills/lesecure-cloud/SKILL.md
+cp LESecureLocal/SKILL.md ~/.agents/skills/lesecure-local/SKILL.md
+```
+
+**Repo-local install:**
+```bash
+mkdir -p .agents/skills/lesecure-cloud .agents/skills/lesecure-local
+cp LESecureCl/SKILL.md .agents/skills/lesecure-cloud/SKILL.md
+cp LESecureLocal/SKILL.md .agents/skills/lesecure-local/SKILL.md
+```
+
+### Cloud vs Local
+
+| | LESecure Cloud | LESecure Local |
+|---|---|---|
+| **Plain text** | ✅ | ✅ |
+| **Files & Folders** | ❌ | ✅ |
+| **API key required** | Yes | No |
+| **Runs via** | REST API | Desktop binary |
+
+### Usage
+
+**Plain text (Cloud):**
+- `Encrypt "hello world" with LESecure using pin 1234 and my API key is <YOUR_KEY>`
+- `Decrypt this with LESecure: <encrypted_blob>, pin is 1234`
+
+**Plain text (Local):**
+- `Encrypt "hello world" locally with pin 1234`
+
+**Files & Folders (Local only):**
+- `Encrypt example.txt with pin 1234 using LE local`
+- `Decrypt example.letxt with pin 1234`
+- `Encrypt my_folder with pin 1234 and password`
+
+### Supported Locks
+
+| Flag | Lock Type | Example |
+|------|-----------|---------|
+| `-1` | Pin/Code | `1234` or `12345678` |
+| `-w` | Password | `mypasscode` or `pass.letxt` |
+| `-2` | MFA (phone, E.164) | `+1YourPhoneNumber` |
+| `-l` / `-r` | Time lock window | `2026/04/13 12:36` – `12:46` EST |
+
+### Encrypted File Naming (Local)
+
+| Type | Original | Encrypted |
+|------|----------|-----------|
+| File | `example.txt` | `example.letxt` |
+| Folder | `my_folder/` | `my_folder/` (files inside get `.le` prefix on extensions) |
+
+> **Notes:**
+> - For the Cloud skill, you'll need a LESecure API key — reach out at spalgorithm@gmail.com.
+> - For the Local skill, update the LE binary path in SKILL.md to match your installation — reach out at spalgorithm@gmail.com for the desktop binary.
+> - Time locks are always calculated in **EST/EDT** (America/New_York).
+
+---
+
+Much cleaner! Want me to save this to your project?
 
 4. **Encrypt a test file**:
 
