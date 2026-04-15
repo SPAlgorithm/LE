@@ -11,6 +11,11 @@ triggers:
   - decrypt file
   - encrypt folder
   - decrypt folder
+  - what's my current location
+  - what is my current location
+  - whereami
+  - where am i
+  - current location
 ---
 
 # LESecureLocal — LESecure Local / On-Prem Skills
@@ -20,7 +25,9 @@ Encrypt and decrypt **plain text, files, and folders** using the LE desktop bina
 ## ROUTING RULES (MANDATORY)
 
 - **Files and folders MUST always use LESecure Local.** Never use LESecure Cloud for file/folder encryption. If the user asks to encrypt files/folders via cloud, inform them: "File/folder encryption is only supported via LESecure Local (desktop)." and use this skill.
+- **Files and folders MUST always include the `-j` flag** for both encryption and decryption. This is non-negotiable — every file/folder invocation of LE must have `-j`.
 - **For plain text**, ask the user: "Would you like to use **LESecure Cloud** (API) or **LESecure Local** (desktop)?" and proceed accordingly.
+- **Current location queries** — when the user asks "what's my current location", "whereami", "where am I", or any equivalent, run `LE -7` via the local binary and share the output. No other flags are needed.
 
 ## Binary Location
 
@@ -59,7 +66,7 @@ Encrypt/decrypt inline strings. Wrap the string in triple single quotes.
 
 ### 2. File / Folder Mode (`-j`)
 
-Encrypt/decrypt files or entire folders. The `-j` flag combines **clean** (`-c`), **force** (`-z`), and **recursive** (`-n`).
+**ALWAYS use the `-j` flag for all file and folder encryption/decryption operations — no exceptions.** The `-j` flag combines **clean** (`-c`), **force** (`-z`), and **recursive** (`-n`), and must be included on every file/folder command.
 
 ```bash
 # Encrypt a file or folder
@@ -84,6 +91,8 @@ Encrypt/decrypt files or entire folders. The `-j` flag combines **clean** (`-c`)
 | `-3` | OTP | OTP code for decryption | `"123456"` |
 | `-l` | Time lock start | `YYYY/MM/DD HH:MM` | `"2026/04/12 17:41"` |
 | `-r` | Time lock end | `YYYY/MM/DD HH:MM` | `"2027/04/12 17:36"` |
+| `-b` | Location lock — use existing `.lecsv` key file | Path to `.lecsv` file | `location.lecsv` |
+| `-v` | Location lock — create a new `.lecsv` key file from a GPS CSV (switch, no value) | (no value) | `-v` |
 
 ### Additional Flags
 
@@ -95,6 +104,7 @@ Encrypt/decrypt files or entire folders. The `-j` flag combines **clean** (`-c`)
 | `-n` | Recursive — process folders recursively |
 | `-i` | Get info on an encrypted file |
 | `-o` | Specify output file name |
+| `-7` | Print the device's current GPS location (no other flags needed) |
 
 ## MFA Workflow
 
@@ -131,6 +141,12 @@ Encrypt/decrypt files or entire folders. The `-j` flag combines **clean** (`-c`)
 /Users/pankajladhe/Pankaj/2018/LETesting1/LE -i /path/to/myfile.letxt
 ```
 
+### Get current device location ("whereami" / "what's my current location")
+No other flags needed — just run `-7` and share the output with the user.
+```bash
+/Users/pankajladhe/Pankaj/2018/LETesting1/LE -7
+```
+
 ## Workflow
 
 1. **Determine the mode**: PlainText (`--PlainText`) for inline strings, or File/Folder (`-j`) for files and directories.
@@ -146,4 +162,21 @@ Encrypt/decrypt files or entire folders. The `-j` flag combines **clean** (`-c`)
 - Time lock dates use `YYYY/MM/DD HH:MM` format. Follow the Date & Time Rules above.
 - Time locks require both `-l` (start) and `-r` (end).
 - The password file (`.letxt`) should be an encrypted password file created with `LE -e pass.txt -q`.
-- For geo-location locks, use `-v` with a location CSV file and `-0 LAT LON` or `-x 'Address'` for geo-point validation.
+- Geo-location locks work in two stages: **create a key file once**, then **reuse it** to lock as many files/folders as you want.
+
+  **Stage 1 — Create the `.lecsv` key file from a GPS CSV (`-v`):**
+  - Input: a plain CSV of GPS locations with distance (e.g., `location.csv`).
+  - `-v` is a switch (no value); LE produces `location.lecsv` alongside the input.
+  - MUST be paired with `-1` (pin) or `-2` (MFA) — otherwise LE errors with "Either Pin or MFA should be enabled for Password/Location file".
+  ```bash
+  LE -e location.csv -v -1 1122 -j
+  LE -e location.csv -v -2 "+1YourPhoneNumber" -j
+  ```
+
+  **Stage 2 — Use the `.lecsv` key file to lock files/folders (`-b`):**
+  - `-b` takes the path to the already-created `.lecsv` file as its value.
+  - No pin/MFA pairing required here — the key file is self-contained.
+  ```bash
+  LE -e example.txt -b location.lecsv -j
+  LE -d example.letxt -b location.lecsv -j
+  ```
