@@ -20,7 +20,14 @@ triggers:
 
 # LESecureLocal — LESecure Local / On-Prem Skills
 
-Encrypt and decrypt **plain text, files, and folders** using the LE desktop binary. No API key is needed — everything runs locally.
+Encrypt and decrypt **plain text, files, and folders** using the LE desktop binary. No API key is needed — everything runs locally. No data leaves your machine.
+
+## Project Links
+
+| Resource | URL |
+|---|---|
+| Source code & documentation | <https://github.com/SPAlgorithm/LE> |
+| Cloud alternative | LESecureCl skill (uses the LESecure API) |
 
 ## ROUTING RULES (MANDATORY)
 

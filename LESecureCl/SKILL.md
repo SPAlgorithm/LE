@@ -7,6 +7,16 @@ description: "LESecure Cloud Skills — encrypt or decrypt data using the LESecu
 
 Encrypt and decrypt **plain text data only** through the LESecure REST API. The API supports layered security "locks" that can be combined for defense-in-depth protection.
 
+## Project Links
+
+| Resource | URL |
+|---|---|
+| Source code & documentation | <https://github.com/SPAlgorithm/LE> |
+| API endpoint | `https://api.lesecure.ai/exec` |
+| Local/on-prem alternative | LESecureLocal skill (no data leaves your machine) |
+
+If you cannot verify the LESecure service or its privacy practices, use the **LESecureLocal** skill instead — it runs entirely on your device with no network calls.
+
 ## Requirements (MANDATORY)
 
 Before running any command in this skill, confirm the following are available. If any is missing, tell the user and stop — do not invent values or fall back silently.
@@ -14,7 +24,7 @@ Before running any command in this skill, confirm the following are available. I
 | Requirement | Purpose | How to check |
 |---|---|---|
 | `curl` on `PATH` | Make the HTTPS request to the LESecure API | `command -v curl` |
-| `python3` on `PATH` | Compute time-lock windows (`-l`, `-r`) in EST/EDT cross-platform | `command -v python3` |
+| `python3` ≥ 3.9 on `PATH` | Compute time-lock windows (`-l`, `-r`) in EST/EDT cross-platform. Requires `zoneinfo` module (built-in from Python 3.9+). | `python3 -c "from zoneinfo import ZoneInfo; print('ok')"` |
 | `LESECURE_API_KEY` env var | Bearer token for the API. Must be set in the shell that runs `curl`; the skill never places it on the command line and never writes it to disk. | `[ -n "$LESECURE_API_KEY" ]` |
 
 No other credentials are read. The skill does **not** open files, browsers, or any OS keychain.
@@ -25,14 +35,16 @@ No other credentials are read. The skill does **not** open files, browsers, or a
 - **If the user wants to encrypt/decrypt files or folders**, always redirect to **LESecureLocal** (the desktop tool). Inform the user: "File/folder encryption is only supported via LESecure Local (desktop). Let me use that instead."
 - **If the user wants to encrypt/decrypt plain text**, ask them: "Would you like to use **LESecure Cloud** (API) or **LESecure Local** (desktop)?" and proceed accordingly.
 
-## Data Transmission Notice
+## Data Transmission Notice (MANDATORY)
 
-This skill sends data over the network. The user should be aware of what is transmitted:
+This skill sends data to a **third-party remote endpoint** over the network. Users must understand what is transmitted before proceeding.
 
-- **Where:** All requests go to `https://api.lesecure.ai/exec` over TLS (HTTPS).
+- **Where:** All requests go to `https://api.lesecure.ai/exec` over TLS (HTTPS). See [source & docs](https://github.com/SPAlgorithm/LE) for the service's privacy practices.
 - **What is sent:** The plaintext data to encrypt (or the ciphertext to decrypt), plus any lock values (PINs, passwords, phone numbers, time-window dates), and the API bearer token.
 - **What is NOT sent:** No local files, no OS credentials, no browser data, no environment variables other than the bearer token.
-- **On first use in a session**, inform the user: "This will send your data to api.lesecure.ai over HTTPS for encryption/decryption." Proceed only after acknowledgment.
+- **Caution:** Do not send highly sensitive personal data (SSNs, financial account numbers, medical records) unless you have verified the service's data handling and privacy policies.
+- **On first use in a session**, inform the user: "This will send your data to api.lesecure.ai (a third-party service) over HTTPS for encryption/decryption. Review the project at https://github.com/SPAlgorithm/LE if you haven't already." Proceed only after acknowledgment.
+- **Recommendation:** Test with non-sensitive sample data first before encrypting real secrets.
 
 ## API Basics
 
@@ -60,7 +72,12 @@ read -rs -p 'LESECURE_API_KEY: ' LESECURE_API_KEY && echo
 export LESECURE_API_KEY
 ```
 
-To persist across shells, add `export LESECURE_API_KEY='…'` to `~/.zshrc` / `~/.bashrc`, or use a secret manager that exports into the shell.
+To persist across shells (in order of preference):
+1. **Secret manager** (recommended): use `1Password CLI`, `aws ssm`, `doppler`, or similar to inject the key at shell startup.
+2. **Shell profile**: add `export LESECURE_API_KEY='…'` to `~/.zshrc` / `~/.bashrc` (ensure the file is chmod 600).
+3. **Dotenv file**: store in a `.env` file excluded from version control and source it.
+
+**If the user ever pastes the key into chat**, remind them: "Your API key was exposed in chat history. Rotate it immediately at your LESecure dashboard."
 
 ## Date & Time Rules (MANDATORY)
 
