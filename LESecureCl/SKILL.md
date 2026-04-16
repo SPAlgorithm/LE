@@ -25,6 +25,15 @@ No other credentials are read. The skill does **not** open files, browsers, or a
 - **If the user wants to encrypt/decrypt files or folders**, always redirect to **LESecureLocal** (the desktop tool). Inform the user: "File/folder encryption is only supported via LESecure Local (desktop). Let me use that instead."
 - **If the user wants to encrypt/decrypt plain text**, ask them: "Would you like to use **LESecure Cloud** (API) or **LESecure Local** (desktop)?" and proceed accordingly.
 
+## Data Transmission Notice
+
+This skill sends data over the network. The user should be aware of what is transmitted:
+
+- **Where:** All requests go to `https://api.lesecure.ai/exec` over TLS (HTTPS).
+- **What is sent:** The plaintext data to encrypt (or the ciphertext to decrypt), plus any lock values (PINs, passwords, phone numbers, time-window dates), and the API bearer token.
+- **What is NOT sent:** No local files, no OS credentials, no browser data, no environment variables other than the bearer token.
+- **On first use in a session**, inform the user: "This will send your data to api.lesecure.ai over HTTPS for encryption/decryption." Proceed only after acknowledgment.
+
 ## API Basics
 
 - **Endpoint**: `https://api.lesecure.ai/exec`
@@ -108,45 +117,62 @@ Use `-d` followed by the encrypted data to decrypt. The same locks used during e
 
 Always include `--PlainText` for readable output.
 
+## Sensitive Data Handling (MANDATORY)
+
+The request body contains sensitive data (plaintext, PINs, passwords). The same protection applied to the API key applies to ALL sensitive values:
+
+- **Never pass the JSON body via `-d '...'` on the command line.** The `-d` argument is visible in `ps` and shell history, which would expose plaintext data, PINs, and passwords.
+- **Always pipe the body via stdin using `-d @-`.** This keeps all sensitive values out of the process argument list.
+- Use a heredoc (`<<'EOF'`) to build the JSON body and pipe it into `curl`.
+
 ## Building the curl Command
 
-Construct the args array by mapping user requirements to flags. Order within the array doesn't matter, but group related flags and their values together for readability. Every example below references `$LESECURE_API_KEY` — the shell expands it so the literal key never appears on the command line.
+Construct the args array by mapping user requirements to flags. Order within the array doesn't matter, but group related flags and their values together for readability.
+
+**All examples use `-d @-` (read body from stdin) so that neither the API key, plaintext data, PINs, nor passwords appear on the command line, in shell history, or in `ps` output.**
 
 **Encrypt with pin lock only:**
 ```bash
-curl -s https://api.lesecure.ai/exec \
+cat <<'EOF' | curl -s https://api.lesecure.ai/exec \
   -H "Authorization: Bearer $LESECURE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"args":["-e","<DATA>","-1","<PIN>","--PlainText"]}'
+  -d @-
+{"args":["-e","<DATA>","-1","<PIN>","--PlainText"]}
+EOF
 ```
 
 **Encrypt with all locks:**
 ```bash
-curl -s https://api.lesecure.ai/exec \
+cat <<'EOF' | curl -s https://api.lesecure.ai/exec \
   -H "Authorization: Bearer $LESECURE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"args":["-e","<DATA>","-w","<PASSWORD>","-1","<PIN>","-2","<PHONE>","-l","<START_DATE>","-r","<END_DATE>","--PlainText"]}'
+  -d @-
+{"args":["-e","<DATA>","-w","<PASSWORD>","-1","<PIN>","-2","<PHONE>","-l","<START_DATE>","-r","<END_DATE>","--PlainText"]}
+EOF
 ```
 
 **Decrypt:**
 ```bash
-curl -s https://api.lesecure.ai/exec \
+cat <<'EOF' | curl -s https://api.lesecure.ai/exec \
   -H "Authorization: Bearer $LESECURE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"args":["-d","<ENCRYPTED_DATA>","-1","<PIN>","--PlainText"]}'
+  -d @-
+{"args":["-d","<ENCRYPTED_DATA>","-1","<PIN>","--PlainText"]}
+EOF
 ```
 
 ## Workflow
 
 1. **Preflight the requirements** from the Requirements section above. Specifically, confirm `$LESECURE_API_KEY` is set. If it is not set, show the user the one-time setup block and stop — do not proceed, do not ask the user to paste the key into chat.
-2. **Gather non-secret inputs from the user:**
+2. **Data-transmission disclosure (first use only).** On the first encrypt/decrypt in a session, inform the user: "This will send your data to api.lesecure.ai over HTTPS for encryption/decryption." Proceed only after acknowledgment.
+3. **Gather non-secret inputs from the user:**
    - The data to encrypt or decrypt
    - Which locks to apply (pin, password, MFA, time window) and their values
    - Always include `--PlainText`
    (Do NOT ask for the API key — it comes from the environment.)
-3. **Build the args array** with the appropriate flags and values.
-4. **Execute the curl command** via Bash and return the result to the user.
-5. **If decrypting**, remind the user they need the same lock values that were used during encryption.
+4. **Build the args array** with the appropriate flags and values.
+5. **Execute the curl command** via Bash using the `cat <<'EOF' | curl ... -d @-` pattern. Never use inline `-d '...'`. This keeps all sensitive data (plaintext, PINs, passwords) out of `ps` output and shell history.
+6. **If decrypting**, remind the user they need the same lock values that were used during encryption.
 
 ## Important Notes
 

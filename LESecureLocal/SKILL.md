@@ -27,7 +27,7 @@ Encrypt and decrypt **plain text, files, and folders** using the LE desktop bina
 - **Files and folders MUST always use LESecure Local.** Never use LESecure Cloud for file/folder encryption. If the user asks to encrypt files/folders via cloud, inform them: "File/folder encryption is only supported via LESecure Local (desktop)." and use this skill.
 - **Safe-by-default flags for files/folders.** Always pass `-z` (force overwrite) and — when the target is a directory — `-n` (recursive). **Never pass `-c` (clean/delete source) or `-j` (trio = `-z -c -n`) without explicit user confirmation**, because both delete the original file after encrypting. See the "Destructive Flags" rules below.
 - **For plain text**, ask the user: "Would you like to use **LESecure Cloud** (API) or **LESecure Local** (desktop)?" and proceed accordingly.
-- **Current location queries** — when the user asks "what's my current location", "whereami", "where am I", or any equivalent, run `LE -7` and share the output. No other flags are needed.
+- **Current location queries** — when the user asks "what's my current location", "whereami", "where am I", or any equivalent, run `LE -7` and share the output. No other flags are needed. **Note:** `LE -7` accesses device GPS — this is a privacy-sensitive operation. On first use in a session, inform the user: "This will query your device's GPS location via LE." Proceed only after acknowledgment.
 
 ## Destructive Flags — `-c` and `-j` (MANDATORY)
 
@@ -60,15 +60,18 @@ All date/time handling for this skill follows these rules — no exceptions:
 1. **Always use EST/EDT (America/New_York)** to calculate and send dates. The LE tool interprets `-l` and `-r` in EST/EDT.
 2. **Start time (`-l`) = current EST + 2 minutes** by default. This buffer prevents the "date must be in future" error.
 3. **End time (`-r`) = start time + the user's requested duration**.
-4. **Cross-platform time computation.** Prefer Python because `date` flag syntax differs between BSD (macOS) and GNU (Linux). Python 3 is available on both:
+4. **Cross-platform time computation.** Prefer Python because `date` flag syntax differs between BSD (macOS) and GNU (Linux). Python 3 is available on both.
+
+   **Input safety:** The `<N>` duration value is passed as `sys.argv[1]` and cast via `int()` inside the Python script — any non-integer input raises `ValueError` and the script exits without executing. **Never concatenate or interpolate user input directly into the `python3 -c` string.** Always pass values as positional arguments (`sys.argv`).
+
    ```bash
-   # Start time (now + 2 minutes, EDT/EST)
+   # Start time (now + 2 minutes, EDT/EST) — no user input needed
    python3 -c "from datetime import datetime,timedelta; from zoneinfo import ZoneInfo; print((datetime.now(ZoneInfo('America/New_York'))+timedelta(minutes=2)).strftime('%Y/%m/%d %H:%M'))"
 
-   # End time (now + 2 min + N minutes)
+   # End time (now + 2 min + N minutes) — N is passed as argv[1], cast to int()
    python3 -c "import sys; from datetime import datetime,timedelta; from zoneinfo import ZoneInfo; N=int(sys.argv[1]); print((datetime.now(ZoneInfo('America/New_York'))+timedelta(minutes=2+N)).strftime('%Y/%m/%d %H:%M'))" <N>
 
-   # End time (now + 2 min + N hours)
+   # End time (now + 2 min + N hours) — N is passed as argv[1], cast to int()
    python3 -c "import sys; from datetime import datetime,timedelta; from zoneinfo import ZoneInfo; N=int(sys.argv[1]); print((datetime.now(ZoneInfo('America/New_York'))+timedelta(minutes=2,hours=N)).strftime('%Y/%m/%d %H:%M'))" <N>
    ```
    Fallback (`date`) — only if Python is unavailable:
@@ -80,13 +83,26 @@ All date/time handling for this skill follows these rules — no exceptions:
 
 ### 1. PlainText Mode (`--PlainText` / `-p`)
 
-Encrypt/decrypt inline strings. Wrap the string in triple single quotes.
+Encrypt/decrypt inline strings. The LE binary expects the data wrapped in triple single quotes (`'''...'''`).
+
+#### Input Sanitization (MANDATORY)
+
+**Never interpolate raw user input directly into the shell command.** The `'''...'''` quoting breaks if the data contains single quotes, enabling shell injection. Before building the command:
+
+1. **Validate:** reject or escape any single quotes (`'`) in the user's plaintext. Replace each `'` with `'\''` (end quote, escaped literal quote, reopen quote).
+2. **Alternatively, use a shell variable** to isolate user data from the command string:
+   ```bash
+   # Store user data in a variable — shell expansion is safe inside triple quotes
+   LEDATA='user provided text here'
+   LE -e "'''${LEDATA}'''" <LOCK_FLAGS> --PlainText
+   ```
+3. **Never use `eval`** or backtick interpolation with user-supplied text.
 
 ```bash
-# Encrypt
-LE -e '''<DATA>''' <LOCK_FLAGS> --PlainText
+# Encrypt (with sanitized data)
+LE -e '''<SANITIZED_DATA>''' <LOCK_FLAGS> --PlainText
 
-# Decrypt
+# Decrypt (encrypted output is safe — no special chars)
 LE -d '''<ENCRYPTED_DATA>''' <LOCK_FLAGS> --PlainText
 ```
 
@@ -138,7 +154,7 @@ LE -e <FILE_OR_FOLDER> <LOCK_FLAGS> -j
 | `-j` | Trio = `-z -c -n` — **includes delete-source** | DESTRUCTIVE — opt-in with confirmation |
 | `-i` | Get info on an encrypted file | Safe (read only) |
 | `-o` | Specify output file name | Safe |
-| `-7` | Print the device's current GPS location (no other flags needed) | Safe |
+| `-7` | Print the device's current GPS location (no other flags needed) | PRIVACY-SENSITIVE — requires user consent on first use |
 
 ## MFA Workflow
 
@@ -182,7 +198,7 @@ LE -i /path/to/myfile.letxt
 ```
 
 ### Get current device location
-No other flags needed — just run `-7` and share the output.
+Requires user consent on first use in a session (privacy-sensitive — accesses device GPS).
 ```bash
 LE -7
 ```
