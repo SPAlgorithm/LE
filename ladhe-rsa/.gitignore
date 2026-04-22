@@ -7,3 +7,8 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
+
+# Generated PKI artifacts — never commit private keys.
+demo_pki/
+*.key.pem
+*.sig
