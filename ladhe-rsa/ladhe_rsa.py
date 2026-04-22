@@ -465,6 +465,31 @@ class Signature:
                 out += struct.pack(">H", len(r.salt)) + r.salt
         return bytes(out)
 
+    @classmethod
+    def decode(cls, data: bytes) -> "Signature":
+        """Inverse of encode(); rebuild a Signature from bytes."""
+        offset = 0
+        (n,) = struct.unpack_from(">I", data, offset); offset += 4
+        commits = []
+        for _ in range(n):
+            (alen,) = struct.unpack_from(">H", data, offset); offset += 2
+            a_commit = data[offset:offset + alen]; offset += alen
+            (xlen,) = struct.unpack_from(">H", data, offset); offset += 2
+            aux = data[offset:offset + xlen]; offset += xlen
+            commits.append(SigmaCommit(a_commit=a_commit, aux=aux))
+        responses = []
+        for _ in range(n):
+            (olen,) = struct.unpack_from(">I", data, offset); offset += 4
+            opening = data[offset:offset + olen]; offset += olen
+            (slen,) = struct.unpack_from(">H", data, offset); offset += 2
+            if slen:
+                salt = data[offset:offset + slen]
+                offset += slen
+            else:
+                salt = None
+            responses.append(SigmaResponse(opening=opening, salt=salt))
+        return cls(commits=tuple(commits), responses=tuple(responses))
+
 
 def sign(
     message: bytes,
