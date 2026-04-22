@@ -176,6 +176,8 @@ LE --setup
 LE -s
 ```
 
+ ![Lesecure Demo](https://github.com/SPAlgorithm/LE/blob/main/lesecure-demo.gif)
+ 
 4. LESecureCl — LESecure Cloud Skills (Claude Code)
 A Claude Code skill for encrypting and decrypting plain text data via the LESecure API using layered locks (pin, password, MFA, time lock).
 
