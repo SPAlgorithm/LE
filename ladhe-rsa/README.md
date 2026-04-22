@@ -45,6 +45,14 @@ The implementation is deliberately self-contained in a single file ([`ladhe_rsa.
 
 Requires Python 3.9+. No third-party dependencies.
 
+**Install directly via pip:**
+
+```bash
+pip install git+https://github.com/SPAlgorithm/LE.git#subdirectory=ladhe-rsa
+```
+
+**Or clone and run:**
+
 ```bash
 git clone https://github.com/SPAlgorithm/LE.git
 cd LE/ladhe-rsa
