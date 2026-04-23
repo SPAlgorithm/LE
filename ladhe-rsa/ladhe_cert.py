@@ -2,10 +2,13 @@
 ladhe_cert.py — Experimental certificate format backed by
 Ladhe-RSA signatures.
 
-This is NOT an X.509 certificate. X.509 requires an IANA/ITU-T
-registered Object Identifier (OID) for any new signature
-algorithm, and no such OID exists for Ladhe-RSA. This format is a
-self-contained JSON-based structure suitable for:
+This is NOT yet an X.509 certificate. As of April 2026 the
+signature algorithm has a registered OID — 1.3.6.1.4.1.65644.1.1
+(id-ladhe-rsa-signature) under IANA PEN 65644 — but full X.509
+interop still requires ASN.1 DER encoding and an OpenSSL provider
+plugin, both of which are future work. For now, this format is a
+self-contained JSON-based structure (with the OID embedded in
+every certificate and signature) suitable for:
 
     * Local testing
     * Demonstrating what a Ladhe-RSA PKI would look like

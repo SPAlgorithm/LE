@@ -4,9 +4,19 @@ An experimental certificate format backed by Ladhe-RSA signatures, for **local t
 
 ---
 
-## ⚠️ These are NOT real X.509 certificates
+## ⚠️ These are NOT yet X.509 certificates
 
-A real X.509 certificate requires an **Object Identifier (OID)** registered with IANA/ITU-T for its signature algorithm. No such OID exists for Ladhe-RSA, and getting one is a multi-year process involving IETF review, publication of an RFC, and coordination across standards bodies.
+**Update (April 2026):** Ladhe-RSA now has an IANA-registered algorithm
+identifier — `1.3.6.1.4.1.65644.1.1` (`id-ladhe-rsa-signature`) — under
+Private Enterprise Number **65644**. The OID is already embedded in every
+certificate this tool produces. See [OID_REGISTRY.md](OID_REGISTRY.md) and
+[ALGORITHM_SPEC.md](ALGORITHM_SPEC.md) for the full arc and ASN.1 module.
+
+Full X.509 interoperability still requires two additional pieces of work:
+ASN.1 DER encoding of the certificate body (instead of our JSON), and an
+OpenSSL provider plugin so standard tooling can parse and verify the
+certificates. Both are tractable — roughly one to two years — but are
+ahead of us, not behind.
 
 This format uses its own JSON-based structure wrapped in PEM markers (`-----BEGIN LADHE CERTIFICATE-----`). It is:
 
@@ -155,12 +165,12 @@ Any of these could be added incrementally. This file format is versioned (`"vers
 
 If Ladhe-RSA's hardness assumption survives cryptanalysis and the paper is peer-reviewed:
 
-1. **Obtain an OID** from IANA or IETF for `id-ladhe-rsa-sig`
+1. **✅ Obtain an OID** — done. IANA PEN 65644 (April 2026); `id-ladhe-rsa-signature` is `1.3.6.1.4.1.65644.1.1`.
 2. **Publish an Internet-Draft / RFC** specifying the ASN.1 encoding of the public key and signature
 3. **Implement in OpenSSL** (or a provider plugin) so standard tools can generate and verify X.509 Ladhe-RSA certificates
 4. **Get it on CAB Forum's list** of approved signature algorithms for web PKI
 
-Steps 1–3 take 1–3 years typically. Step 4 takes longer. Before any of that, the cryptanalysis must withstand community scrutiny — which is why the paper and this implementation lead with a challenge, not a claim.
+Steps 2–3 take one to two years typically. Step 4 takes longer. Before any of that, the cryptanalysis must withstand community scrutiny — which is why the paper and this implementation lead with a challenge, not a claim.
 
 ---
 
