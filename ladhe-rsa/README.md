@@ -249,6 +249,32 @@ IANA Private Enterprise Number **65644** was registered to LeSecure on
 Full arc and ASN.1 module: see [OID_REGISTRY.md](OID_REGISTRY.md) and
 the formal specification at [ALGORITHM_SPEC.md](ALGORITHM_SPEC.md).
 
+### X.509 export (optional)
+
+Install the `x509` extra (adds `asn1crypto`) to export certificates as
+DER or PEM X.509 files that standard tools like `openssl asn1parse` and
+`openssl x509 -text` can parse:
+
+```bash
+pip install "ladhe-rsa[x509]"
+
+python3 ladhe_cert_cli.py export-x509 \
+    --cert demo_pki/alice.cert.pem \
+    --out  alice.x509.pem \
+    --format pem
+
+openssl x509 -in alice.x509.pem -text -noout
+# Signature Algorithm: 1.3.6.1.4.1.65644.1.1
+# Issuer: CN=Acme Quantum CA
+# Subject: CN=alice@acme.com
+# Public Key Algorithm: 1.3.6.1.4.1.65644.1.2
+```
+
+Run [`demo_x509.sh`](demo_x509.sh) for the full walkthrough.
+OpenSSL can introspect every field *except* cryptographically verify
+the signature — that requires an OpenSSL provider plugin, which is
+the next engineering milestone.
+
 ---
 
 ## Authors
