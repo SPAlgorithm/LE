@@ -1,53 +1,53 @@
 # Ladhe-RSA Object Identifier (OID) Registry
 
-This file documents the OID arc reserved for SPAlgorithm and the
-algorithm identifiers defined within it for the Ladhe-RSA scheme.
+This file documents the OID arc reserved for LESecure AI / SPAlgorithm
+and the algorithm identifiers defined within it for the Ladhe-RSA scheme.
 
 ## OID Arc
 
-IANA Private Enterprise Number (PEN) application submitted 2026-04-22.
-Request ID: **PHII-QH8-T48** — pending assignment.
+IANA Private Enterprise Number (PEN) assigned 2026-04-23.
 
-Once the PEN is assigned, replace `<PEN>` below with the integer value.
+- **PEN:** 65644
+- **Registered organisation:** LeSecure
+- **Contact:** Pankaj S Ladhe
+- **Registry:** https://www.iana.org/assignments/enterprise-numbers/
 
 ```
-1.3.6.1.4.1.<PEN>          -- SPAlgorithm root arc
+1.3.6.1.4.1.65644          -- LESecure AI / SPAlgorithm root arc
 ```
 
 ## Algorithm Identifiers
 
 ```
-1.3.6.1.4.1.<PEN>.1        -- SPAlgorithm cryptographic algorithms
-1.3.6.1.4.1.<PEN>.1.1      -- id-ladhe-rsa-signature
-1.3.6.1.4.1.<PEN>.1.2      -- id-ladhe-rsa-publicKey
-1.3.6.1.4.1.<PEN>.2        -- SPAlgorithm certificate profiles
-1.3.6.1.4.1.<PEN>.2.1      -- id-ladhe-cert-v1
+1.3.6.1.4.1.65644.1        -- Cryptographic algorithms
+1.3.6.1.4.1.65644.1.1      -- id-ladhe-rsa-signature
+1.3.6.1.4.1.65644.1.2      -- id-ladhe-rsa-publicKey
+1.3.6.1.4.1.65644.2        -- Certificate profiles
+1.3.6.1.4.1.65644.2.1      -- id-ladhe-cert-v1
 ```
 
-## ASN.1 Definitions (draft)
-
-The following ASN.1 module will be finalised once the PEN is assigned.
+## ASN.1 Definitions
 
 ```asn1
-SPAlgorithm-LadheRSA
+LESecure-LadheRSA
   { iso(1) identified-organization(3) dod(6) internet(1)
-    private(4) enterprise(1) spalgorithm(<PEN>) }
+    private(4) enterprise(1) lesecure(65644) }
 
 DEFINITIONS IMPLICIT TAGS ::= BEGIN
 
 -- Root arcs
-id-spalgorithm  OBJECT IDENTIFIER ::= { 1 3 6 1 4 1 <PEN> }
-id-spalg-algs   OBJECT IDENTIFIER ::= { id-spalgorithm 1 }
-id-spalg-certs  OBJECT IDENTIFIER ::= { id-spalgorithm 2 }
+id-lesecure     OBJECT IDENTIFIER ::= { 1 3 6 1 4 1 65644 }
+id-lesec-algs   OBJECT IDENTIFIER ::= { id-lesecure 1 }
+id-lesec-certs  OBJECT IDENTIFIER ::= { id-lesecure 2 }
 
 -- Signature algorithm
-id-ladhe-rsa-signature  OBJECT IDENTIFIER ::= { id-spalg-algs 1 }
+id-ladhe-rsa-signature  OBJECT IDENTIFIER ::= { id-lesec-algs 1 }
 
 -- Public-key algorithm
-id-ladhe-rsa-publicKey  OBJECT IDENTIFIER ::= { id-spalg-algs 2 }
+id-ladhe-rsa-publicKey  OBJECT IDENTIFIER ::= { id-lesec-algs 2 }
 
 -- Certificate profile
-id-ladhe-cert-v1  OBJECT IDENTIFIER ::= { id-spalg-certs 1 }
+id-ladhe-cert-v1  OBJECT IDENTIFIER ::= { id-lesec-certs 1 }
 
 -- Public key structure
 LadheRSAPublicKey ::= SEQUENCE {
@@ -88,9 +88,9 @@ END
 
 ## Status
 
-- [ ] PEN assigned by IANA (pending — request PHII-QH8-T48)
-- [ ] Replace `<PEN>` placeholder throughout this file
-- [ ] Update `ladhe_cert.py` `CERT_ALGORITHM` string to include OID
+- [x] PEN assigned by IANA (decimal 65644, 2026-04-23)
+- [x] OID placeholders resolved throughout this file
+- [x] `ladhe_cert.py` `CERT_ALGORITHM` includes the OID
 - [ ] Submit algorithm identifier to IETF LAMPS WG for awareness
 
 ## References

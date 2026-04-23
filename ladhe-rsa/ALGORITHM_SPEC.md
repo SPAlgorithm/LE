@@ -35,15 +35,18 @@ Full mathematical treatment: see the companion paper (§2–§4).
 
 ---
 
-## 2. OID Assignments (Pending PEN)
+## 2. OID Assignments
 
-OIDs are pending IANA PEN assignment (request PHII-QH8-T48,
-submitted 2026-04-22). All OIDs below use `<PEN>` as a placeholder.
+IANA Private Enterprise Number **65644** assigned 2026-04-23 to
+LESecure AI / SPAlgorithm.
 
 ```
-id-ladhe-rsa-signature  ::=  1.3.6.1.4.1.<PEN>.1.1
-id-ladhe-rsa-publicKey  ::=  1.3.6.1.4.1.<PEN>.1.2
+id-ladhe-rsa-signature  ::=  1.3.6.1.4.1.65644.1.1
+id-ladhe-rsa-publicKey  ::=  1.3.6.1.4.1.65644.1.2
+id-ladhe-cert-v1        ::=  1.3.6.1.4.1.65644.2.1
 ```
+
+Full OID arc and ASN.1 module: see [OID_REGISTRY.md](OID_REGISTRY.md).
 
 ---
 
@@ -200,10 +203,10 @@ SigmaResponse ::= SEQUENCE {
 
 ## 7. IANA Considerations
 
-OID registration is in progress via the IANA Private Enterprise
-Number mechanism (RFC 9371). Once the PEN is assigned, this document
-will be updated with concrete OID values and submitted to the IETF
-LAMPS Working Group for awareness.
+IANA Private Enterprise Number **65644** was assigned on 2026-04-23
+under RFC 9371 procedures. All OID values in §2 are now concrete.
+This document will be submitted to the IETF LAMPS Working Group
+for awareness once community cryptanalysis has begun.
 
 ---
 
