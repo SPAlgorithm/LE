@@ -122,6 +122,37 @@ def cmd_verify(args: argparse.Namespace) -> int:
     return 0 if ok else 1
 
 
+def cmd_export_x509(args: argparse.Namespace) -> int:
+    """Export a Ladhe certificate as a DER or PEM-encoded X.509 file."""
+    try:
+        import ladhe_x509 as LX
+    except ImportError as e:
+        print(f"{e}", file=sys.stderr)
+        return 2
+
+    cert = LC.read_cert(Path(args.cert))
+    out_path = Path(args.out)
+    if args.format == "der":
+        LX.write_x509_der(out_path, cert)
+    else:
+        LX.write_x509_pem(out_path, cert)
+
+    print(f"exported: {args.cert}")
+    print(f"  format:   X.509 {args.format.upper()}")
+    print(f"  subject:  {cert.subject.get('CN')}")
+    print(f"  issuer:   {cert.issuer.get('CN')}")
+    print(f"  sig OID:  {LX.OID_LADHE_SIG}")
+    print(f"  pk OID:   {LX.OID_LADHE_PK}")
+    print(f"  out ->    {out_path}")
+    print()
+    print("Inspect with OpenSSL:")
+    if args.format == "pem":
+        print(f"  openssl x509 -in {out_path} -text -noout")
+    else:
+        print(f"  openssl x509 -in {out_path} -inform DER -text -noout")
+    return 0
+
+
 def _resolve_subject_files(args: argparse.Namespace):
     """Allow either --subject <stem> (looks in --dir) or explicit
     --cert / --key paths."""
@@ -210,6 +241,18 @@ def build_parser() -> argparse.ArgumentParser:
     q.add_argument("--cert", required=True)
     q.add_argument("--ca",   default=str(DEFAULT_DIR / "ca.cert.pem"))
     q.set_defaults(func=cmd_verify)
+
+    # export-x509
+    q = sub.add_parser(
+        "export-x509",
+        help="export a Ladhe cert as a DER or PEM X.509 file (requires asn1crypto)",
+    )
+    q.add_argument("--cert", required=True,
+                   help="source Ladhe certificate (.cert.pem)")
+    q.add_argument("--out",  required=True,
+                   help="destination path (.der or .pem)")
+    q.add_argument("--format", choices=["der", "pem"], default="pem")
+    q.set_defaults(func=cmd_export_x509)
 
     # sign
     q = sub.add_parser("sign", help="sign a document with a subject key")
