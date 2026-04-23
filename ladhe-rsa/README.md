@@ -235,10 +235,28 @@ Please open an issue before starting significant work so we can coordinate.
 
 ---
 
+## Algorithm Identifier (OID)
+
+IANA Private Enterprise Number **65644** was registered to LeSecure on
+2026-04-23. The resulting OIDs for Ladhe-RSA are:
+
+```
+1.3.6.1.4.1.65644.1.1    id-ladhe-rsa-signature
+1.3.6.1.4.1.65644.1.2    id-ladhe-rsa-publicKey
+1.3.6.1.4.1.65644.2.1    id-ladhe-cert-v1
+```
+
+Full arc and ASN.1 module: see [OID_REGISTRY.md](OID_REGISTRY.md) and
+the formal specification at [ALGORITHM_SPEC.md](ALGORITHM_SPEC.md).
+
+---
+
 ## Authors
 
 - **Shubham Ladhe** — [spalgorithm@gmail.com](mailto:spalgorithm@gmail.com)
 - **Pankaj Ladhe** — [spalgorithm@gmail.com](mailto:spalgorithm@gmail.com)
+
+SPAlgorithm is the cryptography research program of **LESecure AI, Inc.**
 
 ---
 

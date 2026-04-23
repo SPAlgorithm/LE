@@ -37,7 +37,13 @@ import ladhe_rsa as LR
 
 
 CERT_VERSION = 1
+# "ladhe-sig-v1" is the human-readable algorithm name; the OID below
+# is the globally unique identifier registered under IANA PEN 65644
+# (LESecure AI / SPAlgorithm). See OID_REGISTRY.md for the full arc.
 CERT_ALGORITHM = "ladhe-sig-v1"
+CERT_ALGORITHM_OID = "1.3.6.1.4.1.65644.1.1"       # id-ladhe-rsa-signature
+PUBLIC_KEY_OID     = "1.3.6.1.4.1.65644.1.2"       # id-ladhe-rsa-publicKey
+CERT_PROFILE_OID   = "1.3.6.1.4.1.65644.2.1"       # id-ladhe-cert-v1
 PEM_BEGIN = "-----BEGIN LADHE CERTIFICATE-----"
 PEM_END   = "-----END LADHE CERTIFICATE-----"
 KEY_PEM_BEGIN = "-----BEGIN LADHE PRIVATE KEY-----"
@@ -147,6 +153,7 @@ def decode_private_key(text: str) -> LR.PrivateKey:
 def _pk_to_dict(pk: LR.PublicKey) -> dict:
     return {
         "algorithm": CERT_ALGORITHM,
+        "algorithm_oid": PUBLIC_KEY_OID,
         "prime": str(pk.prime),
         "commitment": pk.commitment.hex(),
         "salt": pk.salt.hex(),
@@ -180,7 +187,11 @@ def create_ca(
         },
     )
     sig = LR.sign(cert.body_bytes(), sk, pk)
-    cert.signature = {"algorithm": CERT_ALGORITHM, "value": sig.encode().hex()}
+    cert.signature = {
+        "algorithm": CERT_ALGORITHM,
+        "algorithm_oid": CERT_ALGORITHM_OID,
+        "value": sig.encode().hex(),
+    }
     return cert, sk
 
 
@@ -209,7 +220,11 @@ def issue_certificate(
     )
     ca_pk = ca_cert.subject_public_key()
     sig = LR.sign(cert.body_bytes(), ca_sk, ca_pk)
-    cert.signature = {"algorithm": CERT_ALGORITHM, "value": sig.encode().hex()}
+    cert.signature = {
+        "algorithm": CERT_ALGORITHM,
+        "algorithm_oid": CERT_ALGORITHM_OID,
+        "value": sig.encode().hex(),
+    }
     return cert
 
 
