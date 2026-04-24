@@ -1,10 +1,12 @@
-# Demo commands from the video
+# Demo commands
 
-Every command shown in the "Ladhe-RSA Signatures" explainer video, in order. Copy-paste any of them — they all work after a `git clone` of this folder.
+Quick-reference commands for the Ladhe v3 reference implementation.
+For the Alice & Bob enterprise demo, see
+[`../Demo/DEMO_WALKTHROUGH.md`](../Demo/DEMO_WALKTHROUGH.md).
 
 ---
 
-## Quick start — run everything at once
+## Quick start — one-shot smoke test
 
 ```bash
 cd ladhe-rsa
@@ -12,88 +14,91 @@ chmod +x demo.sh    # first time only
 ./demo.sh
 ```
 
-Walks through all five demos with pauses between. Press **Enter** to advance.
+Walks through all demos with pauses. Press **Enter** to advance.
 
 ---
 
 ## The commands, one at a time
 
-### 1. See it in action (video: ~6:22)
+### 1. End-to-end demo
 
 ```bash
-python3 ladhe_rsa.py demo
+python3 ladhe_rsa.py demo 5
 ```
 
-**Expected output** (abridged):
+(The `5` is the decimal-digit count for the public prime P — small
+enough that KeyGen finishes in milliseconds.)
+
+**Expected output (abridged):**
 
 ```
-Ladhe-RSA reference implementation — demo
+Ladhe v3 reference — demo (digits=5)
 
-Loaded 1618 valid entries from dataset.
+KeyGen:        1.78 ms
+  P          = 27823  (15 bits)
+  k          = 5
+  primes     = (17, 53, 107, 1033, 26613)   (secret)
+  W          = (70, 1140, 26613)
+  h          = 3b29c2a08d4f...
 
-Key generated:
-  prime        = 65336989  (26 bits)
-  witness      = (50936514, 14366710, 15740, 18025)  (kept secret)
-  commitment   = 6edf8d944d52e86858db7804a94189f9...
-  salt         = bade3a0ac7b18943c331fca15214461e...
-
-Running identification protocol (32 rounds)...
-  identification verifies: True
-
-Signing message: b'Hello, Ladhe-RSA community!'
-  signature size: 7140 bytes
-  signature verifies:     True
+Sign:          0.01 ms, signature size = 38 bytes
+Verify:        0.22 ms, result = True
 
 Tampered-message verify (should be False): False
+
+Fresh LDP challenge (32-bit):
+  P = 2854391051
+  h = ...
 ```
 
 ---
 
-### 2. Try to break it — generate a fresh LDP challenge (video: ~9:00)
+### 2. Timing benchmark across prime sizes
+
+```bash
+python3 ladhe_rsa.py bench
+```
+
+Prints KeyGen / Sign / Verify times and signature sizes for digits ∈
+{3, 5, 7, 10, 15, 20, 30, 50}.
+
+---
+
+### 3. Generate a fresh LDP challenge (for cryptanalysts)
 
 ```bash
 python3 -c "
 import ladhe_rsa as LR
-P, h, s = LR.generate_ldp_challenge(bits=32)
+P, h = LR.generate_ldp_challenge(bits=32)
 print('Your LDP challenge:')
-print('  P    =', P)
-print('  salt =', s.hex())
-print('  h    =', h.hex())
+print(f'  P = {P}')
+print(f'  h = {h.hex()}')
 "
 ```
 
-**Your task:** find positive integers `a, b, c` with:
-- `a + b + c = P`
-- `sha256(salt || canonical_encode(a, b, c)) == h`
+**Your task:** find a sorted tuple of distinct odd primes
+`(p_1 < ... < p_k)` with `k` odd, such that:
 
-Solving this faster than brute force breaks the scheme.
+- `sum(p_i) = P`, and
+- `sha256(encode_W(pair_compress(primes))) == h`
 
-`canonical_encode` is defined in `ladhe_rsa._encode_witness`. At `bits=32`, brute force takes ~2³² hash evaluations (~seconds to minutes on a laptop); at `bits=256`, it's 2²⁵⁶ — infeasible.
+`encode_W` and `pair_compress` are defined in
+[`ladhe_rsa.py`](./ladhe_rsa.py). Solving faster than hash preimage
+breaks the scheme.
+
+At `bits=32`, brute force takes seconds on a laptop. At `bits=256`,
+2²⁵⁶ — infeasible.
 
 ---
 
-### 3. Run the unit test suite
+### 4. Run the unit test suite
 
 ```bash
 python3 -m unittest test_ladhe_rsa -v
+python3 -m unittest test_ladhe_x509 -v    # X.509 export tests
 ```
 
-Expect ~15 tests, all OK. Tests cover primality, dataset loading, hash commitments, keygen, Sigma protocol, signatures, and the LDP challenge generator.
-
----
-
-### 4. Practical code-signing example
-
-```bash
-python3 example_code_signing.py
-```
-
-Simulates the realistic flow:
-- **Bob** signs a software release
-- **Attacker** swaps in malicious software → verification **fails**
-- **Alice** downloads the genuine release → verification **succeeds**
-
-No encryption anywhere. Signatures alone provide integrity and authenticity — which is the use case for every app store, every TLS certificate, every cryptocurrency transaction.
+Expect 11 core tests + 4 X.509 tests. All should pass.
 
 ---
 
@@ -102,21 +107,14 @@ No encryption anywhere. Signatures alone provide integrity and authenticity — 
 ```bash
 python3 -c "
 import ladhe_rsa as LR
-pk, sk = LR.keygen()
-sig = LR.sign(b'hi', sk, pk)
+pk, sk = LR.keygen(up1=5)
+sig = LR.sign(b'hi', sk)
 print('genuine message verifies:', LR.verify(b'hi', sig, pk))
 print('tampered message rejects:', not LR.verify(b'evil', sig, pk))
 "
 ```
 
-**Expected output:**
-
-```
-genuine message verifies: True
-tampered message rejects: True
-```
-
-If both lines print `True`, the library is working correctly.
+Both lines should print `True`.
 
 ---
 
@@ -126,26 +124,38 @@ If both lines print `True`, the library is working correctly.
 python3 ladhe_rsa.py sign "your message here"
 ```
 
-Generates a fresh key pair, signs the message, prints the public key and signature bytes.
+Generates a fresh one-time key pair, signs the message, prints the
+public key and signature bytes.
+
+> ⚠️ One-time only — this key pair must not be used to sign anything
+> else. Use a fresh keygen for each new message.
 
 ---
 
-## For deeper testing
+### 7. Certificate + X.509 demo
 
-See [`MANUAL_TESTING.md`](./MANUAL_TESTING.md) — eight sections covering:
+```bash
+bash demo_x509.sh
+```
 
-- Primality, dataset, and commitment primitives in isolation
-- Step-by-step Sigma protocol (one round at a time, printing intermediate values)
-- Negative tests (cheating provers, wrong salts, invalid witnesses)
-- Simple benchmarks
-- Suggested cryptanalysis exercises
+Bootstraps a CA, issues a cert, exports to DER and PEM X.509,
+and shows OpenSSL parsing the result end-to-end.
+
+---
 
 ## Breaking the scheme
 
-If you find a way to solve an LDP challenge faster than brute force, or forge a signature without the witness, please open an issue:
+If you find:
+
+1. An algorithm that recovers the prime decomposition from `(P, h)`
+   asymptotically faster than SHA-256 preimage, or
+2. A way to forge a signature under a fresh key pair without ever
+   seeing a legitimate signature,
+
+please open an issue:
 
 - Repo: https://github.com/SPAlgorithm/LE
-- Paper: https://zenodo.org/records/19680322
-- DOI: 10.5281/zenodo.19680322
+- Paper: `SP_Paper_v3.pdf` (this folder) + Zenodo
+  10.5281/zenodo.19680322
 
-Cryptanalysis is the point. Every attack strengthens the field.
+Cryptanalysis is the point.

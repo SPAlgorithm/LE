@@ -1,3 +1,24 @@
+> # ⚠️ OUTDATED — WRITTEN FOR V1 SCHEME
+>
+> This guide was written for the original Ladhe scheme (Sigma
+> protocol, commitment+salt, Φ₁ predicate). The v3 scheme
+> (`SP_Paper_v3.pdf` / `ladhe_rsa.py` as of April 2026) uses a
+> one-time hash-based construction with a prime-decomposition
+> witness — the API is different.
+>
+> Working commands for v3:
+>
+> ```bash
+> python3 ladhe_rsa.py demo           # end-to-end demo
+> python3 ladhe_rsa.py bench          # timing benchmark
+> python3 -m unittest test_ladhe_rsa  # all 11 tests should pass
+> bash demo_x509.sh                   # X.509 export + openssl
+> ```
+>
+> Rewrite of this guide for v3 is pending.
+>
+> --- ARCHIVE NOTE ADDED 2026-04-24 ---
+
 # Manual testing guide
 
 Hands-on walkthrough for every primitive in `ladhe_rsa.py`. Open a terminal in this folder and follow along.

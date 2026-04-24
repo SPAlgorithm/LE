@@ -1,13 +1,13 @@
-# Ladhe-RSA Certificates (experimental format)
+# Ladhe Certificates (experimental format)
 
-An experimental certificate format backed by Ladhe-RSA signatures, for **local testing and demonstrations only.**
+An experimental certificate format backed by Ladhe signatures, for **local testing and demonstrations only.**
 
 ---
 
 ## ⚠️ These are NOT yet X.509 certificates
 
-**Update (April 2026):** Ladhe-RSA now has an IANA-registered algorithm
-identifier — `1.3.6.1.4.1.65644.1.1` (`id-ladhe-rsa-signature`) — under
+**Update (April 2026):** Ladhe now has an IANA-registered algorithm
+identifier — `1.3.6.1.4.1.65644.1.1` (`id-ladhe-signature`) — under
 Private Enterprise Number **65644**. The OID is already embedded in every
 certificate this tool produces. See [OID_REGISTRY.md](OID_REGISTRY.md) and
 [ALGORITHM_SPEC.md](ALGORITHM_SPEC.md) for the full arc and ASN.1 module.
@@ -26,7 +26,7 @@ This format uses its own JSON-based structure wrapped in PEM markers (`-----BEGI
 | Demonstrating PKI flows | Real TLS / HTTPS |
 | Educational exercises | Apple Keychain or macOS code-signing (`codesign`) |
 | Prototype interop between Ladhe-aware tools | OpenSSL, GnuTLS, or any standards-compliant tool |
-| Showing what a Ladhe-RSA PKI would look like | Any production system |
+| Showing what a Ladhe PKI would look like | Any production system |
 
 Do not attempt to load these files into any system that expects X.509. They will be rejected, and rightly so.
 
@@ -68,8 +68,7 @@ Each `.cert.pem` file is a PEM-wrapped base64-encoded JSON object with this shap
   "public_key": {
     "algorithm":  "ladhe-sig-v1",
     "prime":      "123364601",
-    "commitment": "6e35f93a...",
-    "salt":       "a1b2c3..."
+    "h":          "6e35f93a..."
   },
   "extensions": {
     "basicConstraints": {"CA": false},
@@ -104,7 +103,7 @@ import ladhe_cert as LC
 ca_cert, ca_sk = LC.create_ca("Example Root CA", validity_days=3650)
 
 # Subject generates their own key pair
-subject_pk, subject_sk = LR.keygen(min_prime_bits=24)
+subject_pk, subject_sk = LR.keygen(up1=5)
 
 # CA issues
 subject_cert = LC.issue_certificate(
@@ -163,11 +162,11 @@ Any of these could be added incrementally. This file format is versioned (`"vers
 
 ## Path to real-world interoperability
 
-If Ladhe-RSA's hardness assumption survives cryptanalysis and the paper is peer-reviewed:
+If Ladhe's hardness assumption survives cryptanalysis and the paper is peer-reviewed:
 
-1. **✅ Obtain an OID** — done. IANA PEN 65644 (April 2026); `id-ladhe-rsa-signature` is `1.3.6.1.4.1.65644.1.1`.
+1. **✅ Obtain an OID** — done. IANA PEN 65644 (April 2026); `id-ladhe-signature` is `1.3.6.1.4.1.65644.1.1`.
 2. **Publish an Internet-Draft / RFC** specifying the ASN.1 encoding of the public key and signature
-3. **Implement in OpenSSL** (or a provider plugin) so standard tools can generate and verify X.509 Ladhe-RSA certificates
+3. **Implement in OpenSSL** (or a provider plugin) so standard tools can generate and verify X.509 Ladhe certificates
 4. **Get it on CAB Forum's list** of approved signature algorithms for web PKI
 
 Steps 2–3 take one to two years typically. Step 4 takes longer. Before any of that, the cryptanalysis must withstand community scrutiny — which is why the paper and this implementation lead with a challenge, not a claim.
@@ -176,7 +175,7 @@ Steps 2–3 take one to two years typically. Step 4 takes longer. Before any of 
 
 ## Security note (again)
 
-The Sigma protocol used for the underlying signatures is a **simplified prototype** — see the top-level `README.md` for the list of known limitations. Do not use these certificates to protect real data, real identity, or real documents. When cryptography is at stake, "demo only" means demo only.
+The underlying Ladhe signature is **one-time** — a key pair can safely sign exactly one document. See the top-level `README.md` for the full list of known limitations. Do not use these certificates to protect real data, real identity, or real documents. When cryptography is at stake, "demo only" means demo only.
 
 ---
 

@@ -1,19 +1,19 @@
 """
 ladhe_cert.py — Experimental certificate format backed by
-Ladhe-RSA signatures.
+Ladhe signatures.
 
 This is NOT yet an X.509 certificate. As of April 2026 the
 signature algorithm has a registered OID — 1.3.6.1.4.1.65644.1.1
-(id-ladhe-rsa-signature) under IANA PEN 65644 — but full X.509
+(id-ladhe-signature) under IANA PEN 65644 — but full X.509
 interop still requires ASN.1 DER encoding and an OpenSSL provider
 plugin, both of which are future work. For now, this format is a
 self-contained JSON-based structure (with the OID embedded in
 every certificate and signature) suitable for:
 
     * Local testing
-    * Demonstrating what a Ladhe-RSA PKI would look like
+    * Demonstrating what a Ladhe PKI would look like
     * Educational purposes
-    * Prototype interop between Ladhe-RSA-aware tools
+    * Prototype interop between Ladhe-aware tools
 
 It is NOT suitable for:
 
@@ -44,8 +44,8 @@ CERT_VERSION = 1
 # is the globally unique identifier registered under IANA PEN 65644
 # (LESecure AI / SPAlgorithm). See OID_REGISTRY.md for the full arc.
 CERT_ALGORITHM = "ladhe-sig-v1"
-CERT_ALGORITHM_OID = "1.3.6.1.4.1.65644.1.1"       # id-ladhe-rsa-signature
-PUBLIC_KEY_OID     = "1.3.6.1.4.1.65644.1.2"       # id-ladhe-rsa-publicKey
+CERT_ALGORITHM_OID = "1.3.6.1.4.1.65644.1.1"       # id-ladhe-signature
+PUBLIC_KEY_OID     = "1.3.6.1.4.1.65644.1.2"       # id-ladhe-publicKey
 CERT_PROFILE_OID   = "1.3.6.1.4.1.65644.2.1"       # id-ladhe-cert-v1
 PEM_BEGIN = "-----BEGIN LADHE CERTIFICATE-----"
 PEM_END   = "-----END LADHE CERTIFICATE-----"
@@ -64,7 +64,7 @@ class LadheCertificate:
     subject: dict                     # e.g. {"CN": "alice@example.com"}
     not_before: str                   # ISO 8601
     not_after: str                    # ISO 8601
-    public_key: dict                  # {"algorithm", "prime", "commitment", "salt"}
+    public_key: dict                  # {"algorithm", "algorithm_oid", "prime", "h"}
     extensions: dict                  # arbitrary dict
     signature: dict = field(
         default_factory=lambda: {"algorithm": CERT_ALGORITHM, "value": ""}
@@ -110,8 +110,7 @@ class LadheCertificate:
         pk = self.public_key
         return LR.PublicKey(
             prime=int(pk["prime"]),
-            commitment=bytes.fromhex(pk["commitment"]),
-            salt=bytes.fromhex(pk["salt"]),
+            h=bytes.fromhex(pk["h"]),
         )
 
 
@@ -123,8 +122,7 @@ def encode_private_key(sk: LR.PrivateKey) -> str:
     demo only; do not use for real keys."""
     d = {
         "prime": str(sk.prime),
-        "witness": [str(x) for x in sk.witness],
-        "salt": sk.salt.hex(),
+        "primes": [str(x) for x in sk.primes],
     }
     raw = json.dumps(d, sort_keys=True, separators=(",", ":"))
     encoded = base64.b64encode(raw.encode("utf-8")).decode("ascii")
@@ -145,8 +143,7 @@ def decode_private_key(text: str) -> LR.PrivateKey:
     d = json.loads(raw)
     return LR.PrivateKey(
         prime=int(d["prime"]),
-        witness=tuple(int(x) for x in d["witness"]),
-        salt=bytes.fromhex(d["salt"]),
+        primes=tuple(int(x) for x in d["primes"]),
     )
 
 
@@ -158,8 +155,7 @@ def _pk_to_dict(pk: LR.PublicKey) -> dict:
         "algorithm": CERT_ALGORITHM,
         "algorithm_oid": PUBLIC_KEY_OID,
         "prime": str(pk.prime),
-        "commitment": pk.commitment.hex(),
-        "salt": pk.salt.hex(),
+        "h": pk.h.hex(),
     }
 
 
@@ -170,10 +166,10 @@ def _iso_now() -> str:
 def create_ca(
     common_name: str,
     validity_days: int = 3650,
-    min_prime_bits: int = 24,
+    up1: int = 8,
 ) -> Tuple[LadheCertificate, LR.PrivateKey]:
     """Create a self-signed CA certificate + its private key."""
-    pk, sk = LR.keygen(min_prime_bits=min_prime_bits)
+    pk, sk = LR.keygen(up1=up1)
 
     now = datetime.now(timezone.utc).replace(microsecond=0)
     cert = LadheCertificate(

@@ -1,9 +1,9 @@
-# Algorithm Identifier Specification: Ladhe-RSA Signature Scheme
+# Algorithm Identifier Specification: Ladhe Signature Scheme (v3)
 
-**Draft** — SPAlgorithm, April 2026  
-**Authors**: Shubham Ladhe, Pankaj Ladhe  
-**Contact**: spalgorithm@gmail.com  
-**Paper**: https://zenodo.org/records/19680322  
+**Draft** — SPAlgorithm, April 2026
+**Authors**: Shubham Ladhe, Pankaj Ladhe
+**Contact**: spalgorithm@gmail.com
+**Paper**: `SP_Paper_v3.pdf` (this folder); Zenodo: https://zenodo.org/records/19680322
 **Implementation**: https://github.com/SPAlgorithm/LE
 
 ---
@@ -11,220 +11,200 @@
 ## Abstract
 
 This document specifies the algorithm identifiers, key formats, and
-signature formats for the Ladhe-RSA signature scheme, a candidate
-post-quantum signature scheme based on the Ladhe Decomposition Problem
-(LDP). It follows the style of IETF algorithm identifier specifications
-(cf. RFC 8410, RFC 8420) to facilitate future standardisation efforts.
+signature formats for the **Ladhe signature scheme**, a one-time
+hash-based signature within the post-quantum hash-based family
+(alongside SPHINCS+ and Lamport). Security reduces to preimage
+resistance of SHA-256. The specification follows the style of IETF
+algorithm identifier drafts (cf. RFC 8410, RFC 8420) to facilitate
+future standardisation efforts.
 
-This is a **research draft**. The hardness of LDP is unproven and
-awaits community cryptanalysis. This specification is published to
-enable interoperability among experimental implementations and to
-invite formal review.
+This is a **research draft**. Community cryptanalysis has not yet
+occurred. The specification is published to enable interoperability
+among experimental implementations and to invite formal review.
 
 ---
 
 ## 1. Background
 
-The Ladhe Decomposition Problem (LDP) asks: given a prime P and a
-hash commitment h = H(salt || encode(a, b, c)), find a triple
-(a, b, c) of positive integers such that a + b + c = P and the
-commitment matches. The Ladhe-RSA signature scheme is a Fiat-Shamir
-transform of a Sigma protocol whose soundness relies on LDP hardness.
+The Ladhe scheme is defined in the companion paper
+(`SP_Paper_v3.pdf`). Informally:
 
-Full mathematical treatment: see the companion paper (§2–§4).
+- A **public key** is `(P, h)` where `P` is a prime and
+  `h = SHA-256(enc(W))` for a compressed witness `W`.
+- A **private key** is a sorted tuple
+  `(p_1 < p_2 < ... < p_k)` of distinct odd primes with `k` odd
+  and `sum(p_i) = P`.
+- The compressed witness `W` is formed by **indexed-pair compression**
+  of the private primes.
+- A **signature** reveals the private decomposition once; the scheme
+  is one-time (Merkle aggregation for many-time is sketched in
+  paper §6).
+
+The **Ladhe Decomposition Problem (LDP)** — given `(P, h)`, recover a
+valid prime decomposition — reduces to SHA-256 preimage resistance
+(paper §4, Proposition 1).
 
 ---
 
 ## 2. OID Assignments
 
 IANA Private Enterprise Number **65644** assigned 2026-04-23 to
-LESecure AI / SPAlgorithm.
+LeSecure.
 
 ```
-id-ladhe-rsa-signature  ::=  1.3.6.1.4.1.65644.1.1
-id-ladhe-rsa-publicKey  ::=  1.3.6.1.4.1.65644.1.2
-id-ladhe-cert-v1        ::=  1.3.6.1.4.1.65644.2.1
+id-ladhe-signature  ::=  1.3.6.1.4.1.65644.1.1
+id-ladhe-publicKey  ::=  1.3.6.1.4.1.65644.1.2
+id-ladhe-cert-v1    ::=  1.3.6.1.4.1.65644.2.1
 ```
 
-Full OID arc and ASN.1 module: see [OID_REGISTRY.md](OID_REGISTRY.md).
+Full OID arc: see [OID_REGISTRY.md](OID_REGISTRY.md).
 
 ---
 
 ## 3. Public Key Format
 
-A Ladhe-RSA public key consists of three values:
-
-| Field        | Type        | Description                                    |
-|--------------|-------------|------------------------------------------------|
-| `prime`      | INTEGER     | The Ladhe prime P                              |
-| `commitment` | OCTET STRING| SHA-256(salt \|\| encode(witness)), 32 bytes   |
-| `salt`       | OCTET STRING| 32-byte random salt used in the commitment     |
-
-### 3.1 Witness Encoding
-
-The witness (a, b, c) is encoded as follows before hashing:
-
-```
-encoded := byte(len(parts))       -- 1 byte: number of parts (3 or 4)
-        || for each part p:
-             uint16be(byte_len(p)) -- 2 bytes: length of p in bytes
-          || bytes_be(p)           -- p in big-endian, minimal length
-```
-
-### 3.2 ASN.1
-
 ```asn1
-LadheRSAPublicKey ::= SEQUENCE {
-    prime       INTEGER,
-    commitment  OCTET STRING (SIZE(32)),
-    salt        OCTET STRING (SIZE(32))
+LadhePublicKey ::= SEQUENCE {
+    prime  INTEGER,            -- the public prime P
+    h      OCTET STRING        -- SHA-256 of the compressed witness
+                               -- (32 bytes for SHA-256)
 }
 ```
 
-### 3.3 SubjectPublicKeyInfo (for X.509 use, once OID is finalised)
+For X.509 use:
 
 ```asn1
 SubjectPublicKeyInfo  ::=  SEQUENCE {
     algorithm   AlgorithmIdentifier {
-                    algorithm  id-ladhe-rsa-publicKey,
-                    parameters absent
+                    algorithm  id-ladhe-publicKey,
+                    parameters NULL
                 },
-    subjectPublicKey  BIT STRING  -- DER of LadheRSAPublicKey
+    subjectPublicKey  BIT STRING    -- DER of LadhePublicKey
 }
 ```
 
 ---
 
-## 4. Signature Format
+## 4. Indexed-Pair Compression and Encoding
 
-A Ladhe-RSA signature is the result of a 64-round Fiat-Shamir
-transform of the Sigma protocol.
+### 4.1 Indexed-pair compression
 
-### 4.1 Sigma Round
-
-Each round consists of:
-
-- **Commitment**: (a_commit, aux) where  
-  `a_commit = SHA-256(r || encode(witness))`  
-  `aux      = SHA-256(r)`  
-  and r is a 32-byte random blinding value.
-
-- **Challenge**: a single bit c ∈ {0, 1}, derived deterministically
-  from `SHA-256(pk || message || a_commit_0 || aux_0 || ... )`.
-
-- **Response**:
-  - If c = 0: reveal r. Verifier checks `SHA-256(r) = aux`.
-  - If c = 1: reveal `r XOR encode(witness)` and the commitment salt.
-    Verifier checks the opening length against the public key.
-
-### 4.2 Fiat-Shamir Challenge Derivation
-
-Challenge bits are derived from a SHA-256 hash expanded via a
-counter-based PRF:
+Given a sorted tuple `(p_1, p_2, ..., p_k)` with `k` odd:
 
 ```
-seed  = SHA-256( pk_bytes || uint32be(len(msg)) || msg
-               || a_commit_0 || aux_0 || ... || a_commit_63 || aux_63 )
-
-block_i = SHA-256(seed || uint32be(i))
-
-challenges = bits(block_0) || bits(block_1) || ...   (first 64 bits)
+W = ( p_1 + p_2, p_3 + p_4, ..., p_{k-2} + p_{k-1}, p_k )
 ```
 
-### 4.3 Binary Wire Format
+`W` has `m = (k+1)/2` components. The first `m-1` are even (sums of
+two odd primes); the last is odd (the unpaired prime `p_k`).
+
+### 4.2 Canonical encoding
+
+```
+enc(W) :=  0x01                        -- version byte
+        || uint8(m)                    -- 1 byte: tuple length
+        || for each w_i in W:
+               uint16be(byte_len(w_i)) -- 2 bytes
+            || w_i                     -- minimal big-endian of w_i
+```
+
+### 4.3 Hash commitment
+
+```
+h = SHA-256( enc(W) )
+```
+
+Output `h` is 32 bytes.
+
+---
+
+## 5. Signature Format
+
+A Ladhe one-time signature reveals the private decomposition.
+
+```asn1
+LadheSignature ::= SEQUENCE {
+    primes   SEQUENCE OF INTEGER,    -- the k private odd primes,
+                                     -- sorted ascending
+    message  OCTET STRING            -- the signed message
+}
+```
+
+### 5.1 Binary wire format (reference implementation)
 
 ```
 signature_bytes :=
-    uint32be(rounds)                   -- 4 bytes, default 64
-    for i in 0..rounds-1:
-        uint16be(len(a_commit_i))      -- 2 bytes
-        a_commit_i                     -- 32 bytes
-        uint16be(len(aux_i))           -- 2 bytes
-        aux_i                          -- 32 bytes
-    for i in 0..rounds-1:
-        uint32be(len(opening_i))       -- 4 bytes
-        opening_i
-        uint16be(len(salt_i))          -- 2 bytes (0 if challenge=0)
-        salt_i                         -- 32 bytes, or absent
-```
-
-### 4.4 ASN.1
-
-```asn1
-LadheRSASignature ::= SEQUENCE {
-    rounds     INTEGER DEFAULT 64,
-    commits    SEQUENCE OF SigmaCommit,
-    responses  SEQUENCE OF SigmaResponse
-}
-
-SigmaCommit ::= SEQUENCE {
-    aCommit  OCTET STRING,
-    aux      OCTET STRING
-}
-
-SigmaResponse ::= SEQUENCE {
-    opening  OCTET STRING,
-    salt     OCTET STRING OPTIONAL
-}
+    uint8(k)                      -- 1 byte: number of primes (odd)
+    for i in 0..k-1:
+        uint16be(byte_len(p_i))   -- 2 bytes
+        p_i_big_endian
+    uint32be(message_length)      -- 4 bytes
+    message_bytes
 ```
 
 ---
 
-## 5. Security Parameters
+## 6. Verification
 
-| Parameter           | Research value | Target production value |
-|---------------------|---------------|------------------------|
-| Prime bit-length    | 8–30 bits     | ≥ 2048 bits            |
-| Fiat-Shamir rounds  | 64            | 128+ (≥ 128-bit sound) |
-| Hash function       | SHA-256       | SHA-256 or SHA-3-256   |
-| Salt length         | 256 bits      | 256 bits               |
-| Soundness error     | 2⁻⁶⁴          | 2⁻¹²⁸                  |
-
----
-
-## 6. Known Limitations and Open Problems
-
-1. **LDP hardness** — no reduction from a classically or quantumly
-   hard problem is known. Community cryptanalysis is invited.
-
-2. **Simplified Sigma protocol** — the challenge-1 branch reveals the
-   commitment salt, which at toy parameter sizes enables offline
-   brute-force of the witness. A production scheme must use
-   MPC-in-the-head (IKOS 2007) or an equivalent ZK compiler.
-
-3. **No formal ZK proof** — the scheme is not proven zero-knowledge.
-   The paper (§7) identifies this as future work.
-
-4. **Parameter sizes** — the empirical dataset (LadheConjecture.txt)
-   uses 8–30 bit primes. Real security requires at least 2048-bit
-   primes; generation tooling for large primes is future work.
+```
+Verify(pk = (P, h), m, sigma):
+    1. parse sigma into (p_1, ..., p_k, m')
+    2. reject if m != m'
+    3. reject if k < 3 or k is even
+    4. reject if any p_i is not prime (Miller-Rabin)
+    5. reject if the p_i are not all distinct and ascending
+    6. reject if sum(p_i) != P
+    7. compute W by indexed-pair compression of (p_1, ..., p_k)
+    8. reject if SHA-256(enc(W)) != h
+    9. otherwise, accept
+```
 
 ---
 
-## 7. IANA Considerations
+## 7. Security Parameters
+
+| Parameter        | Reference value | Target production       |
+|------------------|-----------------|-------------------------|
+| Security param κ | 256 bits        | 256                     |
+| Hash function    | SHA-256         | SHA-256 or SHA3-256     |
+| Prime P bit-len  | small (toy)     | ≥ 2048 (open problem)   |
+| k (odd)          | 3, 5, or 7      | unchanged               |
+| Preimage attack  | 2²⁵⁶ classical / 2¹²⁸ Grover | same |
+
+---
+
+## 8. Known Limitations (Summary)
+
+1. **One-time only.** A fresh key pair must be used for each message.
+   Merkle-aggregation for many-time is planned (paper §6).
+2. **Slow KeyGen at cryptographic parameter sizes.** Random-trial
+   decomposition search; efficient alternatives are open.
+3. **Community cryptanalysis has not yet occurred.**
+4. **Not side-channel or constant-time hardened.** Research
+   reference only.
+
+---
+
+## 9. IANA Considerations
 
 IANA Private Enterprise Number **65644** was assigned on 2026-04-23
-under RFC 9371 procedures. All OID values in §2 are now concrete.
-This document will be submitted to the IETF LAMPS Working Group
-for awareness once community cryptanalysis has begun.
+under RFC 9371 procedures. All OID values in §2 are concrete.
+This specification may be submitted to the IETF LAMPS Working Group
+for awareness once community cryptanalysis begins.
 
 ---
 
-## 8. References
+## 10. References
 
-- **[LDP26]** Shubham Ladhe, Pankaj Ladhe. "The Ladhe Decomposition
-  Problem: A Candidate Post-Quantum Hardness Assumption on Additive
-  Prime Structure, with an Identification Scheme." 2026.
-  https://zenodo.org/records/19680322
-
+- **[LadheV3]** Shubham Ladhe, Pankaj Ladhe. "Ladhe Signatures:
+  Compact Hash-Based Signatures from Additive Prime Decompositions."
+  2026 — this folder's `SP_Paper_v3.pdf`.
 - **[RFC8410]** S. Josefsson, J. Schaad. "Algorithm Identifiers for
   Ed25519, Ed448, X25519, and X448." RFC 8410, 2018.
-
 - **[RFC9371]** M. Cotton. "Registration Procedures for Private
   Enterprise Numbers (PENs)." RFC 9371, 2023.
-
-- **[IKOS07]** Y. Ishai, E. Kushilevitz, R. Ostrovsky, A. Sahai.
-  "Zero-knowledge from secure multiparty computation." STOC 2007.
-
-- **[FS87]** A. Fiat, A. Shamir. "How to Prove Yourself: Practical
-  Solutions to Identification and Signature Problems." CRYPTO 1986.
+- **[SPHINCS+]** D. J. Bernstein et al. "The SPHINCS+ Signature
+  Framework." ACM CCS 2019.
+- **[Vinogradov]** I. M. Vinogradov, "Representation of an Odd
+  Number as a Sum of Three Primes," 1937. Helfgott (2013) removed
+  the sufficiency condition.

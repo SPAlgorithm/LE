@@ -1,8 +1,8 @@
-# Ladhe-RSA
+# Ladhe
 
-Reference implementation of the identification and signature scheme from the paper:
+Reference implementation of the signature scheme from the paper:
 
-> **The Ladhe Decomposition Problem: A Candidate Post-Quantum Hardness Assumption on Additive Prime Structure, with an Identification Scheme**
+> **Ladhe Signatures: Compact Hash-Based Signatures from Additive Prime Decompositions**
 > Shubham Ladhe, Pankaj Ladhe (2026)
 > Zenodo: [10.5281/zenodo.19680322](https://zenodo.org/records/19680322)
 > Dataset: [10.5281/zenodo.19354450](https://zenodo.org/records/19354450)
@@ -13,12 +13,18 @@ Reference implementation of the identification and signature scheme from the pap
 
 This repository exists to accompany the paper and **enable community cryptanalysis**. Do not use it to protect real data.
 
-Specifically:
+**What Ladhe is** (honestly):
 
-- The hardness assumption (LDP) is **unproven**. It is proposed as a candidate and awaits community analysis.
-- The Sigma protocol is a **simplified commit-and-open variant**, not a tight zero-knowledge construction. A production scheme would use MPC-in-the-head (IKOS 2007) or a zk-SNARK framework.
-- **No side-channel resistance**, no constant-time operations, no memory hygiene.
-- At toy parameter sizes (which the accompanying dataset supports — 8–30 bit primes), the challenge-1 branch of the Sigma protocol leaks enough information for an offline brute-force attack on the witness. At real cryptographic sizes this is infeasible, but the code is still not hardened.
+- A **one-time hash-based signature scheme** in the same family as Lamport, SPHINCS+, and SLH-DSA.
+- Security **reduces to SHA-256 preimage resistance** — the same standard assumption as SPHINCS+. There is **no new hardness assumption**.
+- The novelty is in the *structure* of the hash preimage: the private key is a sorted tuple of distinct odd primes summing to the public prime P. This enables dramatically smaller signatures (~100 bytes vs SPHINCS+'s ~17 KB) at the cost of significantly slower KeyGen.
+
+**Known limitations:**
+
+- **One-time only.** Signing two messages with the same key leaks the private key. The paper (§6) sketches a Merkle-aggregated many-time extension; this is not yet implemented.
+- **Slow KeyGen.** Random-trial decomposition search. Milliseconds for small primes (digits ≤ 10); ~300ms at 50-digit primes; minutes to hours at cryptographic parameter sizes. Efficient KeyGen is open work.
+- **No side-channel resistance**, no constant-time operations.
+- **Community cryptanalysis has not yet occurred.** The scheme is released to invite it.
 
 **If you find a break, please open an issue or email the authors.** That's the point.
 
@@ -28,14 +34,13 @@ Specifically:
 
 | Function | Purpose |
 |---|---|
-| `load_dataset()` | Parse `LadheConjecture.txt` into structured entries |
+| `keygen(up1)` | Sample a (public, private) key pair for a prime of `up1` decimal digits |
+| `sign(message, sk)` | Produce a one-time signature (reveals the prime decomposition) |
+| `verify(message, sig, pk)` | Verify a signature against the public key |
 | `is_prime(n)` | Miller-Rabin primality test |
-| `hash_commitment(witness, salt)` | SHA-256-based Φ₁ commitment |
-| `keygen()` | Sample a (public, private) key pair |
-| `run_identification(pk, sk)` | Interactive Sigma protocol |
-| `sign(message, sk, pk)` | Non-interactive Fiat-Shamir signature |
-| `verify(message, signature, pk)` | Verify a signature |
-| `generate_ldp_challenge(bits)` | Produce a fresh LDP instance for cryptanalysts |
+| `pair_compress(primes)` | Indexed-pair compression of the private decomposition |
+| `encode_W(W)` | Canonical byte encoding of a compressed witness |
+| `generate_ldp_challenge(bits)` | Produce a fresh (P, h) challenge for cryptanalysts |
 
 The implementation is deliberately self-contained in a single file ([`ladhe_rsa.py`](./ladhe_rsa.py)) so it's easy to audit end-to-end.
 
@@ -59,44 +64,43 @@ cd LE/ladhe-rsa
 python3 ladhe_rsa.py demo
 ```
 
-The dataset file `LadheConjecture.txt` is bundled in this folder, so the demo runs out of the box after a clone. If you want to use your own dataset, pass its path to `load_dataset()`. The canonical version of the dataset is archived at [Zenodo 10.5281/zenodo.19354450](https://zenodo.org/records/19354450).
+The empirical dataset (`LadheConjecture.txt`, 1,620+ verified key pairs) is bundled for reference and cryptanalysis; the scheme itself does not consult the dataset at run time. The canonical dataset copy is archived at [Zenodo 10.5281/zenodo.19354450](https://zenodo.org/records/19354450).
 
 ---
 
 ## Quick start
 
-**Want to reproduce everything from the companion video?**
-See [`DEMO.md`](./DEMO.md), or just run:
+**Want to run everything at once?** See [`DEMO.md`](./DEMO.md) for a command-by-command breakdown, or just run:
 
 ```bash
 chmod +x demo.sh && ./demo.sh
 ```
 
-For deeper step-by-step testing — negative cases, benchmarks, cryptanalysis exercises — see [`MANUAL_TESTING.md`](./MANUAL_TESTING.md).
+This runs 6 demos end-to-end: full scheme demo, timing benchmark, LDP challenge, unit tests, sanity check, and the software-signing example.
 
-### Sign a message
+### Sign a message (one-time)
 
 ```python
 import ladhe_rsa as LR
 
-# One-time key setup
-pk, sk = LR.keygen()
+# One-time key setup (5-digit prime; quick for demo)
+pk, sk = LR.keygen(up1=5)
 
-# Sign
+# Sign ONCE — signing twice with the same key leaks the secret.
 message = b"software-release-v1.0.0.sha256:abc123..."
-sig = LR.sign(message, sk, pk)
+sig = LR.sign(message, sk)
 
-# Verify (using only the public key)
+# Verify using only the public key
 assert LR.verify(message, sig, pk)
 ```
 
-### Identification (interactive)
+### Run the benchmark
 
-```python
-pk, sk = LR.keygen()
-ok = LR.run_identification(pk, sk, rounds=32)
-# Soundness error: 2^-32 after 32 rounds
+```bash
+python3 ladhe_rsa.py bench
 ```
+
+Outputs measured KeyGen / Sign / Verify times and signature sizes at several prime scales.
 
 ### Run the full demo
 
@@ -104,7 +108,7 @@ ok = LR.run_identification(pk, sk, rounds=32)
 python3 ladhe_rsa.py demo
 ```
 
-Output walks through key generation, identification, signing, verification, tampered-message rejection, and an LDP challenge.
+Output walks through key generation, signing, verification, tampered-message rejection, and a fresh LDP challenge.
 
 ### Run the tests
 
@@ -124,7 +128,7 @@ python3 example_code_signing.py
 
 ## Why signatures and not encryption?
 
-The paper **does not propose** an encryption scheme. An earlier draft of the work did — we withdrew it as unsound. This implementation only provides signatures and identification, which are what the current paper specifies.
+The paper **does not propose** an encryption scheme. This implementation provides one-time hash-based signatures, which is what the current paper specifies.
 
 Digital signatures answer *"who really wrote this, unmodified?"* — and that's the primitive behind:
 
@@ -135,7 +139,7 @@ Digital signatures answer *"who really wrote this, unmodified?"* — and that's 
 - WebAuthn / passkeys
 - Document signing
 
-None of those need encryption. If Ladhe-RSA signatures ever mature into a production-grade scheme, these are the deployment targets.
+None of those need encryption. If Ladhe signatures ever mature into a production-grade scheme, these are the deployment targets.
 
 ---
 
@@ -146,17 +150,19 @@ The code exposes a fresh LDP challenge generator:
 ```python
 import ladhe_rsa as LR
 
-P, h, salt = LR.generate_ldp_challenge(bits=32)
-# Your task: find (a, b, c) with
-#   a + b + c = P
-#   sha256(salt || canonical_encode(a, b, c)) == h
+P, h = LR.generate_ldp_challenge(bits=32)
+# Your task: find distinct odd primes (p_1 < ... < p_k), k odd,
+#   such that sum(p_i) = P  AND
+#   sha256(encode_W(pair_compress(p_1,...,p_k))) == h
 ```
 
-The encoding is defined in `ladhe_rsa._encode_witness`. If you break any of the following, the authors would like to know:
+The canonical encoding is `LR.encode_W`; the pair compression is `LR.pair_compress`. The paper (§3.2–§3.3) defines both exactly.
 
-1. **LDP itself** — given `(P, h, salt)`, recover a valid witness in time polynomial in `log P` (classically or quantumly).
-2. **The simplified Sigma protocol** — given a public key and polynomially-many valid transcripts, forge a new one without knowing the witness.
-3. **The Fiat-Shamir signature** — existentially forge a signature for a message you did not legitimately sign.
+If you break any of the following, the authors would like to know:
+
+1. **LDP itself** — given `(P, h)`, recover a valid decomposition in time asymptotically faster than the brute-force bound on the secret space.
+2. **A structural shortcut** — given the scheme's arithmetic structure (distinct odd primes, odd `k`, ascending order), a recovery algorithm faster than hash preimage on SHA-256.
+3. **The signature** — existentially forge a signature for a message on a fresh key pair without ever seeing a legitimate signature.
 
 Please open an issue with a concrete demonstration.
 
@@ -166,12 +172,11 @@ Please open an issue with a concrete demonstration.
 
 | Limitation | Severity | Mitigation |
 |---|---|---|
-| Simplified Sigma protocol leaks information at toy sizes | Medium | At real κ ≥ 256 sizes, brute force is infeasible; still, production requires MPC-in-the-head |
-| No formal ZK proof | Medium | Future work; see paper §4 and §7 |
-| LDP hardness unproven | **High** | Core assumption; awaits community analysis |
-| Dataset entries may be constructively generated | Medium | See paper §2, Open Problem #4 |
-| Non-constant-time | Low (for research use) | Not a production implementation |
-| SHA-256 as random oracle in proofs | Standard | Same assumption as most Fiat-Shamir schemes |
+| One-time only — signing twice leaks the private key | **High** | Use Merkle-aggregated many-time extension (paper §6) — not yet implemented |
+| Slow KeyGen at cryptographic sizes | **High** | Efficient decomposition search is open work (paper §8) |
+| Non-constant-time primality checks | Medium | Research reference only; production would need constant-time MR |
+| SHA-256 modelled as random oracle in proofs | Standard | Same assumption as every hash-based scheme |
+| No structural-attack analysis | Medium | Community cryptanalysis invited (paper §4) |
 
 ---
 
@@ -179,14 +184,25 @@ Please open an issue with a concrete demonstration.
 
 ```
 ladhe-rsa/
-├── ladhe_rsa.py              # main implementation
-├── test_ladhe_rsa.py         # unit tests
+├── ladhe_rsa.py              # core scheme: KeyGen, Sign, Verify
+├── ladhe_cert.py             # experimental certificate format
+├── ladhe_cert_cli.py         # CLI wrapper for cert operations
+├── ladhe_x509.py             # DER/PEM X.509 export (optional; needs asn1crypto)
+├── test_ladhe_rsa.py         # unit tests for the scheme
+├── test_ladhe_x509.py        # unit tests for X.509 export
 ├── example_code_signing.py   # realistic software-signing demo
+├── demo_cert.py              # end-to-end PKI demo script
+├── demo.sh                   # run the full suite of demos
+├── demo_x509.sh              # X.509 export + openssl parsing demo
 ├── LadheConjecture.txt       # empirical dataset (1,620+ entries)
-├── DEMO.md                   # commands from the companion video
-├── demo.sh                   # run all the video demos at once
-├── MANUAL_TESTING.md         # deeper testing + cryptanalysis guide
 ├── README.md                 # this file
+├── DEMO.md                   # quick-reference commands
+├── CERTIFICATES.md           # certificate-format details
+├── ALGORITHM_SPEC.md         # formal algorithm specification
+├── OID_REGISTRY.md           # IANA OID arc and ASN.1 module
+├── ROADMAP.md                # near, medium, and long-term goals
+├── MANUAL_TESTING.md         # deeper cryptanalysis walkthrough (v1 — archived)
+├── pyproject.toml            # packaging (with [x509] extra)
 ├── LICENSE                   # CC BY 4.0
 └── .gitignore
 ```
@@ -198,19 +214,15 @@ ladhe-rsa/
 If you build on this paper or implementation, please cite:
 
 ```bibtex
-@misc{ladhe2026ldp,
-  author       = {Shubham Ladhe and Pankaj Ladhe},
-  title        = {{The Ladhe Decomposition Problem: A Candidate Post-Quantum
-                  Hardness Assumption on Additive Prime Structure, with an
-                  Identification Scheme}},
-  year         = {2026},
-  doi          = {10.5281/zenodo.19680322},
-  url          = {https://zenodo.org/records/19680322},
-  note         = {IACR ePrint: \url{https://eprint.iacr.org/2026/NNNN}},
+@misc{ladhe2026signatures,
+  author = {Shubham Ladhe and Pankaj Ladhe},
+  title  = {{Ladhe Signatures: Compact Hash-Based Signatures
+             from Additive Prime Decompositions}},
+  year   = {2026},
+  doi    = {10.5281/zenodo.19680322},
+  url    = {https://zenodo.org/records/19680322},
 }
 ```
-
-(Replace `NNNN` with the real ePrint ID once the paper is approved.)
 
 ---
 
@@ -224,11 +236,11 @@ Code and paper are released under **Creative Commons Attribution 4.0 (CC BY 4.0)
 
 Contributions welcome, especially:
 
-- **Cryptanalysis**: attacks, breaks, reductions to known hard problems
-- **Formal security proofs** or disproofs
-- **MPC-in-the-head or zk-SNARK implementations** of a tight ZK Sigma protocol
-- **Better dataset generation** tooling or a formal characterisation of Φ
-- **Benchmarks** at real cryptographic parameter sizes
+- **Cryptanalysis**: structural shortcuts on LDP beyond generic hash preimage
+- **Efficient KeyGen**: constructive algorithms for the decomposition search at cryptographic prime sizes (currently the main barrier)
+- **Many-time extension**: implementation of the Merkle-aggregated variant sketched in the paper (§6)
+- **Constant-time / side-channel hardening** of primality checks
+- **Benchmarks** at larger parameter sizes and on different hardware
 - **Bindings** (Rust, C, JavaScript) once the Python reference is stable
 
 Please open an issue before starting significant work so we can coordinate.
@@ -238,11 +250,11 @@ Please open an issue before starting significant work so we can coordinate.
 ## Algorithm Identifier (OID)
 
 IANA Private Enterprise Number **65644** was registered to LeSecure on
-2026-04-23. The resulting OIDs for Ladhe-RSA are:
+2026-04-23. The resulting OIDs for Ladhe are:
 
 ```
-1.3.6.1.4.1.65644.1.1    id-ladhe-rsa-signature
-1.3.6.1.4.1.65644.1.2    id-ladhe-rsa-publicKey
+1.3.6.1.4.1.65644.1.1    id-ladhe-signature
+1.3.6.1.4.1.65644.1.2    id-ladhe-publicKey
 1.3.6.1.4.1.65644.2.1    id-ladhe-cert-v1
 ```
 
@@ -258,6 +270,11 @@ DER or PEM X.509 files that standard tools like `openssl asn1parse` and
 ```bash
 pip install "ladhe-rsa[x509]"
 
+# Bootstrap a CA and issue a cert (creates demo_pki/ the first time)
+python3 ladhe_cert_cli.py init-ca --cn "Example Root CA"
+python3 ladhe_cert_cli.py issue   --cn alice@example.com
+
+# Export the cert as X.509 PEM and inspect with OpenSSL
 python3 ladhe_cert_cli.py export-x509 \
     --cert demo_pki/alice.cert.pem \
     --out  alice.x509.pem \
@@ -265,8 +282,8 @@ python3 ladhe_cert_cli.py export-x509 \
 
 openssl x509 -in alice.x509.pem -text -noout
 # Signature Algorithm: 1.3.6.1.4.1.65644.1.1
-# Issuer: CN=Acme Quantum CA
-# Subject: CN=alice@acme.com
+# Issuer: CN=Example Root CA
+# Subject: CN=alice@example.com
 # Public Key Algorithm: 1.3.6.1.4.1.65644.1.2
 ```
 

@@ -1,11 +1,11 @@
 [build-system]
 requires = ["setuptools>=68"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "ladhe-rsa"
-version = "0.1.0"
-description = "Reference implementation of the Ladhe-RSA post-quantum signature scheme"
+version = "0.3.0"
+description = "Ladhe: a one-time hash-based signature scheme from additive prime decompositions"
 readme = "README.md"
 license = { text = "CC-BY-4.0" }
 authors = [
@@ -40,9 +40,13 @@ Dataset     = "https://zenodo.org/records/19354450"
 [project.scripts]
 ladhe-rsa = "ladhe_rsa:main"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["ladhe_rsa*", "ladhe_cert*"]
+[tool.setuptools]
+py-modules = [
+    "ladhe_rsa",
+    "ladhe_cert",
+    "ladhe_cert_cli",
+    "ladhe_x509",
+]
 
 [tool.setuptools.package-data]
 "*" = ["LadheConjecture.txt"]

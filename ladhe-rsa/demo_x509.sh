@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# demo_x509.sh — show Ladhe-RSA certificates parseable by standard
+# demo_x509.sh — show Ladhe certificates parseable by standard
 # X.509 tooling (openssl).
 #
 # Demonstrates the three things this buys us:
@@ -77,7 +77,7 @@ cat <<EOF
 
 ${BOLD}What this demo proved:${RESET}
 
-  * Ladhe-RSA certificates can be exported in DER or PEM X.509 format.
+  * Ladhe certificates can be exported in DER or PEM X.509 format.
   * OpenSSL parses the full ASN.1 structure — issuer, subject,
     validity, serial number — all round-trip correctly.
   * Our IANA-registered OIDs appear in the output:
@@ -87,7 +87,7 @@ ${BOLD}What this demo proved:${RESET}
 ${BOLD}What is still ahead:${RESET}
 
   OpenSSL prints "Unable to load Public Key" because it doesn't yet
-  know how to interpret our custom Ladhe-RSA public-key bytes. That
+  know how to interpret our custom Ladhe public-key bytes. That
   is the OpenSSL provider plugin — the next engineering milestone —
   after which openssl verify will also work end-to-end.
 

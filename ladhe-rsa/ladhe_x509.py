@@ -1,11 +1,11 @@
-"""ladhe_x509.py — DER-encoded X.509 export for Ladhe-RSA certificates.
+"""ladhe_x509.py — DER-encoded X.509 export for Ladhe certificates.
 
 Converts LadheCertificate objects (the internal JSON format used by
 ladhe_cert.py) into standards-compliant DER / PEM X.509 certificates
 bearing the IANA-registered OIDs:
 
-    1.3.6.1.4.1.65644.1.1   id-ladhe-rsa-signature
-    1.3.6.1.4.1.65644.1.2   id-ladhe-rsa-publicKey
+    1.3.6.1.4.1.65644.1.1   id-ladhe-signature
+    1.3.6.1.4.1.65644.1.2   id-ladhe-publicKey
 
 Once written, the resulting .der / .pem files can be inspected by
 standard tools:
@@ -41,8 +41,8 @@ import ladhe_cert as LC
 
 
 # OIDs — must match OID_REGISTRY.md
-OID_LADHE_SIG = "1.3.6.1.4.1.65644.1.1"   # id-ladhe-rsa-signature
-OID_LADHE_PK  = "1.3.6.1.4.1.65644.1.2"   # id-ladhe-rsa-publicKey
+OID_LADHE_SIG = "1.3.6.1.4.1.65644.1.1"   # id-ladhe-signature
+OID_LADHE_PK  = "1.3.6.1.4.1.65644.1.2"   # id-ladhe-publicKey
 OID_LADHE_CERT_V1 = "1.3.6.1.4.1.65644.2.1"
 
 
@@ -51,9 +51,9 @@ OID_LADHE_CERT_V1 = "1.3.6.1.4.1.65644.2.1"
 # ObjectIdentifier map (so .native returns a friendly name, not the
 # raw dotted form). Purely cosmetic; the DER output is unchanged.
 # ----------------------------------------------------------------------
-keys.PublicKeyAlgorithmId._map[OID_LADHE_PK] = "ladhe_rsa"
+keys.PublicKeyAlgorithmId._map[OID_LADHE_PK] = "ladhe"
 keys.PublicKeyAlgorithmId._reverse_map = None
-algos.SignedDigestAlgorithmId._map[OID_LADHE_SIG] = "ladhe_rsa_signature"
+algos.SignedDigestAlgorithmId._map[OID_LADHE_SIG] = "ladhe_signature"
 algos.SignedDigestAlgorithmId._reverse_map = None
 
 
@@ -107,35 +107,31 @@ class LadheASN1Certificate(core.Sequence):
 
 
 # ----------------------------------------------------------------------
-# LadheRSAPublicKey ::= SEQUENCE {
-#     prime       INTEGER,
-#     commitment  OCTET STRING,
-#     salt        OCTET STRING
+# LadhePublicKey ::= SEQUENCE {
+#     prime  INTEGER,       -- the public prime P
+#     h      OCTET STRING   -- SHA-256 of the compressed witness
 # }
 # ----------------------------------------------------------------------
-class LadheRSAPublicKey(core.Sequence):
+class LadhePublicKey(core.Sequence):
     _fields = [
-        ("prime",      core.Integer),
-        ("commitment", core.OctetString),
-        ("salt",       core.OctetString),
+        ("prime", core.Integer),
+        ("h",     core.OctetString),
     ]
 
 
 def _publickey_der(pk: LR.PublicKey) -> bytes:
-    """Encode a Ladhe-RSA public key as DER bytes."""
-    return LadheRSAPublicKey({
-        "prime":      pk.prime,
-        "commitment": pk.commitment,
-        "salt":       pk.salt,
+    """Encode a Ladhe public key as DER bytes."""
+    return LadhePublicKey({
+        "prime": pk.prime,
+        "h":     pk.h,
     }).dump()
 
 
 def _publickey_from_der(data: bytes) -> LR.PublicKey:
-    parsed = LadheRSAPublicKey.load(data)
+    parsed = LadhePublicKey.load(data)
     return LR.PublicKey(
         prime=int(parsed["prime"].native),
-        commitment=bytes(parsed["commitment"].native),
-        salt=bytes(parsed["salt"].native),
+        h=bytes(parsed["h"].native),
     )
 
 
@@ -246,7 +242,7 @@ def cert_from_x509_der(der: bytes) -> LC.LadheCertificate:
     outer_oid = parsed["signature_algorithm"]["algorithm"].dotted
     if inner_oid != OID_LADHE_SIG or outer_oid != OID_LADHE_SIG:
         raise ValueError(
-            f"not a Ladhe-RSA certificate — signature OID is "
+            f"not a Ladhe certificate — signature OID is "
             f"{outer_oid} (expected {OID_LADHE_SIG})"
         )
 
@@ -266,9 +262,8 @@ def cert_from_x509_der(der: bytes) -> LC.LadheCertificate:
         public_key={
             "algorithm":     LC.CERT_ALGORITHM,
             "algorithm_oid": OID_LADHE_PK,
-            "prime":      str(lr_pk.prime),
-            "commitment": lr_pk.commitment.hex(),
-            "salt":       lr_pk.salt.hex(),
+            "prime": str(lr_pk.prime),
+            "h":     lr_pk.h.hex(),
         },
         extensions={},
         signature={
