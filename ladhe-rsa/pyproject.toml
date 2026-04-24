@@ -47,6 +47,3 @@ py-modules = [
     "ladhe_cert_cli",
     "ladhe_x509",
 ]
-
-[tool.setuptools.package-data]
-"*" = ["LadheConjecture.txt"]
