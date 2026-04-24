@@ -32,16 +32,16 @@ enough that KeyGen finishes in milliseconds.)
 **Expected output (abridged):**
 
 ```
-Ladhe v3 reference — demo (digits=5)
+Ladhe v3.1 reference — demo (digits=5)
 
-KeyGen:        1.78 ms
+KeyGen:        0.14 ms         (after one-time sieve build)
   P          = 27823  (15 bits)
   k          = 5
   primes     = (17, 53, 107, 1033, 26613)   (secret)
   W          = (70, 1140, 26613)
   h          = 3b29c2a08d4f...
 
-Sign:          0.01 ms, signature size = 38 bytes
+Sign:          0.00 ms, signature size = 38 bytes
 Verify:        0.22 ms, result = True
 
 Tampered-message verify (should be False): False
@@ -50,6 +50,9 @@ Fresh LDP challenge (32-bit):
   P = 2854391051
   h = ...
 ```
+
+The first `keygen` call triggers a one-time sieve-of-Eratosthenes
+build (~0.5 s) that amortises across all subsequent keygens.
 
 ---
 
@@ -60,7 +63,10 @@ python3 ladhe_rsa.py bench
 ```
 
 Prints KeyGen / Sign / Verify times and signature sizes for digits ∈
-{3, 5, 7, 10, 15, 20, 30, 50}.
+{3, 5, 7, 10, 15, 20, 30, 50}. At these sizes, the sieve-accelerated
+KeyGen (v3.1) runs in under 10 ms. On modern hardware the reference
+also handles 100-digit (332-bit) primes in ~30 ms and 1000-digit
+(3322-bit) primes in ~90 seconds.
 
 ---
 

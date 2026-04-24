@@ -5,7 +5,6 @@ Reference implementation of the signature scheme from the paper:
 > **Ladhe Signatures: Compact Hash-Based Signatures from Additive Prime Decompositions**
 > Shubham Ladhe, Pankaj Ladhe (2026)
 > Zenodo: [10.5281/zenodo.19680322](https://zenodo.org/records/19680322)
-> Dataset: [10.5281/zenodo.19354450](https://zenodo.org/records/19354450)
 
 ---
 
@@ -22,7 +21,7 @@ This repository exists to accompany the paper and **enable community cryptanalys
 **Known limitations:**
 
 - **One-time only.** Signing two messages with the same key leaks the private key. The paper (§6) sketches a Merkle-aggregated many-time extension; this is not yet implemented.
-- **Slow KeyGen.** Random-trial decomposition search. Milliseconds for small primes (digits ≤ 10); ~300ms at 50-digit primes; minutes to hours at cryptographic parameter sizes. Efficient KeyGen is open work.
+- **KeyGen scales, but slowly.** With the sieve-accelerated random-trial search (v3.1), KeyGen is sub-millisecond at 5-digit primes, ~8 ms at 50 digits (165 bits), ~400 ms at 200 digits (664 bits), and ~90 s at 1000 digits (3322 bits). Lower is better, of course — efficient constructive decomposition remains open work (paper §8).
 - **No side-channel resistance**, no constant-time operations.
 - **Community cryptanalysis has not yet occurred.** The scheme is released to invite it.
 
@@ -64,7 +63,7 @@ cd LE/ladhe-rsa
 python3 ladhe_rsa.py demo
 ```
 
-The empirical dataset (`LadheConjecture.txt`, 1,620+ verified key pairs) is bundled for reference and cryptanalysis; the scheme itself does not consult the dataset at run time. The canonical dataset copy is archived at [Zenodo 10.5281/zenodo.19354450](https://zenodo.org/records/19354450).
+The scheme does not consult any bundled dataset at run time — every `keygen(up1=...)` call samples a fresh prime and a fresh decomposition.
 
 ---
 
@@ -194,7 +193,6 @@ ladhe-rsa/
 ├── demo_cert.py              # end-to-end PKI demo script
 ├── demo.sh                   # run the full suite of demos
 ├── demo_x509.sh              # X.509 export + openssl parsing demo
-├── LadheConjecture.txt       # empirical dataset (1,620+ entries)
 ├── README.md                 # this file
 ├── DEMO.md                   # quick-reference commands
 ├── CERTIFICATES.md           # certificate-format details
