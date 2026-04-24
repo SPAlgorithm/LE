@@ -47,21 +47,65 @@ The implementation is deliberately self-contained in a single file ([`ladhe_rsa.
 
 ## Installation
 
-Requires Python 3.9+. No third-party dependencies.
+Requires **Python 3.9+**. The core scheme has **no third-party dependencies**. The optional `x509` extra pulls in `asn1crypto` for DER/PEM certificate export.
 
-**Install directly via pip:**
+Everything below uses `pyproject.toml`; `ladhe-rsa` is declared as a package named `ladhe-rsa` with version `0.3.0`.
+
+### Option A — Install from GitHub
 
 ```bash
-pip install git+https://github.com/SPAlgorithm/LE.git#subdirectory=ladhe-rsa
+# With virtualenv (recommended)
+python3 -m venv .venv
+source .venv/bin/activate           # macOS/Linux
+# .venv\Scripts\activate            # Windows
+
+# Core scheme
+pip install "git+https://github.com/SPAlgorithm/LE.git#subdirectory=ladhe-rsa"
+
+# Core scheme + X.509 export
+pip install "git+https://github.com/SPAlgorithm/LE.git#subdirectory=ladhe-rsa[x509]"
 ```
 
-**Or clone and run:**
+### Option B — Clone and install locally (editable, for development)
 
 ```bash
 git clone https://github.com/SPAlgorithm/LE.git
 cd LE/ladhe-rsa
-python3 ladhe_rsa.py demo
+
+python3 -m venv .venv && source .venv/bin/activate
+
+pip install -e ".[x509]"             # changes to source reflect immediately
 ```
+
+### Option C — Just run the scripts (no install)
+
+```bash
+git clone https://github.com/SPAlgorithm/LE.git
+cd LE/ladhe-rsa
+python3 ladhe_rsa.py demo            # works with zero pip install
+```
+
+(`ladhe_x509.py` still needs `pip install asn1crypto` separately for X.509 export.)
+
+### Verify the install
+
+After any of the above:
+
+```bash
+ladhe-rsa demo                       # CLI entry point
+ladhe-rsa bench                      # timing benchmark
+python3 -c "import ladhe_rsa; print(ladhe_rsa.keygen(up1=5))"
+python3 -m unittest                  # run the full test suite
+```
+
+### What `pip install` actually gives you
+
+| Thing | Source |
+|---|---|
+| Importable modules: `ladhe_rsa`, `ladhe_cert`, `ladhe_cert_cli`, `ladhe_x509` | `[tool.setuptools] py-modules` in `pyproject.toml` |
+| CLI command: `ladhe-rsa` → runs `ladhe_rsa.main()` | `[project.scripts]` in `pyproject.toml` |
+| Optional dep `asn1crypto>=1.5` (only with `[x509]`) | `[project.optional-dependencies]` |
+| Python 3.9+ enforcement | `requires-python` |
 
 The scheme does not consult any bundled dataset at run time — every `keygen(up1=...)` call samples a fresh prime and a fresh decomposition.
 
