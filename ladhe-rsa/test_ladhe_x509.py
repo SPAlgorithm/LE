@@ -14,9 +14,9 @@ class TestLadheX509(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.ca_cert, cls.ca_sk = LC.create_ca(
-            "Test CA", validity_days=3650, min_prime_bits=20
+            "Test CA", validity_days=3650, up1=5
         )
-        cls.leaf_pk, cls.leaf_sk = LR.keygen(min_prime_bits=20)
+        cls.leaf_pk, cls.leaf_sk = LR.keygen(up1=5)
         cls.leaf_cert = LC.issue_certificate(
             cls.ca_cert, cls.ca_sk, "subject@example.com",
             cls.leaf_pk, validity_days=365,

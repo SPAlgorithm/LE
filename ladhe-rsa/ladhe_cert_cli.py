@@ -62,7 +62,7 @@ def cmd_init_ca(args: argparse.Namespace) -> int:
     ca_cert, ca_sk = LC.create_ca(
         common_name=args.cn,
         validity_days=args.days,
-        min_prime_bits=args.bits,
+        up1=args.digits,
     )
     LC.write_cert(ca_path, ca_cert)
     LC.write_private_key(key_path, ca_sk)
@@ -95,7 +95,7 @@ def cmd_issue(args: argparse.Namespace) -> int:
               f"'{stem}' (use --force).", file=sys.stderr)
         return 2
 
-    subject_pk, subject_sk = LR.keygen(min_prime_bits=args.bits)
+    subject_pk, subject_sk = LR.keygen(up1=args.digits)
     LC.write_private_key(key_path, subject_sk)
 
     subject_cert = LC.issue_certificate(
@@ -206,7 +206,7 @@ def cmd_verify_doc(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="ladhe_cert_cli",
-        description="CLI for Ladhe-RSA certificate operations.",
+        description="CLI for Ladhe certificate operations.",
     )
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -214,8 +214,8 @@ def build_parser() -> argparse.ArgumentParser:
     q = sub.add_parser("init-ca", help="create a self-signed root CA")
     q.add_argument("--cn",   required=True, help="CA common name")
     q.add_argument("--days", type=int, default=3650)
-    q.add_argument("--bits", type=int, default=24,
-                   help="min prime bits for keygen (default 24)")
+    q.add_argument("--digits", type=int, default=5,
+                   help="decimal digits for the public prime P (default 5)")
     q.add_argument("--out",  default=str(DEFAULT_DIR))
     q.add_argument("--force", action="store_true",
                    help="overwrite existing CA files")
@@ -228,7 +228,8 @@ def build_parser() -> argparse.ArgumentParser:
     q.add_argument("--name",  default=None,
                    help="filename stem (default: derived from --cn)")
     q.add_argument("--days",  type=int, default=365)
-    q.add_argument("--bits",  type=int, default=24)
+    q.add_argument("--digits", type=int, default=5,
+                   help="decimal digits for the public prime P (default 5)")
     q.add_argument("--ca-dir", default=str(DEFAULT_DIR),
                    help="directory containing ca.cert.pem + ca.key.pem")
     q.add_argument("--out",   default=str(DEFAULT_DIR),

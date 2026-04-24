@@ -1,168 +1,114 @@
-"""
-test_ladhe_rsa.py — Tests for the Ladhe-RSA reference
-implementation.
+"""Unit tests for the Ladhe signature scheme (v3)."""
 
-Run with:
-    python -m unittest test_ladhe_rsa
-    # or:
-    python test_ladhe_rsa.py
-"""
-
-from __future__ import annotations
-
-import random
 import unittest
-from pathlib import Path
 
 import ladhe_rsa as LR
 
 
 class TestPrimality(unittest.TestCase):
     def test_small_primes(self):
-        for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 97]:
-            self.assertTrue(LR.is_prime(p))
+        for p in (2, 3, 5, 7, 11, 13, 17, 19, 23, 97, 101):
+            self.assertTrue(LR.is_prime(p), f"{p} should be prime")
 
     def test_composites(self):
-        for n in [0, 1, 4, 6, 8, 9, 10, 15, 100, 221]:
-            self.assertFalse(LR.is_prime(n))
+        for n in (4, 6, 8, 9, 15, 21, 25, 100, 1001):
+            self.assertFalse(LR.is_prime(n), f"{n} should be composite")
 
     def test_large_prime(self):
-        # 2^127 - 1 is a Mersenne prime
-        self.assertTrue(LR.is_prime((1 << 127) - 1))
+        # 2^61 - 1 is a Mersenne prime
+        self.assertTrue(LR.is_prime((1 << 61) - 1))
 
 
-class TestDatasetLoading(unittest.TestCase):
-    def test_load_entries(self):
-        entries = LR.load_dataset()
-        self.assertGreater(len(entries), 1000)
+class TestPairCompression(unittest.TestCase):
+    def test_k3(self):
+        self.assertEqual(LR.pair_compress((3, 7, 157)), (10, 157))
 
-    def test_entries_valid(self):
-        entries = LR.load_dataset()
-        valid = LR.filter_valid(entries)
-        self.assertGreater(len(valid), 0)
-        for e in valid[:20]:
-            self.assertEqual(sum(e.parts), e.prime)
-            self.assertTrue(LR.is_prime(e.prime))
-
-
-class TestHashCommitment(unittest.TestCase):
-    def test_determinism(self):
-        salt = b"\x00" * 32
-        w = (2, 3, 6)
-        h1 = LR.hash_commitment(w, salt)
-        h2 = LR.hash_commitment(w, salt)
-        self.assertEqual(h1, h2)
-
-    def test_different_salts_different_commits(self):
-        w = (2, 3, 6)
-        h1 = LR.hash_commitment(w, b"\x00" * 32)
-        h2 = LR.hash_commitment(w, b"\x01" * 32)
-        self.assertNotEqual(h1, h2)
-
-    def test_rejects_wrong_salt_length(self):
-        with self.assertRaises(ValueError):
-            LR.hash_commitment((2, 3, 6), b"\x00" * 16)
-
-
-class TestKeyGeneration(unittest.TestCase):
-    def test_keygen_from_entry(self):
-        # Known entry 40: 3467 = 360 + 501 + 2606
-        entries = LR.filter_valid(LR.load_dataset())
-        # Find entry with prime 3467 if available
-        matching = [e for e in entries if e.prime == 3467]
-        self.assertTrue(matching, "entry 40 (3467) not found in dataset")
-        pk, sk = LR.keygen_from_entry(matching[0])
-        self.assertEqual(pk.prime, sk.prime)
-        self.assertEqual(pk.salt, sk.salt)
-        # Commitment must reopen to the witness
+    def test_k5(self):
         self.assertEqual(
-            LR.hash_commitment(sk.witness, sk.salt),
-            pk.commitment,
+            LR.pair_compress((3, 5, 11, 41, 107)),
+            (8, 52, 107),
         )
 
-    def test_keygen_random(self):
-        pk, sk = LR.keygen(min_prime_bits=20)
-        self.assertEqual(pk.prime, sk.prime)
-        self.assertEqual(sum(sk.witness), pk.prime)
-        self.assertTrue(LR.is_prime(pk.prime))
+    def test_rejects_even_k(self):
+        with self.assertRaises(ValueError):
+            LR.pair_compress((3, 5))
 
 
-class TestSigmaProtocol(unittest.TestCase):
-    def test_honest_prover_accepts(self):
-        pk, sk = LR.keygen(min_prime_bits=20)
-        ok = LR.run_identification(pk, sk, rounds=16)
-        self.assertTrue(ok)
-
-    def test_challenge_0_aux_check(self):
-        pk, sk = LR.keygen(min_prime_bits=20)
-        commit, state = LR.sigma_commit(sk)
-        resp = LR.sigma_response(sk, commit, state, 0)
-        w_enc_len = len(LR._encode_witness(sk.witness))
-        self.assertTrue(
-            LR.sigma_verify(pk, commit, 0, resp, w_enc_len)
+class TestEncoding(unittest.TestCase):
+    def test_encode_deterministic(self):
+        self.assertEqual(
+            LR.encode_W((10, 157)),
+            LR.encode_W((10, 157)),
         )
 
-    def test_wrong_salt_fails(self):
-        pk, sk = LR.keygen(min_prime_bits=20)
-        commit, state = LR.sigma_commit(sk)
-        resp = LR.sigma_response(sk, commit, state, 1)
-        # Corrupt the salt
-        bad = LR.SigmaResponse(opening=resp.opening, salt=b"\xff" * 32)
-        w_enc_len = len(LR._encode_witness(sk.witness))
-        self.assertFalse(
-            LR.sigma_verify(pk, commit, 1, bad, w_enc_len)
+    def test_encode_distinct(self):
+        self.assertNotEqual(
+            LR.encode_W((10, 157)),
+            LR.encode_W((157, 10)),
         )
 
 
-class TestSignatures(unittest.TestCase):
+class TestKeyGenAndSignVerify(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.pk, cls.sk = LR.keygen(up1=3)
+
+    def test_keygen_structure(self):
+        self.assertIsInstance(self.pk.prime, int)
+        self.assertEqual(len(self.pk.h), LR.LAMBDA_BYTES)
+        self.assertGreaterEqual(len(self.sk.primes), 3)
+        self.assertEqual(len(self.sk.primes) % 2, 1)
+
+    def test_keygen_primes_sum_to_P(self):
+        self.assertEqual(sum(self.sk.primes), self.pk.prime)
+
+    def test_keygen_primes_distinct_and_sorted(self):
+        self.assertEqual(len(set(self.sk.primes)), len(self.sk.primes))
+        self.assertEqual(list(self.sk.primes), sorted(self.sk.primes))
+
+    def test_keygen_all_primes(self):
+        for p in self.sk.primes:
+            self.assertTrue(LR.is_prime(p))
+
+    def test_h_matches_compressed_hash(self):
+        import hashlib
+        W = LR.pair_compress(self.sk.primes)
+        h = hashlib.sha256(LR.encode_W(W)).digest()
+        self.assertEqual(self.pk.h, h)
+
     def test_sign_verify_roundtrip(self):
-        pk, sk = LR.keygen(min_prime_bits=20)
-        msg = b"test message"
-        sig = LR.sign(msg, sk, pk)
-        self.assertTrue(LR.verify(msg, sig, pk))
+        msg = b"hello Ladhe"
+        sig = LR.sign(msg, self.sk)
+        self.assertTrue(LR.verify(msg, sig, self.pk))
 
     def test_tampered_message_fails(self):
-        pk, sk = LR.keygen(min_prime_bits=20)
-        sig = LR.sign(b"original", sk, pk)
-        self.assertFalse(LR.verify(b"tampered", sig, pk))
+        msg = b"hello"
+        sig = LR.sign(msg, self.sk)
+        self.assertFalse(LR.verify(b"HELLO", sig, self.pk))
 
-    def test_tampered_signature_fails(self):
-        pk, sk = LR.keygen(min_prime_bits=20)
-        sig = LR.sign(b"original", sk, pk)
-        # Flip a byte in the first commit
-        bad_commit = LR.SigmaCommit(
-            a_commit=b"\x00" + sig.commits[0].a_commit[1:],
-            aux=sig.commits[0].aux,
-        )
-        bad_sig = LR.Signature(
-            commits=(bad_commit,) + sig.commits[1:],
-            responses=sig.responses,
-        )
-        self.assertFalse(LR.verify(b"original", bad_sig, pk))
+    def test_tampered_primes_fails(self):
+        msg = b"hello"
+        sig = LR.sign(msg, self.sk)
+        bad_primes = list(sig.primes)
+        bad_primes[0] += 2
+        bad_sig = LR.Signature(primes=tuple(bad_primes), message=msg)
+        self.assertFalse(LR.verify(msg, bad_sig, self.pk))
 
     def test_signature_encoding_roundtrip(self):
-        pk, sk = LR.keygen(min_prime_bits=20)
-        sig = LR.sign(b"hello", sk, pk)
-        encoded = sig.encode()
-        self.assertIsInstance(encoded, bytes)
-        self.assertGreater(len(encoded), 0)
+        msg = b"roundtrip"
+        sig = LR.sign(msg, self.sk)
+        decoded = LR.Signature.decode(sig.encode())
+        self.assertEqual(decoded.primes, sig.primes)
+        self.assertEqual(decoded.message, sig.message)
+        self.assertTrue(LR.verify(msg, decoded, self.pk))
 
 
 class TestLDPChallenge(unittest.TestCase):
-    def test_challenge_structure(self):
-        P, h, s = LR.generate_ldp_challenge(bits=24)
+    def test_generate_challenge(self):
+        P, h = LR.generate_ldp_challenge(bits=16)
         self.assertTrue(LR.is_prime(P))
-        self.assertEqual(len(s), LR.COMMITMENT_SALT_BYTES)
-        self.assertEqual(len(h), 32)   # SHA-256 output
-
-
-class TestPublicKeyEncoding(unittest.TestCase):
-    def test_encode_stable(self):
-        pk, _ = LR.keygen(min_prime_bits=20)
-        e1 = pk.encode()
-        e2 = pk.encode()
-        self.assertEqual(e1, e2)
+        self.assertEqual(len(h), LR.LAMBDA_BYTES)
 
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    unittest.main()

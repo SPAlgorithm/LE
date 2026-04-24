@@ -1,5 +1,5 @@
 """
-demo_cert.py — End-to-end demonstration of Ladhe-RSA
+demo_cert.py — End-to-end demonstration of Ladhe
 certificates.
 
 Simulates a small PKI:
@@ -65,11 +65,11 @@ def main() -> int:
     # -----------------------------------------------------------
     banner("2. Alice generates her own key pair")
     # -----------------------------------------------------------
-    alice_pk, alice_sk = LR.keygen(min_prime_bits=24)
+    alice_pk, alice_sk = LR.keygen(up1=7)
     LC.write_private_key(OUTDIR / "alice.key.pem", alice_sk)
     print(f"  wrote:  {OUTDIR / 'alice.key.pem'}  (Alice keeps secret)")
     print(f"  Alice's prime:      {alice_pk.prime}")
-    print(f"  Alice's commitment: {alice_pk.commitment.hex()[:32]}...")
+    print(f"  Alice's h: {alice_pk.h.hex()[:32]}...")
 
     # -----------------------------------------------------------
     banner("3. CA issues Alice a certificate")

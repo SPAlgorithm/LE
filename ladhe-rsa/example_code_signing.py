@@ -1,5 +1,5 @@
 """
-example_code_signing.py — Practical demo of using Ladhe-RSA
+example_code_signing.py — Practical demo of using Ladhe
 signatures for software release verification.
 
 Scenario:
@@ -22,12 +22,13 @@ def simulate_release_flow():
     print("=" * 60)
     print("  BOB: Setting up signing key (done once)")
     print("=" * 60)
-    bob_pk, bob_sk = LR.keygen(min_prime_bits=20)
+    bob_pk, bob_sk = LR.keygen(up1=5)
     print(f"  Published public key:")
-    print(f"    prime:      {bob_pk.prime}")
-    print(f"    commitment: {bob_pk.commitment.hex()[:32]}...")
-    print(f"    salt:       {bob_pk.salt.hex()[:32]}...")
+    print(f"    prime: {bob_pk.prime}")
+    print(f"    h:     {bob_pk.h.hex()[:48]}...")
     print(f"  (Bob publishes these on his website / in his CA cert)")
+    print(f"  NOTE: Ladhe one-time — Bob uses this key for ONE release,")
+    print(f"        then generates a fresh key for the next.")
     print()
 
     # Bob builds some software
@@ -39,7 +40,7 @@ def simulate_release_flow():
     print("=" * 60)
     print(f"  software bytes: {len(software)}")
     print(f"  sha256(software): {software_hash.hex()[:32]}...")
-    signature = LR.sign(software_hash, bob_sk, bob_pk)
+    signature = LR.sign(software_hash, bob_sk)
     print(f"  signature size: {len(signature.encode())} bytes")
     print()
     print("  Bob ships (software, signature, public_key) to the world.")
