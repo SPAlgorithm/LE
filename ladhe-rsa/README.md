@@ -121,6 +121,16 @@ chmod +x demo.sh && ./demo.sh
 
 This runs 6 demos end-to-end: full scheme demo, timing benchmark, LDP challenge, unit tests, sanity check, and the software-signing example.
 
+**Want the live Alice & Bob walkthrough?** Bootstraps an Acme Quantum CA, issues certs to Alice and Bob, then runs the 7-step signing/verifying/tampering demo:
+
+```bash
+cd demo
+./setup.sh    # one-time PKI bootstrap (~1 second)
+./run.sh      # the live demo with ENTER-paced steps
+```
+
+See [`demo/README.md`](./demo/README.md) for full details.
+
 ### Sign a message (one-time)
 
 ```python

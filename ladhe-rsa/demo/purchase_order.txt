@@ -1,0 +1,12 @@
+ACME CORPORATION — PURCHASE ORDER APPROVAL
+===========================================
+
+PO Number:    PO-2026-001847
+Date:         2026-04-23
+Vendor:       Global Supply Co.
+Description:  Industrial control systems upgrade
+Amount:       USD 1,250,000.00
+Approved by:  Alice (alice@acme.com)
+              Director, Procurement
+
+This purchase order is hereby approved for payment.
