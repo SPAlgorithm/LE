@@ -1,0 +1,7 @@
+# Generated demo PKI — regenerate with ./setup.sh
+ca/
+alice/
+bob/
+
+# Stale runtime artefacts
+*.sig
