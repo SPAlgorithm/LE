@@ -335,7 +335,7 @@ def auto_detect(folder: Path) -> int:
         print(f"{GREEN}{BOLD}All verifications passed.{RESET}")
         return 0
     print(f"{RED}{BOLD}One or more verifications FAILED.{RESET}")
-    print(f"{YELLOW}Hint: if you tampered with a document or substituted a "
+    print(f"{RED}Hint: if you tampered with a document or substituted a "
           f"file, that's the expected behaviour — the math caught you.{RESET}")
     return 1
 
