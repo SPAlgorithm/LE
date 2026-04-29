@@ -34,7 +34,7 @@ x509 = ["asn1crypto>=1.5"]
 
 [project.urls]
 Homepage    = "https://github.com/SPAlgorithm/LE"
-Paper       = "https://zenodo.org/records/19680322"
+Paper       = "https://zenodo.org/records/19888480"
 Dataset     = "https://zenodo.org/records/19354450"
 
 [project.scripts]

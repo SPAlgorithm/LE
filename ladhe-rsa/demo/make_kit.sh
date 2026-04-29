@@ -151,7 +151,7 @@ LADHE VERIFICATION KIT
 This bundle contains a digitally signed document and the tools to
 verify it. The signature was produced with Ladhe, a one-time
 hash-based signature scheme whose security reduces to SHA-256
-preimage resistance (paper: https://zenodo.org/records/19738891).
+preimage resistance (paper: https://zenodo.org/records/19888480).
 
 CONTENTS
 --------

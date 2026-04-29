@@ -501,10 +501,33 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"sig    = {sig.encode().hex()[:200]}...")
         print(f"verify = {verify(msg, sig, pk)}")
         return 0
+    if argv[1] == "challenge":
+        bits = int(argv[2]) if len(argv) > 2 else 32
+        P, h = generate_ldp_challenge(bits=bits)
+        print(f"# Ladhe LDP challenge (bits={bits})")
+        print(f"P = {P}")
+        print(f"h = {h.hex()}")
+        print()
+        print("Task:  find an ascending tuple of distinct odd primes")
+        print("       (p_1 < p_2 < ... < p_k)  with  k in {3, 5, 7}")
+        print("       summing to P, such that")
+        print("       SHA-256(encode(pair_compress(primes))) == h.")
+        print()
+        print("       pair_compress((p_1, p_2, ..., p_k)) =")
+        print("         (p_1+p_2, p_3+p_4, ..., p_k)")
+        print("       — last element unpaired since k is odd.")
+        print()
+        print("       encode(W) is the canonical big-endian byte encoding")
+        print("       of the tuple W; see encode_W() in ladhe_rsa.py.")
+        print()
+        print("Submit: github.com/SPAlgorithm/LE/issues  or  spalgorithm@gmail.com")
+        print("Credit: substantive cryptanalysis is named in v2 of the paper.")
+        return 0
     print("usage:")
     print("  python3 ladhe_rsa.py demo [up1]")
     print("  python3 ladhe_rsa.py bench")
     print("  python3 ladhe_rsa.py sign <message>")
+    print("  python3 ladhe_rsa.py challenge [bits]")
     return 1
 
 
