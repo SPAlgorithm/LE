@@ -41,7 +41,7 @@ This repository exists to accompany the paper and **enable community cryptanalys
 | `encode_W(W)` | Canonical byte encoding of a compressed witness |
 | `generate_ldp_challenge(bits)` | Produce a fresh (P, h) challenge for cryptanalysts |
 
-The implementation is deliberately self-contained in a single file ([`ladhe_rsa.py`](./ladhe_rsa.py)) so it's easy to audit end-to-end.
+The implementation is deliberately self-contained in a single file ([`ladhe.py`](./ladhe.py)) so it's easy to audit end-to-end.
 
 ---
 
@@ -49,7 +49,7 @@ The implementation is deliberately self-contained in a single file ([`ladhe_rsa.
 
 Requires **Python 3.9+**. The core scheme has **no third-party dependencies**. The optional `x509` extra pulls in `asn1crypto` for DER/PEM certificate export.
 
-Everything below uses `pyproject.toml`; `ladhe-rsa` is declared as a package named `ladhe-rsa` with version `0.3.0`.
+Everything below uses `pyproject.toml`; `ladhe` is declared as a package named `ladhe` with version `0.3.0`.
 
 ### Option A — Install from GitHub
 
@@ -60,17 +60,17 @@ source .venv/bin/activate           # macOS/Linux
 # .venv\Scripts\activate            # Windows
 
 # Core scheme
-pip install "git+https://github.com/SPAlgorithm/LE.git#subdirectory=ladhe-rsa"
+pip install "git+https://github.com/SPAlgorithm/LE.git#subdirectory=ladhe"
 
 # Core scheme + X.509 export
-pip install "git+https://github.com/SPAlgorithm/LE.git#subdirectory=ladhe-rsa[x509]"
+pip install "git+https://github.com/SPAlgorithm/LE.git#subdirectory=ladhe[x509]"
 ```
 
 ### Option B — Clone and install locally (editable, for development)
 
 ```bash
 git clone https://github.com/SPAlgorithm/LE.git
-cd LE/ladhe-rsa
+cd LE/ladhe
 
 python3 -m venv .venv && source .venv/bin/activate
 
@@ -81,8 +81,8 @@ pip install -e ".[x509]"             # changes to source reflect immediately
 
 ```bash
 git clone https://github.com/SPAlgorithm/LE.git
-cd LE/ladhe-rsa
-python3 ladhe_rsa.py demo            # works with zero pip install
+cd LE/ladhe
+python3 ladhe.py demo            # works with zero pip install
 ```
 
 (`ladhe_x509.py` still needs `pip install asn1crypto` separately for X.509 export.)
@@ -92,9 +92,9 @@ python3 ladhe_rsa.py demo            # works with zero pip install
 After any of the above:
 
 ```bash
-ladhe-rsa demo                       # CLI entry point
-ladhe-rsa bench                      # timing benchmark
-python3 -c "import ladhe_rsa; print(ladhe_rsa.keygen(up1=5))"
+ladhe demo                       # CLI entry point
+ladhe bench                      # timing benchmark
+python3 -c "import ladhe; print(ladhe.keygen(up1=5))"
 python3 -m unittest                  # run the full test suite
 ```
 
@@ -102,8 +102,8 @@ python3 -m unittest                  # run the full test suite
 
 | Thing | Source |
 |---|---|
-| Importable modules: `ladhe_rsa`, `ladhe_cert`, `ladhe_cert_cli`, `ladhe_x509` | `[tool.setuptools] py-modules` in `pyproject.toml` |
-| CLI command: `ladhe-rsa` → runs `ladhe_rsa.main()` | `[project.scripts]` in `pyproject.toml` |
+| Importable modules: `ladhe`, `ladhe_cert`, `ladhe_cert_cli`, `ladhe_x509` | `[tool.setuptools] py-modules` in `pyproject.toml` |
+| CLI command: `ladhe` → runs `ladhe.main()` | `[project.scripts]` in `pyproject.toml` |
 | Optional dep `asn1crypto>=1.5` (only with `[x509]`) | `[project.optional-dependencies]` |
 | Python 3.9+ enforcement | `requires-python` |
 
@@ -134,7 +134,7 @@ See [`demo/README.md`](./demo/README.md) for full details.
 ### Sign a message (one-time)
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 # One-time key setup (5-digit prime; quick for demo)
 pk, sk = LR.keygen(up1=5)
@@ -150,7 +150,7 @@ assert LR.verify(message, sig, pk)
 ### Run the benchmark
 
 ```bash
-python3 ladhe_rsa.py bench
+python3 ladhe.py bench
 ```
 
 Outputs measured KeyGen / Sign / Verify times and signature sizes at several prime scales.
@@ -158,7 +158,7 @@ Outputs measured KeyGen / Sign / Verify times and signature sizes at several pri
 ### Run the full demo
 
 ```bash
-python3 ladhe_rsa.py demo
+python3 ladhe.py demo
 ```
 
 Output walks through key generation, signing, verification, tampered-message rejection, and a fresh LDP challenge.
@@ -166,7 +166,7 @@ Output walks through key generation, signing, verification, tampered-message rej
 ### Run the tests
 
 ```bash
-python3 -m unittest test_ladhe_rsa -v
+python3 -m unittest test_ladhe -v
 ```
 
 ### Example: software code signing
@@ -201,7 +201,7 @@ None of those need encryption. If Ladhe signatures ever mature into a production
 The code exposes a fresh LDP challenge generator:
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 P, h = LR.generate_ldp_challenge(bits=32)
 # Your task: find distinct odd primes (p_1 < ... < p_k), k odd,
@@ -236,12 +236,12 @@ Please open an issue with a concrete demonstration.
 ## Repository layout
 
 ```
-ladhe-rsa/
-├── ladhe_rsa.py              # core scheme: KeyGen, Sign, Verify
+ladhe/
+├── ladhe.py              # core scheme: KeyGen, Sign, Verify
 ├── ladhe_cert.py             # experimental certificate format
 ├── ladhe_cert_cli.py         # CLI wrapper for cert operations
 ├── ladhe_x509.py             # DER/PEM X.509 export (optional; needs asn1crypto)
-├── test_ladhe_rsa.py         # unit tests for the scheme
+├── test_ladhe.py         # unit tests for the scheme
 ├── test_ladhe_x509.py        # unit tests for X.509 export
 ├── example_code_signing.py   # realistic software-signing demo
 ├── demo_cert.py              # end-to-end PKI demo script
@@ -320,7 +320,7 @@ DER or PEM X.509 files that standard tools like `openssl asn1parse` and
 `openssl x509 -text` can parse:
 
 ```bash
-pip install "ladhe-rsa[x509]"
+pip install "ladhe[x509]"
 
 # Bootstrap a CA and issue a cert (creates demo_pki/ the first time)
 python3 ladhe_cert_cli.py init-ca --cn "Example Root CA"

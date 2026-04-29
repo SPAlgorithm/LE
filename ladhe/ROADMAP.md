@@ -28,7 +28,7 @@ Target window: **May 2026 – October 2026**
 - [ ] **Submit IACR ePrint** — once approved, update citation in README
 - [ ] **Post to IETF LAMPS working group** — awareness, not action request ([ALGORITHM_SPEC.md](ALGORITHM_SPEC.md) is the draft)
 - [ ] **Academic outreach** — email cryptanalysis targets at MIT CSAIL, CMU CyLab, Georgia Tech, other PQC-active labs
-- [ ] **First external cryptanalysis attempts** — enabled by the challenge generator in `ladhe_rsa.generate_ldp_challenge`
+- [ ] **First external cryptanalysis attempts** — enabled by the challenge generator in `ladhe.generate_ldp_challenge`
 - [ ] **Conference submissions** — PQCrypto 2027, CT-RSA 2027, ACNS 2027 (deadlines mid-2026)
 - [ ] **NSF SBIR Phase I** — outline ready; $300K / 6 months to fund formal security analysis and production hardening
 - [ ] **First friendly pilot** — unpaid proof-of-concept with a warm enterprise or IoT contact

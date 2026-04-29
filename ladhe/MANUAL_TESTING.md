@@ -2,16 +2,16 @@
 >
 > This guide was written for the original Ladhe scheme (Sigma
 > protocol, commitment+salt, Φ₁ predicate). The v3 scheme
-> (`SP_Paper_v3.pdf` / `ladhe_rsa.py` as of April 2026) uses a
+> (`SP_Paper_v3.pdf` / `ladhe.py` as of April 2026) uses a
 > one-time hash-based construction with a prime-decomposition
 > witness — the API is different.
 >
 > Working commands for v3:
 >
 > ```bash
-> python3 ladhe_rsa.py demo           # end-to-end demo
-> python3 ladhe_rsa.py bench          # timing benchmark
-> python3 -m unittest test_ladhe_rsa  # all 11 tests should pass
+> python3 ladhe.py demo           # end-to-end demo
+> python3 ladhe.py bench          # timing benchmark
+> python3 -m unittest test_ladhe  # all 11 tests should pass
 > bash demo_x509.sh                   # X.509 export + openssl
 > ```
 >
@@ -21,7 +21,7 @@
 
 # Manual testing guide
 
-Hands-on walkthrough for every primitive in `ladhe_rsa.py`. Open a terminal in this folder and follow along.
+Hands-on walkthrough for every primitive in `ladhe.py`. Open a terminal in this folder and follow along.
 
 ---
 
@@ -30,7 +30,7 @@ Hands-on walkthrough for every primitive in `ladhe_rsa.py`. Open a terminal in t
 ### 1.1 The demo (end-to-end smoke test)
 
 ```bash
-python3 ladhe_rsa.py demo
+python3 ladhe.py demo
 ```
 
 Expected: loads 1618 dataset entries, generates a key, runs identification (32 rounds → verifies True), signs a message (verifies True), tries tampered message (False), prints an LDP challenge.
@@ -38,7 +38,7 @@ Expected: loads 1618 dataset entries, generates a key, runs identification (32 r
 ### 1.2 The unit tests
 
 ```bash
-python3 -m unittest test_ladhe_rsa -v
+python3 -m unittest test_ladhe -v
 ```
 
 Expected: `~15 tests, all OK`. Any `FAIL` or `ERROR` is a real bug.
@@ -46,8 +46,8 @@ Expected: `~15 tests, all OK`. Any `FAIL` or `ERROR` is a real bug.
 Run individual tests:
 
 ```bash
-python3 -m unittest test_ladhe_rsa.TestSignatures -v
-python3 -m unittest test_ladhe_rsa.TestSignatures.test_sign_verify_roundtrip -v
+python3 -m unittest test_ladhe.TestSignatures -v
+python3 -m unittest test_ladhe.TestSignatures.test_sign_verify_roundtrip -v
 ```
 
 ### 1.3 The code-signing example
@@ -61,7 +61,7 @@ Expected: Bob signs, attacker tamper fails, Alice verifies.
 ### 1.4 Sign an arbitrary message from the CLI
 
 ```bash
-python3 ladhe_rsa.py sign "hello world"
+python3 ladhe.py sign "hello world"
 ```
 
 ### 1.5 Quick one-liner: keygen + sign + verify + tamper check
@@ -70,7 +70,7 @@ The fastest sanity-check after a clone. Copy-paste into your shell:
 
 ```bash
 python3 -c "
-import ladhe_rsa as LR
+import ladhe as LR
 pk, sk = LR.keygen()
 sig = LR.sign(b'hi', sk, pk)
 print('verify not ok:', LR.verify(b'hi', sig, pk))
@@ -111,7 +111,7 @@ Then paste the sessions below.
 ### 2.1 Primality testing
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 LR.is_prime(2)           # True
 LR.is_prime(97)          # True
@@ -124,7 +124,7 @@ LR.is_prime((1<<127))    # False
 ### 2.2 Dataset loading
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 entries = LR.load_dataset()
 len(entries)                          # 1620 (raw)
@@ -142,7 +142,7 @@ print("prime check:", LR.is_prime(e.prime))
 ### 2.3 Hash commitment (the Φ₁ primitive)
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 salt = b"\x00" * 32                        # fixed salt for demo
 h1 = LR.hash_commitment((2, 3, 6), salt)
@@ -163,7 +163,7 @@ print("commit bits:", len(h1) * 8)         # 256
 ### 2.4 Key generation
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 # Sample a random key from the dataset
 pk, sk = LR.keygen(min_prime_bits=20)
@@ -188,7 +188,7 @@ print("deterministic prime:", pk2.prime)                # 3467
 ### 2.5 Sigma protocol — one round, step by step
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 pk, sk = LR.keygen()
 
@@ -219,7 +219,7 @@ print("round verifies:", ok)
 ### 2.6 Full identification protocol (32 rounds)
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 pk, sk = LR.keygen()
 print("Running 32 rounds...")
@@ -232,7 +232,7 @@ print("identification:", ok)
 ### 2.7 Fiat-Shamir signatures
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 pk, sk = LR.keygen()
 
@@ -266,7 +266,7 @@ print("Corrupted sig verifies      :", LR.verify(msg, corrupted, pk))  # False
 ### 2.8 Serialise and deserialise a signature
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 pk, sk = LR.keygen()
 sig = LR.sign(b"hello", sk, pk)
@@ -283,7 +283,7 @@ print("first 64 hex  :", wire[:32].hex())
 ### 2.9 Generate an LDP challenge (for cryptanalysis)
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 # Generate a fresh challenge at toy size
 P, h, salt = LR.generate_ldp_challenge(bits=24)
@@ -315,7 +315,7 @@ A good way to build intuition is to feed invalid inputs and see what happens.
 ### 3.1 Invalid witness (doesn't sum to P)
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 bogus = LR.LadheEntry(index=999, prime=11, parts=(2, 3, 5))  # sums to 10, not 11
 print("valid sum:", bogus.is_valid_sum())   # False
@@ -329,7 +329,7 @@ except ValueError as e:
 ### 3.2 Wrong salt during verification
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 pk, sk = LR.keygen()
 commit, state = LR.sigma_commit(sk)
@@ -345,7 +345,7 @@ print("wrong salt verifies:", ok)           # False
 ### 3.3 A cheating prover without the witness
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 # Bob's real key
 pk, sk = LR.keygen()
@@ -369,7 +369,7 @@ Why does challenge-0 sometimes pass for the cheater? Because challenge-0 only ch
 ### 3.4 Encoding edge cases
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 
 # Negative witness part — rejected
 try:
@@ -392,7 +392,7 @@ print("big value encoding size:", len(encoded), "bytes")
 
 ```python
 import time
-import ladhe_rsa as LR
+import ladhe as LR
 
 pk, sk = LR.keygen()
 msg = b"benchmark message" * 100
@@ -446,8 +446,8 @@ find . -name "*.pyc" -delete
 
 | File | Command | What to look for |
 |---|---|---|
-| `ladhe_rsa.py` | `python3 ladhe_rsa.py demo` | All 6 steps print non-error output |
-| `test_ladhe_rsa.py` | `python3 -m unittest test_ladhe_rsa -v` | All tests pass, no failures |
+| `ladhe.py` | `python3 ladhe.py demo` | All 6 steps print non-error output |
+| `test_ladhe.py` | `python3 -m unittest test_ladhe -v` | All tests pass, no failures |
 | `example_code_signing.py` | `python3 example_code_signing.py` | Tamper fails, genuine verify succeeds |
 | REPL experiments | see sections above | Intermediate values shape your intuition |
 

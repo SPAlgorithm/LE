@@ -36,7 +36,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-import ladhe_rsa as LR
+import ladhe as LR
 
 
 CERT_VERSION = 1

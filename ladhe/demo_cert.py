@@ -22,7 +22,7 @@ import shutil
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-import ladhe_rsa as LR
+import ladhe as LR
 import ladhe_cert as LC
 
 

@@ -9,7 +9,7 @@ For the Alice & Bob enterprise demo, see
 ## Quick start — one-shot smoke test
 
 ```bash
-cd ladhe-rsa
+cd ladhe
 chmod +x demo.sh    # first time only
 ./demo.sh
 ```
@@ -23,7 +23,7 @@ Walks through all demos with pauses. Press **Enter** to advance.
 ### 1. End-to-end demo
 
 ```bash
-python3 ladhe_rsa.py demo 5
+python3 ladhe.py demo 5
 ```
 
 (The `5` is the decimal-digit count for the public prime P — small
@@ -59,7 +59,7 @@ build (~0.5 s) that amortises across all subsequent keygens.
 ### 2. Timing benchmark across prime sizes
 
 ```bash
-python3 ladhe_rsa.py bench
+python3 ladhe.py bench
 ```
 
 Prints KeyGen / Sign / Verify times and signature sizes for digits ∈
@@ -74,7 +74,7 @@ also handles 100-digit (332-bit) primes in ~30 ms and 1000-digit
 
 ```bash
 python3 -c "
-import ladhe_rsa as LR
+import ladhe as LR
 P, h = LR.generate_ldp_challenge(bits=32)
 print('Your LDP challenge:')
 print(f'  P = {P}')
@@ -89,7 +89,7 @@ print(f'  h = {h.hex()}')
 - `sha256(encode_W(pair_compress(primes))) == h`
 
 `encode_W` and `pair_compress` are defined in
-[`ladhe_rsa.py`](./ladhe_rsa.py). Solving faster than hash preimage
+[`ladhe.py`](./ladhe.py). Solving faster than hash preimage
 breaks the scheme.
 
 At `bits=32`, brute force takes seconds on a laptop. At `bits=256`,
@@ -100,7 +100,7 @@ At `bits=32`, brute force takes seconds on a laptop. At `bits=256`,
 ### 4. Run the unit test suite
 
 ```bash
-python3 -m unittest test_ladhe_rsa -v
+python3 -m unittest test_ladhe -v
 python3 -m unittest test_ladhe_x509 -v    # X.509 export tests
 ```
 
@@ -112,7 +112,7 @@ Expect 11 core tests + 4 X.509 tests. All should pass.
 
 ```bash
 python3 -c "
-import ladhe_rsa as LR
+import ladhe as LR
 pk, sk = LR.keygen(up1=5)
 sig = LR.sign(b'hi', sk)
 print('genuine message verifies:', LR.verify(b'hi', sig, pk))
@@ -127,7 +127,7 @@ Both lines should print `True`.
 ### 6. Sign your own message from the CLI
 
 ```bash
-python3 ladhe_rsa.py sign "your message here"
+python3 ladhe.py sign "your message here"
 ```
 
 Generates a fresh one-time key pair, signs the message, prints the

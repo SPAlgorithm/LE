@@ -1,4 +1,4 @@
-"""ladhe_rsa.py — Reference implementation of the Ladhe signature scheme.
+"""ladhe.py — Reference implementation of the Ladhe signature scheme.
 
 This is version 3 of the scheme, matching SP_Paper_v3.tex (April 2026).
 The scheme is a ONE-TIME hash-based signature whose private key is a
@@ -564,7 +564,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         print("       — last element unpaired since k is odd.")
         print()
         print("       encode(W) is the canonical big-endian byte encoding")
-        print("       of the tuple W; see encode_W() in ladhe_rsa.py.")
+        print("       of the tuple W; see encode_W() in ladhe.py.")
         print()
         print("Tier reference:")
         print("  bits <  64        sanity check       (toy)")
@@ -579,10 +579,10 @@ def main(argv: Optional[List[str]] = None) -> int:
               "spalgorithm@gmail.com")
         return 0
     print("usage:")
-    print("  python3 ladhe_rsa.py demo [up1]")
-    print("  python3 ladhe_rsa.py bench")
-    print("  python3 ladhe_rsa.py sign <message>")
-    print("  python3 ladhe_rsa.py challenge [bits]")
+    print("  python3 ladhe.py demo [up1]")
+    print("  python3 ladhe.py bench")
+    print("  python3 ladhe.py sign <message>")
+    print("  python3 ladhe.py challenge [bits]")
     return 1
 
 

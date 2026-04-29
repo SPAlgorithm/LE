@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ladhe-rsa"
+name = "ladhe"
 version = "0.3.0"
 description = "Ladhe: a one-time hash-based signature scheme from additive prime decompositions"
 readme = "README.md"
@@ -29,7 +29,7 @@ dependencies = []
 
 [project.optional-dependencies]
 # X.509 DER/PEM export for interop with OpenSSL and standard PKI tooling.
-# Install with:  pip install ladhe-rsa[x509]
+# Install with:  pip install ladhe[x509]
 x509 = ["asn1crypto>=1.5"]
 
 [project.urls]
@@ -38,11 +38,11 @@ Paper       = "https://zenodo.org/records/19888480"
 Dataset     = "https://zenodo.org/records/19354450"
 
 [project.scripts]
-ladhe-rsa = "ladhe_rsa:main"
+ladhe = "ladhe:main"
 
 [tool.setuptools]
 py-modules = [
-    "ladhe_rsa",
+    "ladhe",
     "ladhe_cert",
     "ladhe_cert_cli",
     "ladhe_x509",

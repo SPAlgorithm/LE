@@ -2,7 +2,7 @@
 
 import unittest
 
-import ladhe_rsa as LR
+import ladhe as LR
 
 
 class TestPrimality(unittest.TestCase):

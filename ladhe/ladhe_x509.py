@@ -36,7 +36,7 @@ except ImportError as e:
         "    pip install asn1crypto"
     ) from e
 
-import ladhe_rsa as LR
+import ladhe as LR
 import ladhe_cert as LC
 
 
