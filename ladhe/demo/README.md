@@ -11,7 +11,7 @@ signature; a tamper attempt is caught.
 ## Two-step quickstart
 
 ```bash
-cd ladhe-rsa/demo
+cd ladhe/demo
 
 # Bootstrap the CA, Alice, and Bob (one-time, ~1 second)
 ./setup.sh
@@ -43,7 +43,7 @@ DIGITS=7 ./setup.sh    # 23-bit primes; still finishes in ~milliseconds
 ## Folder layout after `./setup.sh`
 
 ```
-ladhe-rsa/demo/
+ladhe/demo/
 ├── setup.sh                   # bootstrap the demo PKI
 ├── run.sh                     # the 7-step live demo
 ├── README.md                  # this file
@@ -83,11 +83,11 @@ The 7 steps in `run.sh`:
 
 ## Manual commands (if you want to run without the script)
 
-Run from `ladhe-rsa/` (one level up from this folder), so Python sees
+Run from `ladhe/` (one level up from this folder), so Python sees
 the `ladhe_*.py` modules.
 
 ```bash
-cd ladhe-rsa
+cd ladhe
 
 # Sign a document
 python3 ladhe_cert_cli.py sign \

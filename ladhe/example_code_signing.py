@@ -14,7 +14,7 @@ Run:
 import hashlib
 from pathlib import Path
 
-import ladhe_rsa as LR
+import ladhe as LR
 
 
 def simulate_release_flow():

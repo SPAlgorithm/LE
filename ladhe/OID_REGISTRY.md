@@ -73,7 +73,7 @@ END
 | Hash function    | SHA-256 (32-byte output)                   |
 | Security param κ | 256 bits                                   |
 | k                | 3, 5, or 7 (odd)                           |
-| Witness encoding | enc(W) per `ladhe_rsa.encode_W`            |
+| Witness encoding | enc(W) per `ladhe.encode_W`            |
 | Classical attack | 2²⁵⁶ preimage brute-force                  |
 | Quantum attack   | 2¹²⁸ Grover on hash                        |
 | Lifetime per key | **One signature** (signing twice leaks sk) |

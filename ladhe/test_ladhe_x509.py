@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import ladhe_rsa as LR
+import ladhe as LR
 import ladhe_cert as LC
 import ladhe_x509 as LX
 

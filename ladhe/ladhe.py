@@ -1,4 +1,4 @@
-"""ladhe_rsa.py — Reference implementation of the Ladhe signature scheme.
+"""ladhe.py — Reference implementation of the Ladhe signature scheme.
 
 This is version 3 of the scheme, matching SP_Paper_v3.tex (April 2026).
 The scheme is a ONE-TIME hash-based signature whose private key is a
@@ -502,9 +502,55 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"verify = {verify(msg, sig, pk)}")
         return 0
     if argv[1] == "challenge":
-        bits = int(argv[2]) if len(argv) > 2 else 32
-        P, h = generate_ldp_challenge(bits=bits)
+        bits = int(argv[2]) if len(argv) > 2 else 256
+
+        # Tier classification
+        if bits < 64:
+            tier_label = "SANITY CHECK TIER"
+            tier_note = ("toy parameters — trivially breakable by brute "
+                         "force; for testing the algorithm only")
+            reward = ("not a cryptographic break; for testing / debugging")
+        elif bits < 128:
+            tier_label = "EDUCATIONAL TIER"
+            tier_note = ("tractable for advanced attackers; below "
+                         "security target")
+            reward = ("not yet a cryptographic break; useful for teaching "
+                      "and CTF practice")
+        elif bits < 256:
+            tier_label = "PRE-CRYPTOGRAPHIC TIER"
+            tier_note = ("hard but solvable; below the 256-bit security "
+                         "target of the paper")
+            reward = ("technically interesting but does not contradict the "
+                      "scheme's security claim")
+        elif bits < 512:
+            tier_label = "BRONZE TIER (security target)"
+            tier_note = ("256-bit P is the cryptographic security claim "
+                         "of the paper; a break here is a real "
+                         "cryptanalytic result")
+            reward = ("named in the public 'challenges solved' log")
+        elif bits < 1024:
+            tier_label = "SILVER TIER"
+            tier_note = ("above the 256-bit security target")
+            reward = ("named acknowledgment in v2 of the paper")
+        elif bits < 2048:
+            tier_label = "GOLD TIER"
+            tier_note = ("well above security target")
+            reward = ("coauthorship offer on a cryptanalysis follow-on "
+                      "paper")
+        else:
+            tier_label = "PLATINUM TIER"
+            tier_note = ("extreme parameters")
+            reward = ("public retraction of the scheme + coauthorship "
+                      "on the retraction paper")
+
         print(f"# Ladhe LDP challenge (bits={bits})")
+        print(f"# Tier:   {tier_label}")
+        print(f"#         {tier_note}")
+        print(f"# Credit: {reward}")
+        print(f"# Generating challenge "
+              f"(may take a moment for higher bit sizes)...")
+        print()
+        P, h = generate_ldp_challenge(bits=bits)
         print(f"P = {P}")
         print(f"h = {h.hex()}")
         print()
@@ -518,16 +564,25 @@ def main(argv: Optional[List[str]] = None) -> int:
         print("       — last element unpaired since k is odd.")
         print()
         print("       encode(W) is the canonical big-endian byte encoding")
-        print("       of the tuple W; see encode_W() in ladhe_rsa.py.")
+        print("       of the tuple W; see encode_W() in ladhe.py.")
         print()
-        print("Submit: github.com/SPAlgorithm/LE/issues  or  spalgorithm@gmail.com")
-        print("Credit: substantive cryptanalysis is named in v2 of the paper.")
+        print("Tier reference:")
+        print("  bits <  64        sanity check       (toy)")
+        print("  bits <  128       educational        (CTF practice)")
+        print("  bits <  256       pre-cryptographic  (below target)")
+        print("  bits =  256       BRONZE             (security target)")
+        print("  bits <  1024      SILVER             (above target)")
+        print("  bits <  2048      GOLD               (well above target)")
+        print("  bits >= 2048      PLATINUM           (extreme)")
+        print()
+        print("Submit: github.com/SPAlgorithm/LE/issues  or  "
+              "spalgorithm@gmail.com")
         return 0
     print("usage:")
-    print("  python3 ladhe_rsa.py demo [up1]")
-    print("  python3 ladhe_rsa.py bench")
-    print("  python3 ladhe_rsa.py sign <message>")
-    print("  python3 ladhe_rsa.py challenge [bits]")
+    print("  python3 ladhe.py demo [up1]")
+    print("  python3 ladhe.py bench")
+    print("  python3 ladhe.py sign <message>")
+    print("  python3 ladhe.py challenge [bits]")
     return 1
 
 

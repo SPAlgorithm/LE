@@ -39,7 +39,7 @@ from pathlib import Path
 from typing import List, Optional, Sequence, Tuple
 
 # ---------------------------------------------------------------------
-# Constants — must match ladhe_rsa.py
+# Constants — must match ladhe.py
 # ---------------------------------------------------------------------
 HASH = hashlib.sha256
 LAMBDA_BYTES = 32
@@ -125,7 +125,7 @@ def encode_W(W: Sequence[int]) -> bytes:
 
 
 # ---------------------------------------------------------------------
-# Signature decoding (matches ladhe_rsa.Signature.encode/decode)
+# Signature decoding (matches ladhe.Signature.encode/decode)
 # ---------------------------------------------------------------------
 def decode_signature(data: bytes) -> Tuple[Tuple[int, ...], bytes]:
     """Return (primes, message)."""

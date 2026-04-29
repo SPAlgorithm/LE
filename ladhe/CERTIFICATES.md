@@ -96,7 +96,7 @@ These are all deliberate: the goal is demonstration, not standards compliance.
 ## Programmatic use
 
 ```python
-import ladhe_rsa as LR
+import ladhe as LR
 import ladhe_cert as LC
 
 # Create a CA
