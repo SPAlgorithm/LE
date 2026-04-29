@@ -4,7 +4,7 @@ Reference implementation of the signature scheme from the paper:
 
 > **Ladhe Signatures: Compact Hash-Based Signatures from Additive Prime Decompositions**
 > Shubham Ladhe, Pankaj Ladhe (2026)
-> Zenodo: [10.5281/zenodo.19680322](https://zenodo.org/records/19680322)
+> Zenodo: [10.5281/zenodo.19888480](https://zenodo.org/records/19888480)
 
 ---
 
@@ -271,8 +271,8 @@ If you build on this paper or implementation, please cite:
   title  = {{Ladhe Signatures: Compact Hash-Based Signatures
              from Additive Prime Decompositions}},
   year   = {2026},
-  doi    = {10.5281/zenodo.19680322},
-  url    = {https://zenodo.org/records/19680322},
+  doi    = {10.5281/zenodo.19888480},
+  url    = {https://zenodo.org/records/19888480},
 }
 ```
 

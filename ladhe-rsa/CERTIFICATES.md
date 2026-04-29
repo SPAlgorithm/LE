@@ -184,6 +184,6 @@ The underlying Ladhe signature is **one-time** — a key pair can safely sign ex
 If you find a bug in the cert format, file an issue:
 
 - Repo: https://github.com/SPAlgorithm/LE
-- Paper: https://zenodo.org/records/19680322
+- Paper: https://zenodo.org/records/19888480
 
 If you find a cryptographic break, see the main `README.md` for how to report.

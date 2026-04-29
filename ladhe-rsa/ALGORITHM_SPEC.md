@@ -3,7 +3,7 @@
 **Draft** — SPAlgorithm, April 2026
 **Authors**: Shubham Ladhe, Pankaj Ladhe
 **Contact**: spalgorithm@gmail.com
-**Paper**: `SP_Paper_v3.pdf` (this folder); Zenodo: https://zenodo.org/records/19680322
+**Paper**: `SP_Paper_v3.pdf` (this folder); Zenodo: https://zenodo.org/records/19888480
 **Implementation**: https://github.com/SPAlgorithm/LE
 
 ---

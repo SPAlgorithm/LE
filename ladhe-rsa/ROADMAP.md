@@ -12,7 +12,7 @@ funding or pilot engagements materialising.
 
 | Date        | Milestone |
 |-------------|-----------|
-| 2026-04-22  | Paper published on Zenodo ([10.5281/zenodo.19680322](https://zenodo.org/records/19680322)) |
+| 2026-04-22  | Paper published on Zenodo ([10.5281/zenodo.19888480](https://zenodo.org/records/19888480)) |
 | 2026-04-22  | Reference implementation released (github.com/SPAlgorithm/LE) |
 | 2026-04-22  | Empirical dataset released (1,620+ entries) |
 | 2026-04-23  | IANA Private Enterprise Number **65644** registered to LeSecure |
