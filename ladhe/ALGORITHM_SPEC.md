@@ -3,7 +3,7 @@
 **Draft** — SPAlgorithm, April 2026
 **Authors**: Shubham Ladhe, Pankaj Ladhe
 **Contact**: spalgorithm@gmail.com
-**Paper**: `SP_Paper_v3.pdf` (this folder); Zenodo: https://zenodo.org/records/19888480
+**Paper**: `SP_Paper.pdf` (this folder); Zenodo: https://zenodo.org/records/19888480
 **Implementation**: https://github.com/SPAlgorithm/LE
 
 ---
@@ -27,7 +27,7 @@ among experimental implementations and to invite formal review.
 ## 1. Background
 
 The Ladhe scheme is defined in the companion paper
-(`SP_Paper_v3.pdf`). Informally:
+(`SP_Paper.pdf`). Informally:
 
 - A **public key** is `(P, h)` where `P` is a prime and
   `h = SHA-256(enc(W))` for a compressed witness `W`.
@@ -198,7 +198,7 @@ for awareness once community cryptanalysis begins.
 
 - **[LadheV3]** Shubham Ladhe, Pankaj Ladhe. "Ladhe Signatures:
   Compact Hash-Based Signatures from Additive Prime Decompositions."
-  2026 — this folder's `SP_Paper_v3.pdf`.
+  2026 — this folder's `SP_Paper.pdf`.
 - **[RFC8410]** S. Josefsson, J. Schaad. "Algorithm Identifiers for
   Ed25519, Ed448, X25519, and X448." RFC 8410, 2018.
 - **[RFC9371]** M. Cotton. "Registration Procedures for Private

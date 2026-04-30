@@ -1,6 +1,6 @@
 """ladhe.py — Reference implementation of the Ladhe signature scheme.
 
-This is version 3 of the scheme, matching SP_Paper_v3.tex (April 2026).
+This is version 3 of the scheme, matching SP_Paper.tex (April 2026).
 The scheme is a ONE-TIME hash-based signature whose private key is a
 sorted tuple of distinct odd primes summing to a public prime P, and
 whose public key is the hash of an indexed-pair compression of those

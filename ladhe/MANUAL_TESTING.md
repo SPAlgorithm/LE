@@ -2,7 +2,7 @@
 >
 > This guide was written for the original Ladhe scheme (Sigma
 > protocol, commitment+salt, Φ₁ predicate). The v3 scheme
-> (`SP_Paper_v3.pdf` / `ladhe.py` as of April 2026) uses a
+> (`SP_Paper.pdf` / `ladhe.py` as of April 2026) uses a
 > one-time hash-based construction with a prime-decomposition
 > witness — the API is different.
 >

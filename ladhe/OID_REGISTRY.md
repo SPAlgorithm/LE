@@ -90,4 +90,4 @@ END
 
 - IANA PEN registry: https://www.iana.org/assignments/enterprise-numbers/
 - RFC 9371: Registration procedures for PENs
-- Paper (v3): `SP_Paper_v3.pdf` (this repo); Zenodo: https://zenodo.org/records/19888480
+- Paper (v3): `SP_Paper.pdf` (this repo); Zenodo: https://zenodo.org/records/19888480

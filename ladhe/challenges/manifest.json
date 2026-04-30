@@ -1,0 +1,67 @@
+{
+  "ladhe_bounty_format_version": 1,
+  "scheme": "Ladhe v1.0",
+  "scheme_paper": "https://zenodo.org/records/19888480",
+  "verifier": "verify_solution.py",
+  "brute_force_baseline": "brute_force_baseline.py",
+  "cryptanalysis_doc": "../CRYPTANALYSIS.md",
+  "generator_started_at": "2026-04-30T03:37:09.950911+00:00",
+  "generator_finished_at": "2026-04-30T03:37:10.539426+00:00",
+  "challenges": [
+    {
+      "id": "sanity-32",
+      "bits": 32,
+      "P": 3492166253,
+      "h_hex": "098f8feaa143403010f8461a979a704d49f5bbfa3ec088c35fa180039335133b",
+      "actual_bit_length": 32,
+      "k": 3,
+      "tier": "SANITY_CHECK",
+      "reward": "Acknowledgment in changelog",
+      "purpose": "Algorithm sanity test; trivially breakable by brute force."
+    },
+    {
+      "id": "educational-64",
+      "bits": 64,
+      "P": 34364577572498869427,
+      "h_hex": "d895aa07b48a426301bcfd77283c98b72a10ea1725b6cf78ceb6669a7b18ec28",
+      "actual_bit_length": 65,
+      "k": 5,
+      "tier": "EDUCATIONAL",
+      "reward": "Acknowledgment in changelog",
+      "purpose": "Tractable for advanced attackers; below security target."
+    },
+    {
+      "id": "educational-96",
+      "bits": 96,
+      "P": 40091800751081870034013464797,
+      "h_hex": "aae443b915eb7106570dc8a223f36d3794cf9f0fd89a8dbde17d446fea7feeb7",
+      "actual_bit_length": 96,
+      "k": 3,
+      "tier": "EDUCATIONAL",
+      "reward": "Acknowledgment in changelog",
+      "purpose": "Educational ceiling; practical CTF challenge."
+    },
+    {
+      "id": "pre-crypto-128",
+      "bits": 128,
+      "P": 307106797964092792899157346843679586793,
+      "h_hex": "654204247ad0742b23236b3e88d9c499df232638d926a6e111b172d6638b7d28",
+      "actual_bit_length": 128,
+      "k": 7,
+      "tier": "PRE_CRYPTOGRAPHIC",
+      "reward": "Acknowledgment in changelog",
+      "purpose": "Hard but solvable; below 256-bit security target."
+    },
+    {
+      "id": "bronze-256",
+      "bits": 256,
+      "P": 764071537703589974901981391441023137902846150188500529721046153092622621683843,
+      "h_hex": "12937359e272d1e2eeae7303da1038f4bdc87bc3c72b8d54f065fae84226f4f7",
+      "actual_bit_length": 259,
+      "k": 5,
+      "tier": "BRONZE",
+      "reward": "Named in public 'challenges solved' log; v2 paper acknowledgment",
+      "purpose": "Cryptographic security target. A break here is a real cryptanalytic result."
+    }
+  ]
+}
