@@ -47,7 +47,7 @@ Gated on:
 Steps:
 
 - [ ] **OpenSSL provider plugin** — implement Ladhe as an OpenSSL 3.0+ provider so standard tools (`openssl verify`, Python `cryptography`, Go `crypto/x509`, curl, nginx) can cryptographically verify signatures, not just parse the structure. Fastest path: fork `oqsprovider` (Open Quantum Safe) and add Ladhe alongside NIST PQC algorithms. Estimated: 2–4 months of C development.
-- [ ] **Many-time extension** — ship the Merkle-aggregated many-time variant sketched in `SP_Paper_v3.pdf` §6. Each leaf is a one-time Ladhe key pair; signatures include the one-time signature plus a Merkle authentication path.
+- [ ] **Many-time extension** — ship the Merkle-aggregated many-time variant sketched in `SP_Paper.pdf` §6. Each leaf is a one-time Ladhe key pair; signatures include the one-time signature plus a Merkle authentication path.
 - [ ] **Efficient KeyGen algorithm** — replace random-trial decomposition search (`O((ln P)^k · k · (log P)^3)`) with a directly-constructive algorithm. This is the main barrier to cryptographic parameter sizes.
 - [ ] **Constant-time / side-channel hardening** — replace non-constant-time primitives; add memory hygiene and timing-attack resistance.
 - [ ] **Third-party security audit** — engage Trail of Bits, NCC Group, or Cure53 for formal review of the hardened implementation.

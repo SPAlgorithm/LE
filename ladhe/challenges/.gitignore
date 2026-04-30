@@ -1,0 +1,11 @@
+# Witness vault — DO NOT COMMIT.
+# These files contain the prime tuples that produced each public
+# (P, h) in manifest.json. Keeping them out of the public repo is
+# what makes the cryptanalysis challenge meaningful.
+.witnesses/
+
+# Standard Python ignores
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/

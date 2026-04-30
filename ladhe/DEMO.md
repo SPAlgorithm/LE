@@ -161,7 +161,7 @@ If you find:
 please open an issue:
 
 - Repo: https://github.com/SPAlgorithm/LE
-- Paper: `SP_Paper_v3.pdf` (this folder) + Zenodo
+- Paper: `SP_Paper.pdf` (this folder) + Zenodo
   10.5281/zenodo.19888480
 
 Cryptanalysis is the point.
