@@ -38,6 +38,7 @@ cryptographic specification of the bounty.
 | `verify_solution.py` | Stdlib-only verifier. Given a candidate prime tuple, runs all six structural and hash checks. |
 | `brute_force_baseline.py` | Reference brute-force solver. Demonstrates the baseline attack work; succeeds at sub-cryptographic tiers, infeasible at BRONZE+. |
 | `generate_manifest.py` | Maintainer tool — used to refresh the manifest. Committed publicly so anyone can audit how challenges are generated (no fixed seeds, no hidden choices). |
+| `demo_pair_compress_noninj.py` | Runnable demo of the documented non-injectivity of `pair_compress` on prime tuples (paper Remark `rmk:pc-noninj`). Saves cryptanalysts from re-discovering this and reporting it as a break. |
 | `.witnesses/` | Internal witness vault. **Gitignored** — not in the public repo. |
 
 ---
@@ -169,6 +170,15 @@ To save everyone time, here's the explicit "not a break" list:
   recovered via Merkle aggregation (paper §6, not yet implemented).
 - **Attacks on the many-time variant** before it's implemented.
   We make no claims yet about its security.
+- **Alternative prime tuples that compress to the same `W`.** The
+  pair-compression map is intentionally non-injective on prime
+  tuples: distinct ascending tuples with matching pair-sums and
+  matching unpaired tail produce the same `W`, hence the same `h`.
+  This is documented in the paper (Remark `rmk:pc-noninj`, §3.4)
+  and demonstrated by `demo_pair_compress_noninj.py` in this
+  directory. `h` commits to `W`, not to a specific prime tuple;
+  recovering any opening from `(P, h)` alone still requires a
+  SHA-256 preimage.
 
 ---
 
