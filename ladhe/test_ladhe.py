@@ -33,6 +33,30 @@ class TestPairCompression(unittest.TestCase):
         with self.assertRaises(ValueError):
             LR.pair_compress((3, 5))
 
+    def test_noninjective_on_prime_tuples(self):
+        # Locks the property documented in SP_Paper.tex Remark
+        # rmk:pc-noninj (§3.4): h commits to W, not to a specific
+        # prime tuple. Two ascending tuples with matching pair-sums
+        # and matching unpaired tail compress to the same W and
+        # therefore both verify against the same public key.
+        import hashlib
+        A = (3, 17, 23, 29, 1009)
+        B = (7, 13, 23, 29, 1009)
+        self.assertEqual(sum(A), sum(B))
+        WA = LR.pair_compress(A)
+        WB = LR.pair_compress(B)
+        self.assertEqual(WA, WB)
+        self.assertEqual(LR.encode_W(WA), LR.encode_W(WB))
+        hA = hashlib.sha256(LR.encode_W(WA)).digest()
+        hB = hashlib.sha256(LR.encode_W(WB)).digest()
+        self.assertEqual(hA, hB)
+        pk = LR.PublicKey(prime=sum(A), h=hA)
+        msg = b"x"
+        sigA = LR.Signature(primes=A, message=msg)
+        sigB = LR.Signature(primes=B, message=msg)
+        self.assertTrue(LR.verify(msg, sigA, pk))
+        self.assertTrue(LR.verify(msg, sigB, pk))
+
 
 class TestEncoding(unittest.TestCase):
     def test_encode_deterministic(self):
