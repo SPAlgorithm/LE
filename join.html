@@ -3,25 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Join Tournament — LE Games</title>
+  <title>Join — LE Games</title>
   <style>
     body { font-family: -apple-system, sans-serif; text-align: center; padding: 40px 20px; color: #222; }
     h1 { font-size: 22px; margin-bottom: 8px; }
     p  { font-size: 15px; color: #666; margin: 6px 0; }
     a  { color: #d83a4a; font-weight: 600; text-decoration: none; }
     .code { font-family: monospace; font-size: 28px; letter-spacing: 4px; margin: 16px 0; color: #d83a4a; }
+    .btn { display: inline-block; margin-top: 18px; padding: 12px 26px; border-radius: 12px;
+           background: #d83a4a; color: #fff; font-weight: 700; }
   </style>
 </head>
 <body>
   <h1>Opening LE Games…</h1>
   <p id="code-display"></p>
-  <p>If nothing happens, <a id="store-link" href="https://apps.apple.com/us/app/le-games/id6767880385">download the app</a>.</p>
+  <p><a id="open-link" class="btn" href="#">Open in LE Games</a></p>
+  <p>If nothing happens, <a id="store-link" href="https://apps.apple.com/us/app/le-games/id6767880385">download the app</a>,
+     then enter the code on the Join screen.</p>
 
   <script>
     (function () {
       var APP_STORE_URL = "https://apps.apple.com/us/app/le-games/id6767880385";
       var params = new URLSearchParams(window.location.search);
-      var game   = params.get("game") || "";
+      var game   = params.get("game") || "";        // tournament links: ?game=<slug>&code=…
+      var room   = (params.get("room") || "").toLowerCase(); // room links: ?room=escape|bingo&code=…
       var code   = (params.get("code") || "").toUpperCase();
 
       if (code) {
@@ -34,9 +39,25 @@
         return;
       }
 
-      var deepLink = "legames://tournament/" + encodeURIComponent(game) + "/join?code=" + encodeURIComponent(code);
-      window.location = deepLink;
+      // Build the right deep link for each invite kind:
+      //   escape room  -> legames://escape/join?code=XXXXXX
+      //   pentabingo   -> legames://bingo/join?code=XXXXXX
+      //   tournament   -> legames://tournament/<gameSlug>/join?code=XXXXXX
+      var deepLink;
+      if (room === "escape" || room === "bingo") {
+        deepLink = "legames://" + room + "/join?code=" + encodeURIComponent(code);
+      } else if (game) {
+        deepLink = "legames://tournament/" + encodeURIComponent(game) + "/join?code=" + encodeURIComponent(code);
+      } else {
+        window.location = APP_STORE_URL;
+        return;
+      }
 
+      // Manual button (some in-app browsers block scripted scheme redirects —
+      // a real user tap is always allowed).
+      document.getElementById("open-link").href = deepLink;
+
+      window.location = deepLink;
       setTimeout(function () {
         if (!document.hidden) {
           window.location = APP_STORE_URL;
