@@ -1,68 +1,69 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px '.AppleSystemUIFontMonospaced'; color: #141414; -webkit-text-stroke: #141414; background-color: #fcfdfb}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px '.AppleSystemUIFontMonospaced'; color: #141414; -webkit-text-stroke: #141414; background-color: #fcfdfb; min-height: 16.0px}
-    span.s1 {font-kerning: none}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Join — LE Games</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; text-align: center; padding: 40px 20px; color: #222; }
+    h1 { font-size: 22px; margin-bottom: 8px; }
+    p  { font-size: 15px; color: #666; margin: 6px 0; }
+    a  { color: #d83a4a; font-weight: 600; text-decoration: none; }
+    .code { font-family: monospace; font-size: 28px; letter-spacing: 4px; margin: 16px 0; color: #d83a4a; }
+    .btn { display: inline-block; margin-top: 18px; padding: 12px 26px; border-radius: 12px;
+           background: #d83a4a; color: #fff; font-weight: 700; }
   </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;Join Tournament — LE Games&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>body { font-family: -apple-system, sans-serif; text-align: center; padding: 40px 20px; color: #222; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>h1 { font-size: 22px; margin-bottom: 8px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>p<span class="Apple-converted-space">  </span>{ font-size: 15px; color: #666; margin: 6px 0; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>a<span class="Apple-converted-space">  </span>{ color: #d83a4a; font-weight: 600; text-decoration: none; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.code { font-family: monospace; font-size: 28px; letter-spacing: 4px; margin: 16px 0; color: #d83a4a; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Opening LE Games…&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p id="code-display"&gt;&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p&gt;If nothing happens, &lt;a id="store-link" href="https://apps.apple.com/us/app/le-games/id6767880385"&gt;download the app&lt;/a&gt;.&lt;/p&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>(function () {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>var APP_STORE_URL = "https://apps.apple.com/us/app/le-games/id6767880385";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>var params = new URLSearchParams(window.location.search);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>var game <span class="Apple-converted-space">  </span>= params.get("game") || "";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>var code <span class="Apple-converted-space">  </span>= (params.get("code") || "").toUpperCase();</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>// Show the code so the user can hand-type it if all else fails.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (code) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.getElementById("code-display").innerHTML =</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>"Your code: &lt;span class=\"code\"&gt;" + code + "&lt;/span&gt;";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (!code) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>window.location = APP_STORE_URL;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>// Try to open the app.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>var deepLink = "legames://tournament/" + encodeURIComponent(game) + "/join?code=" + encodeURIComponent(code);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>window.location = deepLink;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>// If the page is still visible after 1.5s, the scheme isn't registered → install path.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>setTimeout(function () {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>if (!document.hidden) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>window.location = APP_STORE_URL;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}, 1500);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>})();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+  <h1>Opening LE Games…</h1>
+  <p id="code-display"></p>
+  <p><a id="open-link" class="btn" href="#">Open in LE Games</a></p>
+  <p>If nothing happens, <a id="store-link" href="https://apps.apple.com/us/app/le-games/id6767880385">download the app</a>,
+     then enter the code on the Join screen.</p>
+
+  <script>
+    (function () {
+      var APP_STORE_URL = "https://apps.apple.com/us/app/le-games/id6767880385";
+      var params = new URLSearchParams(window.location.search);
+      var game   = params.get("game") || "";        // tournament links: ?game=<slug>&code=…
+      var room   = (params.get("room") || "").toLowerCase(); // room links: ?room=escape|bingo&code=…
+      var code   = (params.get("code") || "").toUpperCase();
+
+      if (code) {
+        document.getElementById("code-display").innerHTML =
+          "Your code: <span class=\"code\">" + code + "</span>";
+      }
+
+      if (!code) {
+        window.location = APP_STORE_URL;
+        return;
+      }
+
+      // Build the right deep link for each invite kind:
+      //   escape room  -> legames://escape/join?code=XXXXXX
+      //   pentabingo   -> legames://bingo/join?code=XXXXXX
+      //   tournament   -> legames://tournament/<gameSlug>/join?code=XXXXXX
+      var deepLink;
+      if (room === "escape" || room === "bingo") {
+        deepLink = "legames://" + room + "/join?code=" + encodeURIComponent(code);
+      } else if (game) {
+        deepLink = "legames://tournament/" + encodeURIComponent(game) + "/join?code=" + encodeURIComponent(code);
+      } else {
+        window.location = APP_STORE_URL;
+        return;
+      }
+
+      // Manual button (some in-app browsers block scripted scheme redirects —
+      // a real user tap is always allowed).
+      document.getElementById("open-link").href = deepLink;
+
+      window.location = deepLink;
+      setTimeout(function () {
+        if (!document.hidden) {
+          window.location = APP_STORE_URL;
+        }
+      }, 1500);
+    })();
+  </script>
 </body>
 </html>
