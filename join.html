@@ -12,21 +12,32 @@
     .code { font-family: monospace; font-size: 28px; letter-spacing: 4px; margin: 16px 0; color: #d83a4a; }
     .btn { display: inline-block; margin-top: 18px; padding: 12px 26px; border-radius: 12px;
            background: #d83a4a; color: #fff; font-weight: 700; }
+    .note { display: none; margin: 18px auto 0; max-width: 340px; padding: 14px 16px;
+            background: #fff4f0; border: 1px solid #f3c9bd; border-radius: 12px; color: #8a3b28; font-size: 14px; }
+    .note b { color: #d83a4a; }
   </style>
 </head>
 <body>
   <h1>Opening LE Games…</h1>
   <p id="code-display"></p>
   <p><a id="open-link" class="btn" href="#">Open in LE Games</a></p>
-  <p>If nothing happens, <a id="store-link" href="https://apps.apple.com/us/app/le-games/id6767880385">download the app</a>,
+
+  <div id="inapp-note" class="note">
+    This link opened inside another app's browser, which can't launch LE Games.<br><br>
+    Tap the <b>•••</b> (or share) button and choose <b>Open in Safari</b>, then tap
+    <b>Open in LE Games</b> above. If the app isn't installed yet,
+    <a id="store-link-inapp" href="https://apps.apple.com/us/app/le-games/id6767880385">get it here</a> first.
+  </div>
+
+  <p id="fallback">If nothing happens, <a id="store-link" href="https://apps.apple.com/us/app/le-games/id6767880385">download the app</a>,
      then enter the code on the Join screen.</p>
 
   <script>
     (function () {
       var APP_STORE_URL = "https://apps.apple.com/us/app/le-games/id6767880385";
       var params = new URLSearchParams(window.location.search);
-      var game   = params.get("game") || "";        // tournament links: ?game=<slug>&code=…
-      var room   = (params.get("room") || "").toLowerCase(); // room links: ?room=escape|bingo&code=…
+      var game   = params.get("game") || "";                  // tournament links: ?game=<slug>&code=…
+      var room   = (params.get("room") || "").toLowerCase();  // room links: ?room=escape|bingo&code=…
       var code   = (params.get("code") || "").toUpperCase();
 
       if (code) {
@@ -34,35 +45,55 @@
           "Your code: <span class=\"code\">" + code + "</span>";
       }
 
-      if (!code) {
-        window.location = APP_STORE_URL;
-        return;
-      }
-
       // Build the right deep link for each invite kind:
       //   escape room  -> legames://escape/join?code=XXXXXX
       //   pentabingo   -> legames://bingo/join?code=XXXXXX
       //   tournament   -> legames://tournament/<gameSlug>/join?code=XXXXXX
-      var deepLink;
-      if (room === "escape" || room === "bingo") {
-        deepLink = "legames://" + room + "/join?code=" + encodeURIComponent(code);
-      } else if (game) {
-        deepLink = "legames://tournament/" + encodeURIComponent(game) + "/join?code=" + encodeURIComponent(code);
-      } else {
-        window.location = APP_STORE_URL;
-        return;
+      var deepLink = null;
+      if (code) {
+        if (room === "escape" || room === "bingo") {
+          deepLink = "legames://" + room + "/join?code=" + encodeURIComponent(code);
+        } else if (game) {
+          deepLink = "legames://tournament/" + encodeURIComponent(game) + "/join?code=" + encodeURIComponent(code);
+        }
       }
 
-      // Manual button (some in-app browsers block scripted scheme redirects —
-      // a real user tap is always allowed).
+      // No usable code → straight to the store listing.
+      if (!deepLink) { window.location = APP_STORE_URL; return; }
+
+      // The manual button always carries the deep link — a real user tap is
+      // allowed even where scripted scheme redirects are blocked.
       document.getElementById("open-link").href = deepLink;
 
+      var ua = navigator.userAgent || "";
+      // In-app webviews (Facebook, Instagram, Messenger, WhatsApp, …) BLOCK
+      // custom-scheme redirects and never hand off to the app — auto-bouncing
+      // them to the App Store is the "always goes to the store" bug. Tell them
+      // to reopen in Safari instead of redirecting.
+      var inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line|Twitter|WhatsApp|Snapchat|MicroMessenger|GSA/i.test(ua);
+
+      if (inApp) {
+        document.getElementById("inapp-note").style.display = "block";
+        document.getElementById("fallback").style.display = "none";
+        return;                       // no auto redirect — user taps the button / opens in Safari
+      }
+
+      // Normal browser (Safari/Chrome): try the deep link, and only fall back to
+      // the App Store if the app clearly did NOT open. When the app opens, the
+      // page is backgrounded (visibility/pagehide) — cancel the fallback then, so
+      // an installed app is never bounced to the store.
+      var settled = false;
+      var timer = null;
+      function goStore() { if (!settled) { settled = true; window.location = APP_STORE_URL; } }
+      function appOpened() { settled = true; if (timer) { clearTimeout(timer); timer = null; } }
+
+      document.addEventListener("visibilitychange", function () { if (document.hidden) appOpened(); });
+      window.addEventListener("pagehide", appOpened);
+
       window.location = deepLink;
-      setTimeout(function () {
-        if (!document.hidden) {
-          window.location = APP_STORE_URL;
-        }
-      }, 1500);
+      // 2.5s gives the "Open in LE Games?" system prompt time to appear and the
+      // app time to launch before we assume it isn't installed.
+      timer = setTimeout(goStore, 2500);
     })();
   </script>
 </body>
