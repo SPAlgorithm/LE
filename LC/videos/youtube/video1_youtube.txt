@@ -1,0 +1,50 @@
+FILE TO UPLOAD
+  /Users/pankajladhe/Pankaj/2018/AIStuff/RSAL/LC/videos/Ladhe_Quad_Conjecture_Video1.mp4   (724 MB, 28:31, 1080p)
+THUMBNAIL
+  /Users/pankajladhe/Pankaj/2018/AIStuff/RSAL/LC/videos/thumbnail_video1.png
+TRANSCRIPT (Subtitles > Add > Upload file > "With timing" off / or paste as text, auto-sync)
+  /Users/pankajladhe/Pankaj/2018/AIStuff/RSAL/LC/videos/youtube/video1_transcript.txt
+
+TITLE (59 characters)
+Ladhe's Quad Conjecture: A New Pattern in Prime Quadruplets
+
+DESCRIPTION
+A brand new pattern in the prime numbers. Every prime quadruplet (p, p+2, p+6, p+8), the tightest family of four primes that exists, can be written as the largest member of the previous quadruplet plus a few distinct members of earlier quadruplets, for example 13001 = 9439 + 3461 + 101. Seeded by the "royal quad" 2, 3, 5, 7, the chain runs through every prime quadruplet below one billion, all 28,387 of them, with no exception. This video explains the conjecture, the exceptions, what it does and does not say about finding the next quadruplet, a proved companion theorem (every integer below the next quadruplet is a sum of chain members plus one small expression in 2, 3, 5, 7), the additive, multiplicative and exponential ways of writing each member, and open questions.
+
+Invented by Shubham Ladhe, Saloni Ladhe and Pankaj Ladhe.
+
+Companion iOS app (LE-Games, free): https://apps.apple.com/app/id6767880385
+Paper, tool (LC) and the full dataset to 10^9: https://github.com/SPAlgorithm/LE (folder LC)
+Part 2, "Build any number from prime quadruplets": https://youtu.be/JNWvt3hS540
+
+Chapters
+00:00 Prime numbers, the darling of nature
+02:15 Prime quadruplets
+04:09 The royal quad 2, 3, 5, 7
+04:57 Building the chain: Q1 and the rule for the next link
+05:54 Q2: how 101 is made
+07:31 Q4 to Q9: pure addition and the shortest gaps
+09:59 Big numbers, and every quadruplet below one billion
+11:34 The conjecture, stated in three strengths
+12:35 The ten exceptions
+14:12 Does it find the next quadruplet? How the search works
+15:17 A second discovery: every integer below the next quad (a theorem)
+17:21 Three ways to write a gap: additive, multiplicative, exponential
+18:49 No base needed: the M1 and E3 forms
+20:01 The tool and the data
+21:54 Who found it: a new mathematician is born
+23:04 Possible applications
+24:05 Open questions
+25:35 How to check it yourself
+26:53 Recap and closing
+
+TAGS (paste into the Tags box, comma separated)
+prime numbers, prime quadruplets, number theory, Ladhe's Quad Conjecture, Ladhe, conjecture, primes, prime patterns, twin primes, additive basis, mathematics, math discovery, prime constellations, Hardy-Littlewood, LESecure
+
+SETTINGS
+  Visibility: Private now (the link never changes when you switch to Public later)
+  Audience: No, it's not made for kids
+  Category: Education        Language: English        License: Standard YouTube
+  Playlist: create "Ladhe's Quad Conjecture" and add both videos
+  End screen: add "Video" element pointing to Part 2 (last 20 s)
+  Cards: one at 18:49 pointing to Part 2

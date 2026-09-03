@@ -1,0 +1,834 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, citecolor=blue!50!black,
+            urlcolor=blue!50!black}
+\setlength{\emergencystretch}{1.5em}
+
+\newtheorem{definition}{Definition}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{observation}{Observation}
+\newtheorem{remark}{Remark}
+\newtheorem{question}{Question}
+
+\newcommand{\Q}{\mathcal{Q}}
+\newcommand{\Pool}{\mathcal{P}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\Rflat}{\mathcal{R}_{\mathrm{flat}}}
+\newcommand{\Radd}{\mathcal{R}_{+}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\title{Ladhe's Quad Conjecture:\\
+Every Prime Quadruplet Is an Additive/Multiplicative/Exponential\\
+Combination of Its Predecessors\thanks{Correspondence:
+\texttt{spalgorithm@gmail.com}. Paper and dataset are released under
+CC~BY~4.0; the code is released under the licence of the repository
+\url{https://github.com/SPAlgorithm/LE}.}}
+
+\author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
+
+\date{September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Prime quadruplets are the constellations $(p,\,p+2,\,p+6,\,p+8)$ of four
+primes, the densest possible packing of four primes beyond $(5,7,11,13)$.
+We order them into a chain $\Q_1=(11,13,17,19)$, $\Q_2=(101,103,107,109)$,
+$\Q_3=(191,193,197,199)$, \dots, seeded by the \emph{royal quad}
+$\Q_0=(2,3,5,7)$, and observe that every member of every quadruplet can be
+written as the largest member of the previous quadruplet plus a sum of
+distinct members of earlier quadruplets, for example
+$13001 = 9439 + 3461 + 101$ and
+$35545421 = 35524459 + 18049 + 2089 + 821 + 3$.
+The precise form of the observation is that the gap $D$ between a
+quadruplet member and its base is a sum of at most $8$ distinct earlier
+members, with exactly ten exceptional gaps, all at most $382$, that need a
+small expression in the royal members $2,3,5,7$; allowing one such
+expression in every gap brings the bound down to six terms with no
+exception at all. We call this \emph{Ladhe's Quad Conjecture} and verify it
+for all $28{,}387$ prime quadruplets below $10^9$, i.e.\ for $113{,}544$
+quadruplet members, with an independent checker. Two further
+representations of each gap, one that prefers multiplication and one that
+prefers powers of chain members, are also computed and released. We also
+prove, from a two-line lemma and computed base cases, that the chain is an
+additive basis for all integers: every integer up to the next quadruplet
+(indeed up to a bound that grows like the sum of all earlier members) is a
+sum of distinct chain members plus one expression in $2,3,5,7$ with
+$+,-,\times$; this is unconditional below $10^9$ and rests beyond that
+only on a mild growth condition. We explain carefully what the conjecture
+does and does not say about locating the next quadruplet, give a heuristic
+for why such representations are plentiful, and state open questions. The utility that builds the chain and
+the full dataset are available at
+\url{https://github.com/SPAlgorithm/LE}.
+\end{abstract}
+
+\section{Introduction}
+
+A \emph{prime quadruplet} is a quadruple of primes of the form
+\[
+(p,\; p+2,\; p+6,\; p+8),
+\]
+the tightest admissible pattern of four primes. Apart from $(5,7,11,13)$,
+every prime quadruplet has $p\equiv 11 \pmod{30}$, so its members end in the
+digits $1,3,7,9$ in that order. The sequence of first members
+$11, 101, 191, 821, 1481, 1871, 2081, \dots$ is OEIS A007530
+\cite{OEIS_A007530}. Whether there are infinitely many prime quadruplets is
+open; it is the case $k=4$ of the Hardy--Littlewood prime $k$-tuple
+conjecture \cite{HardyLittlewood1923}, and the Bateman--Horn heuristic
+\cite{BatemanHorn1962} predicts that the number of quadruplets up to $x$ is
+asymptotically $C_4\, x/(\log x)^4$ with $C_4 \approx 4.15$. The strongest
+unconditional results in this direction are the bounded-gap theorems of
+Zhang \cite{Zhang2014} and Maynard \cite{Maynard2015}, which give
+infinitely many pairs (and $m$-tuples) of primes within a bounded distance
+but not the specific pattern $(0,2,6,8)$. Large quadruplets and related
+clusters have been searched for computationally for decades
+\cite{Forbes1999}.
+
+This note records an additive structure that runs through the whole
+sequence of prime quadruplets, at least as far as we have looked. Order the
+quadruplets by size and call the $k$-th one $\Q_k$; put the four primes
+$2,3,5,7$ in front as $\Q_0$, the \emph{royal quad}. Then every member of
+$\Q_k$ is obtained from the largest member of $\Q_{k-1}$ by adding a few
+distinct members of earlier quadruplets. Section~\ref{sec:conj} states this
+precisely in three forms of increasing strength, Section~\ref{sec:cover}
+proves a companion statement, that with subtraction allowed among the
+royal members every integer below the next quadruplet is such a sum,
+Section~\ref{sec:examples} walks through examples that can be checked by
+hand, Section~\ref{sec:evidence} reports the computation up to $10^9$, and
+Section~\ref{sec:next} discusses, with some care, what the statement means
+for finding the next quadruplet.
+
+The observation grew out of the authors' earlier work on additive
+decompositions of primes, \emph{Ladhe's Conjecture} \cite{LadheConj}, which
+concerns single primes written as sums of three primes and underlies a
+hash-based signature scheme \cite{LadheScheme}. The present note is about
+prime \emph{quadruplets} and is self-contained.
+
+\section{Definitions and rules}
+\label{sec:defs}
+
+\begin{definition}[Quads]
+$\Q_0=(2,3,5,7)$ is the \emph{royal quad}. For $k\ge 1$, $\Q_k$ is the
+$k$-th prime quadruplet $(p,p+2,p+6,p+8)$ with $p\ge 11$, in increasing
+order of $p$. We write its members as
+$q_k^{(1)}=p,\; q_k^{(3)}=p+2,\; q_k^{(7)}=p+6,\; q_k^{(9)}=p+8$, the
+superscript being the last decimal digit. The quadruplet $(5,7,11,13)$ is
+not part of the chain, because $5$ and $7$ already belong to $\Q_0$, and
+$\Q_0$ itself is not of the form $(p,p+2,p+6,p+8)$.
+\end{definition}
+
+\begin{definition}[Base, gap, pool]
+For $k\ge 2$ the \emph{base} of $\Q_k$ is $m_k=q_{k-1}^{(9)}$, the largest
+member of the previous quadruplet. For a member $t$ of $\Q_k$ the
+\emph{gap} is $D=t-m_k>0$. The \emph{pool} available to $\Q_k$ is
+$\Pool_k=\Q_1\cup\dots\cup\Q_{k-1}$, the set of all $4(k-1)$ primes of the
+earlier quadruplets.
+\end{definition}
+
+\begin{definition}[Royal expressions]
+A \emph{royal expression} is an arithmetic expression built from the
+members $2,3,5,7$ of $\Q_0$, each used at most once, with the operations
+$+$ and $\times$ only. Let $\R$ be the set of its values; $\R$ has $68$
+elements between $2$ and $210$. Two subsets matter below: $\Radd$, the
+$11$ values reachable by addition alone,
+$\{2,3,5,7,8,9,10,12,14,15,17\}$, and $\Rflat$, the $38$ values with a
+\emph{flat} expression, one in which no product contains a sum, such as
+$(5\times 7)+(2\times 3)=41$ but not $5\times(7+(2\times3))=65$.
+\end{definition}
+
+\begin{definition}[Additive representation]
+An \emph{additive representation} of a member $t$ of $\Q_k$ ($k\ge2$) is an
+identity
+\[
+t \;=\; m_k \;+\; s_1+s_2+\dots+s_j \;+\; r,
+\qquad s_1>s_2>\dots>s_j,\;\; s_i\in\Pool_k,\;\; r\in\R\cup\{0\},
+\]
+with all $s_i$ distinct and none equal to $m_k$. Its \emph{length} is
+$j$ if $r=0$ and $j+1$ otherwise. Several $s_i$ may come from the same
+quadruplet. (The stricter reading ``at most one member per quadruplet''
+already fails at $\Q_2$: $101-19=82$, and no single member of $\Q_1$ leaves
+a remainder in $\R$.) A member $t$ of $\Q_1$ is written as a royal
+expression alone, e.g.\ $11=(2\times3)+5$.
+\end{definition}
+
+The following congruences are elementary but shape everything below. All
+first members satisfy $p\equiv 11\pmod{30}$, so consecutive first members
+differ by a multiple of $30$, and the gaps of the four members of $\Q_k$
+satisfy
+\[
+D\equiv 22,\;24,\;28,\;0 \pmod{30}
+\quad\text{for } t=q_k^{(1)},q_k^{(3)},q_k^{(7)},q_k^{(9)} \text{ respectively.}
+\]
+Every gap is even while every pool member is odd, so a representation with
+$r=0$ has an even number of terms. Pool members are $\equiv 11,13,17,19
+\pmod{30}$, hence a two-term representation of the gap of a first member
+($D\equiv22$) must add two first members ($11+11\equiv22$).
+
+\paragraph{Three ways.}
+The utility described in Section~\ref{sec:evidence} computes, for every
+member, one representation of each of three kinds:
+\begin{itemize}[nosep]
+\item[\textbf{A}] \emph{additive}, as in the definition above, chosen so that
+  addition is exhausted before any royal multiplication is used (fewer
+  multiplications first, then fewer terms, then larger members first);
+\item[\textbf{M}] \emph{multiplicative}: any two distinct members of
+  $\Pool_k\cup\Q_0$ may be multiplied, and multiplication is preferred over
+  addition (the largest unused member is multiplied by the largest member
+  that still fits, then the next, plain addition only when nothing can be
+  multiplied);
+\item[\textbf{E}] \emph{exponential}: in addition, a member may be raised to
+  a member power, powers being preferred over products over plain addition.
+  Because the order in which powers are tried changes the outcome, two
+  variants are kept: E1 takes the largest base first, E2 the largest power
+  value first;
+\item[\textbf{M1}] \emph{without the base}: the M search applied to the
+  member itself instead of to its gap. No base term is required, the pool
+  is every member of $\Pool_k\cup\Q_0$ below the target, and the largest
+  products carry the number, e.g.
+  $854921 = (427249\cdot 2) + (109\cdot 3) + (17\cdot 5) + 11$;
+\item[\textbf{E3}] \emph{powers first}: the largest power $b^e$ below the
+  member, with $b$ and $e$ distinct members, then again the largest power
+  below what is left as long as it covers at least half of it, followed by
+  the remainder in the additive way (members below the target added,
+  largest first, closed by a flat royal expression), e.g.
+  $854921 = 829^2 + 11^5 + 17^3 + 1489 + 107 + 101 + 19$ and
+  $19497221 = 11^7 + 2^{13} + 829 + 827 + 199 + 3$. If no choice of
+  members closes the remainder, the chain of powers is shortened by one,
+  and finally the next largest first power is tried.
+\end{itemize}
+In A, M, E1 and E2 every member of $\Pool_k\cup\Q_0$ is used at most once
+and the base $m_k$ is always a plain term; M1 and E3 also use every member
+at most once, the base and exponent of the E3 power included, but have no
+base term.
+
+\section{The conjecture}
+\label{sec:conj}
+
+We state the observation in three forms. The first is the one the utility
+works with; the second and third are the ones we consider interesting,
+because they bound the number of terms.
+
+\begin{conjecture}[Ladhe's Quad Conjecture, existence form]
+\label{conj:A}
+Every member of every prime quadruplet $\Q_k$ with $k\ge2$ has an additive
+representation over the chain: $t=m_k+\sum_i s_i+r$ with distinct
+$s_i\in\Pool_k$ and $r\in\R\cup\{0\}$.
+\end{conjecture}
+
+\begin{conjecture}[bounded pure form]
+\label{conj:B}
+There is an absolute constant $K$ such that, apart from finitely many gaps,
+every gap $D=t-m_k$ ($k\ge2$) is a sum of at most $K$ distinct members of
+$\Pool_k$. The data support $K=8$, with exactly ten exceptional gaps:
+\[
+D\in\{22,\;82,\;84,\;88,\;90,\;172,\;174,\;178,\;180,\;382\},
+\]
+each of which needs a royal value. No exception occurs beyond $\Q_{435}$
+(first member $3{,}512{,}231$) up to $10^9$.
+\end{conjecture}
+
+\begin{conjecture}[bounded form with one flat royal value]
+\label{conj:C}
+Every gap $D=t-m_k$ ($k\ge2$) is a sum of at most five distinct members of
+$\Pool_k$ plus at most one element of $\Rflat$; that is, every member has
+an additive representation of length at most six whose royal part, if any,
+is flat.
+\end{conjecture}
+
+\begin{remark}[Why the existence form alone is weak]
+Once a few quadruplets exist, the pool is large and the sums of its subsets
+cover every even number in range many times over, so Conjecture~\ref{conj:A}
+is very likely to hold for reasons that have little to do with
+quadruplets; it would also be vacuous if only finitely many quadruplets
+existed. What is not automatic is that a \emph{fixed} number of terms
+suffices while the gaps grow: the average gap between consecutive
+quadruplets near $x$ grows like $(\log x)^4/C_4$, about $35{,}000$ at
+$10^9$, and the pool members that fit under a gap are few ($92$ below the
+average gap and $336$ below the largest gap, $395{,}520$, in our data).
+Conjectures~\ref{conj:B}
+and~\ref{conj:C} would be falsified by a single gap that is not a short
+sum; the natural falsification test is a very large gap between
+consecutive quadruplets.
+\end{remark}
+
+\begin{remark}[The exceptional gaps]
+All ten exceptions are small and appear early. The four gaps $82,84,88,90$
+belong to $\Q_2$ (and reappear whenever two consecutive quadruplets are
+$90$ apart, as at $\Q_3$, $\Q_{14}$, $\Q_{437}$, \dots); at that point the
+pool is $\Q_1$ alone, whose subset sums cannot reach $82$. The gaps $22$,
+$172$--$180$ and $382$ are coverage holes of $\Q_1\cup\Q_2$: for instance
+$382=1871-1489$ needs all of $109,107,103,19,17,13,11$ plus $3$. With the
+$11$ royal addition values allowed, only $82,84,88,90$ remain exceptional;
+with $\Rflat$ allowed there is no exception. Appendix~\ref{app:exc} lists
+the ten gaps with their forced representations.
+\end{remark}
+
+\section{Coverage: every integer below the next quadruplet}
+\label{sec:cover}
+
+The chain also serves as an additive basis for \emph{all} integers, not
+only for the quadruplets, once subtraction is allowed inside the royal
+part. This section proves that statement from two computed base cases.
+
+\begin{definition}[Signed royal values]
+$\R^{\pm}$ is the set of non-negative values of expressions built from
+the members $2,3,5,7$ of $\Q_0$, each used at most once, with $+$, $-$ and
+$\times$ placed anywhere. It has $83$ elements between $0$ and $210$,
+contains every integer from $0$ to $38$, and its first gaps are
+$39, 43, 53, 59, 61, 62$. Examples: $0=5-(3+2)$, $1=3-2$, $4=7-3$,
+$33=(5\times7)-2$, $55=5\times((2\times7)-3)$.
+\end{definition}
+
+\begin{definition}[Derivation]
+A \emph{derivation} of an integer $n\ge0$ over $\Q_0,\dots,\Q_k$ is an
+identity $n=s_1+\dots+s_j+r$ with distinct $s_i\in\Q_1\cup\dots\cup\Q_k$
+and $r\in\R^{\pm}$ ($j=0$ or $r=0$ allowed). Quadruplet members are only
+added; subtraction and multiplication occur only among royal members.
+Write $C_k$ for the set of integers that have a derivation over
+$\Q_0,\dots,\Q_k$ and $T_k$ for the largest $T$ with $[0,T]\subseteq C_k$.
+\end{definition}
+
+By direct computation,
+\[
+T_0=38,\qquad T_1=156,\qquad T_2=576,\qquad T_3=1356,\qquad T_4=4656,
+\]
+so with the pool $2,3,5,7,11,13,17,19$ every integer from $0$ to $156$ has
+a derivation, in particular every integer up to $101$; for instance
+$16=11+5$, $53=19+11+(7\times5)-2$ and $55=19+11+(7\times5)$.
+
+\begin{lemma}
+\label{lem:extend}
+Let $A$ be a set of non-negative integers containing every integer in
+$[0,T]$, and let $0<m\le T+1$. Then $A\cup(A+m)$ contains every integer in
+$[0,T+m]$.
+\end{lemma}
+\begin{proof}
+An integer $x\in[0,T]$ lies in $A$. An integer $x\in[T+1,T+m]$ satisfies
+$0\le x-m\le T$, so $x-m\in A$ and $x\in A+m$.
+\end{proof}
+
+\begin{proposition}
+\label{prop:cover}
+Put $S_3=T_3=1356$ and $S_k=S_{k-1}+4p_k+16$ for $k\ge4$. If
+$p_j\le S_{j-1}+1$ for every $j$ with $4\le j\le k+1$, then
+$T_k\ge S_k\ge p_{k+1}$: every integer $n$ with $0\le n\le p_{k+1}$ has a
+derivation over $\Q_0,\dots,\Q_k$. For $k\le 3$ the same conclusion holds
+by the computed values ($T_0\ge p_1=11$, $T_1\ge p_2=101$,
+$T_2\ge p_3=191$, $T_3\ge p_4=821$).
+\end{proposition}
+\begin{proof}
+Induction on $k\ge3$ with the claim $T_k\ge S_k$; the case $k=3$ is the
+computation. Assume $T_{k-1}\ge S_{k-1}$ and add the members
+$p_k,\,p_k+2,\,p_k+6,\,p_k+8$ of $\Q_k$ one at a time, each with
+coefficient $0$ or $1$. The first satisfies $p_k\le S_{k-1}+1\le T_{k-1}+1$
+by hypothesis, so Lemma~\ref{lem:extend} raises the coverage to
+$T_{k-1}+p_k$; each following member is at most $p_k+8$, far below the
+coverage reached so far, so the lemma applies three more times and
+$T_k\ge T_{k-1}+4p_k+16\ge S_k$. Finally $p_{k+1}\le S_k+1$ and $p_{k+1}$
+is odd while $S_k$ is even, hence $p_{k+1}\le S_k$.
+\end{proof}
+
+The hypothesis is mild: it fails only if a quadruplet's first member
+exceeds $S_{j-1}+1$, which grows like four times the sum of all earlier
+first members. In the chain up to $10^9$ it holds at every $j\le 28{,}387$,
+and it is tightest at $j=4$ ($p_4=821$ against $S_3+1=1357$). The one-step
+condition $p_j\le 5p_{j-1}+16$ is sufficient and also holds throughout
+(the largest ratio $p_j/p_{j-1}$ for $j\ge3$ is $4.30$, at $j=4$). So
+Proposition~\ref{prop:cover} is unconditional below $10^9$; an
+unconditional proof for all $k$ would follow from any Bertrand-type bound
+for prime quadruplets, which is open, although far more than what is
+needed here.
+
+\begin{remark}
+Coverage is a statement about \emph{all} integers with subtraction
+allowed and does not imply Conjecture~\ref{conj:A}, which forbids
+subtraction, fixes the base $m_k$ and, in its bounded forms, limits the
+number of terms. It does show that the differences $D$ of the conjecture,
+which are tiny compared with $T_{k-1}$, always have \emph{some} derivation
+of this looser kind.
+\end{remark}
+
+The utility prints a derivation of any integer with \code{-d}, taking the
+largest quad prime below the remainder first, each prime once, and closing
+with a flat royal expression (no product containing a sum) whenever the
+choice of primes allows it, ranked by fewest multiplications, then fewest
+minus signs; a range \code{-d 53 83} prints one line per integer:
+\begin{small}\begin{verbatim}
+  python3 lc.py -d 16      16 = 13 + 3
+  python3 lc.py -d 53      53 = 19 + 17 + 13 + 7 - 3
+  python3 lc.py -d 55      55 = 19 + 17 + 13 + 5 + 3 - 2
+  python3 lc.py -d 76      76 = 19 + 17 + 13 + 11 + (3*7) - 5
+  python3 lc.py -d 99      99 = 19 + 13 + (2*5*7) - 3
+  python3 lc.py -d 101     101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
+  python3 lc.py -d 999986171
+                           999986171 = 999900529 + 82729 + 2089 + 823 + 3 - 2
+\end{verbatim}\end{small}
+The greedy choice is not the only derivation; $53=19+11+(7\times5)-2$ and
+$55=19+11+(7\times5)$ are equally valid. Up to $20{,}000$ every integer
+receives a flat closing.
+
+\section{Worked examples}
+\label{sec:examples}
+
+The lines below are copied verbatim from the utility
+(\code{python3 lc.py 12 -AME}); \code{A}, \code{M}, \code{M1}, \code{E1},
+\code{E2}, \code{E3} label the ways, and a line is omitted when it repeats
+an earlier line of the same member (\code{E2} when it coincides with
+\code{E1}; in $\Q_1$, which has no base, \code{M1} coincides with
+\code{M}). Products are written in parentheses and $b\,\code{\^{}}\,e$
+means $b^e$.
+
+\paragraph{$\Q_1=(11,13,17,19)$ from the royal quad.}
+The first quadruplet is written with royal expressions only; the utility
+also lists alternatives, including ones with subtraction, which the chain
+equations of Section~\ref{sec:conj} otherwise never use.
+\begin{small}\begin{verbatim}
+  11 = (2*3) + 5        also: (2*7) - 3  |  (3*7) - (2*5)  |  7 + 5 + 2 - 3
+  13 = (2*5) + 3
+  17 = 7 + 5 + 3 + 2
+  19 = (2*7) + 5
+\end{verbatim}\end{small}
+
+\paragraph{$\Q_2=(101,103,107,109)$: the gap $82$.}
+Base $m_2=19$, gap $101-19=82$. The pool is $\Q_1$, whose members other
+than the base sum to $41$, so a royal value is unavoidable; $41$ itself is
+flat, $(5\times7)+(2\times3)$.
+\begin{small}\begin{verbatim}
+  A:  101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
+  M:  101 = 19 + (17*3) + (13*2) + 5
+  M1: 101 = (19*5) + (3*2)
+  E1: 101 = 19 + (7^2) + (11*3)
+  E3: 101 = (7^2) + 19 + 17 + 13 + 3
+\end{verbatim}\end{small}
+
+\paragraph{$\Q_3=(191,193,197,199)$: the same gap again.}
+$191-109=82$, so the representation of the gap is reused with the new
+base. The utility stores one equation per distinct gap and reuses it. The
+base-free lines M1 and E3 are computed per member and cannot be reused;
+here they need only $\Q_1$ and the royal quad.
+\begin{small}\begin{verbatim}
+  A:  191 = 109 + 17 + 13 + 11 + (5*7) + (2*3)
+  M:  191 = 109 + (17*3) + (13*2) + 5
+  M1: 191 = (19*7) + (17*3) + 5 + 2
+  E1: 191 = 109 + (7^2) + (11*3)
+  E3: 191 = (13^2) + (5*3) + 7
+\end{verbatim}\end{small}
+
+\paragraph{$\Q_4=(821,823,827,829)$: pure addition.}
+Gap $821-199=622=197+193+191+19+17+5$; the three remaining members of
+$\Q_3$ are used together with two members of $\Q_1$ and the royal $5$. The
+two exponential variants differ here: E1 starts from the largest base
+$19^2$, E2 also, but then prefers $3^5=243$ over $5^3=125$.
+\begin{small}\begin{verbatim}
+  A:  821 = 199 + 197 + 193 + 191 + 19 + 17 + 5
+  M:  821 = 199 + (197*3) + (13*2) + 5
+  M1: 821 = (199*3) + (103*2) + 13 + 5
+  E1: 821 = 199 + (19^2) + (5^3) + 101 + 17 + 11 + 7
+  E2: 821 = 199 + (19^2) + (3^5) + 11 + 7
+  E3: 821 = (19^2) + (7^3) + 101 + 11 + 5
+\end{verbatim}\end{small}
+
+\paragraph{$\Q_6=(1871,\dots)$: a long gap early in the chain.}
+Gap $1871-1489=382$ is one of the ten exceptions: no subset of
+$\Q_1\cup\Q_2$ sums to $382$, so a royal value is needed. The shortest
+representation with a royal \emph{addition} value has seven terms
+($199+109+19+17+13+11+14$, with $14=7+5+2$); with one flat royal value
+four terms suffice, $382=191+101+17+73$ with $73=(2\times5\times7)+3$.
+The utility's addition-first rule prefers the eight-term form below, whose
+royal part is the single member $3$. The multiplicative way is one product.
+\begin{small}\begin{verbatim}
+  A:  1871 = 1489 + 109 + 107 + 103 + 19 + 17 + 13 + 11 + 3
+  M:  1871 = 1489 + (191*2)
+  M1: 1871 = (829*2) + (19*7) + (17*3) + 13 + 11 + 5
+  E1: 1871 = 1489 + (19^2) + (7*3)
+  E3: 1871 = (11^3) + 199 + 197 + 109 + 17 + 13 + 5
+\end{verbatim}\end{small}
+
+\paragraph{$\Q_{12}=(13001,\dots)$: the typical two-term gap.}
+Gap $13001-9439=3562=3461+101$, one member of $\Q_9$ and one of $\Q_2$,
+both first members as the congruence $22\equiv 11+11 \pmod{30}$ requires.
+About one gap in four has such a two-term representation.
+\begin{small}\begin{verbatim}
+  A:  13001 = 9439 + 3461 + 101
+  M:  13001 = 9439 + (1489*2) + (193*3) + 5
+  M1: 13001 = (5659*2) + (199*7) + (19*13) + (5*3) + 17 + 11
+  E1: 13001 = 9439 + (19^2) + (13^3) + (109*7) + 107 + 101 + 17 + 11 + 5
+  E2: 13001 = 9439 + (13^3) + (19^2) + (109*7) + 107 + 101 + 17 + 11 + 5
+  E3: 13001 = (109^2) + 829 + 193 + 19 + 17 + 13 + 11 + (7*5) + 3
+\end{verbatim}\end{small}
+
+\paragraph{Two consecutive quadruplets near $3.5\times10^7$.}
+$\Q_{2208}$ and $\Q_{2209}$ are $6{,}000$ apart; the gap of the first,
+$35545421-35524459=20962$, is $18049+2089+821+3$, and the gap of the second,
+$35551421-35545429=5992$, is $5659+199+109+17+5+3$.
+\begin{small}\begin{verbatim}
+  A:  35545421 = 35524459 + 18049 + 2089 + 821 + 3
+  M:  35545421 = 35524459 + (9439*2) + (199*7) + (193*3) + (19*5) + 17
+  M1: 35545421 = (17771269*2) + (829*3) + (19*13) + (7*5) + 103 + 11
+  E1: 35545421 = 35524459 + (109^2) + (19^3) + (199*7) + (107*5) + 193 + 101
+  E3: 35545421 = (5659^2) + (19^5) + (101^3) + 13009 + 1489 + 109 + 103 + 17 + 13
+
+  A:  35551421 = 35545429 + 5659 + 199 + 109 + 17 + 5 + 3
+  M:  35551421 = 35545429 + (2089*2) + (199*7) + (103*3) + (19*5) + 17
+  M1: 35551421 = (17773369*2) + (1489*3) + (19*11) + 7
+  E1: 35551421 = 35545429 + (19^2) + (17^3) + (103*5) + (13*7) + 101 + 11
+  E3: 35551421 = (5659^2) + (19^5) + (101^3) + 19423 + 823 + 193 + 191 + 103 + 7
+\end{verbatim}\end{small}
+
+The last quadruplet below $10^9$ is $\Q_{28387}=(999986171,\dots)$ with
+$999986171 = 999900529 + 82729 + 2089 + 821 + 3$, and the largest gap
+between consecutive quadruplets in that range, $395{,}520$ at
+$\Q_{19558}$, is still a two-term sum:
+$628641701 = 628246189 + 392261 + 3251$.
+
+\section{Computational evidence}
+\label{sec:evidence}
+
+\paragraph{The utility.}
+\code{lc.py} is a single Python~3 file with no dependencies. It finds
+quadruplets with a segmented sieve (only $p\equiv11 \pmod{30}$ is tested),
+then searches a representation of every member's gap by iterative
+deepening over the number of terms, with the preferences listed in
+Section~\ref{sec:defs}, and stores one set of A/M/E1/E2 equations per
+distinct gap, plus the base-free M1 and E3 equations of every member, in a
+JSON cache that later runs reuse. The additive search is
+capped at $16$ terms and $300{,}000$ nodes per call, the M/E searches at
+$50{,}000$ nodes, the base-free M1 search, whose pool is the whole chain,
+at $1{,}000{,}000$ nodes, and the additive remainder of E3 at $300{,}000$
+nodes; a fallback path exists for the case that a search gives up, and
+it was never taken in the data reported here (zero fallback flags). Building the chain to $10^9$ took $165$~s on a 2019 Intel laptop
+under Python~3.13.5, of which the A/M/E1/E2 equations take $85$~s; the
+base-free M1 and E3 equations, computed once per member over the whole
+chain, account for the rest.
+
+\paragraph{The checker.}
+\code{check.py} re-reads the JSON and, independently of the search code,
+verifies every stored equation: the arithmetic, that all members are
+distinct, that the base is never reused as a term, and that every term is
+smaller than the target. On the $10^9$ dataset it checked $681{,}288$
+equations ($6$ per member for all $113{,}548$ members, $\Q_1$ included) and
+found $0$ errors.
+
+\paragraph{Minimal lengths.}
+\code{stats.py} recomputes, for every distinct gap and independently of the
+preferences of the utility, the minimal length $K$ of a representation
+under three vocabularies: pool members only (\emph{pure}); pool members
+plus at most one value of $\Radd$; pool members plus at most one value of
+$\Rflat$. The minimum is taken when the gap is first met, using only the
+quadruplets available at that moment. Table~\ref{tab:K} gives the result.
+
+\begin{table}[ht]
+\centering
+\caption{Minimal length $K$ of a representation of the gap, over the
+$13{,}636$ distinct gaps met below $10^9$ (all four members).}
+\label{tab:K}
+\small
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+vocabulary & $K{=}1$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ & $8$ & none & mean \\
+\midrule
+pure members            & --   & 2817 & --   & 10375 & --  & 410 & --  & 24 & 10 & 3.65 \\
+$+$ one value of $\Radd$  & --   & 2818 & 429  & 9946  & 365 & 53  & 20  & 1  & 4  & 3.59 \\
+$+$ one value of $\Rflat$ & 5    & 2927 & 3333 & 7295  & 68  & 8   & --  & -- & 0  & 3.33 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pure column has only even lengths, as it must. The ten gaps without a
+pure representation are those of Conjecture~\ref{conj:B}; with $\Radd$
+only $82,84,88,90$ remain; with $\Rflat$ nothing remains and six terms
+always suffice, which is Conjecture~\ref{conj:C}. The mean minimal length
+does not grow along the chain: in eight consecutive blocks of about
+$3{,}550$ quadruplets the mean pure $K$ of the first member's gap is
+$3.80, 3.75, 3.73, 3.71, 3.71, 3.67, 3.73, 3.71$ and the share of two-term
+gaps stays between $22\%$ and $24\%$.
+
+\paragraph{What the utility actually stores.}
+Table~\ref{tab:A} summarises the additive representations chosen by the
+utility. Because addition is exhausted before any royal product is used,
+these are often longer than the minimum: only $120$ of the $113{,}544$
+member equations contain a royal product (all with gap $82,84,88$ or
+$90$), $52{,}790$ end with an added royal value, and $60{,}634$ are pure
+sums of pool members. The longest stored equation has nine terms after
+the base. Of the $28{,}386$ first-member gaps, $24{,}977$ repeat a gap seen
+earlier in the chain; there are only $13{,}636$ distinct gaps among the
+$113{,}544$ member gaps, because consecutive quadruplets are often the
+same distance apart.
+
+\begin{table}[ht]
+\centering
+\caption{Additive representations stored by the utility, $10^9$ dataset.
+Length counts the terms after the base, a royal value counting as one.}
+\label{tab:A}
+\small
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+ & \multicolumn{8}{c}{length} & royal part \\
+\cmidrule(lr){2-9}
+scope & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & none / $+$ / $\times$ \\
+\midrule
+first member of each quad & 6493 & -- & 19472 & 30 & 2173 & 119 & 99 & -- & 14776 / 13580 / 30 \\
+all four members          & 26875 & 60 & 77222 & 60 & 8323 & 227 & 755 & 22 & 60634 / 52790 / 120 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Multiplicative and exponential ways.}
+For the $28{,}386$ first-member gaps, the M representations use $90{,}661$
+products and $50{,}439$ plain terms, never more than nine terms; $2{,}935$
+of the products multiply two royal members. E1 uses $60{,}176$ powers,
+$49{,}728$ products and $79{,}246$ plain terms (at most $14$ terms); E2
+uses $63{,}213$ powers, $34{,}739$ products and $78{,}861$ plain terms (at
+most $12$). E1 and E2 coincide for $9{,}117$ of the $28{,}386$ gaps. These
+representations are released for further study; we make no claim about
+them beyond their existence within the search caps. The base-free M1 and
+powers-first E3 representations were likewise found for every one of the
+$113{,}548$ members (only $11$, $17$ and $19$, which are written from the
+royal quad alone, admit no power chain and fall back to the power-first
+search) and are stored and verified. The E3 chain has one power for
+$16{,}926$ members, two for $35{,}775$, three for $46{,}553$ and four for
+$14{,}291$; we do not analyse these representations further here.
+
+\section{What the conjecture says about the next quadruplet}
+\label{sec:next}
+
+It is tempting to read Conjecture~\ref{conj:B} as a recipe: take the
+largest member of the last known quadruplet, add a short sum of earlier
+members, and the next quadruplet appears. We want to be precise about what
+is and is not true here.
+
+\paragraph{What it gives.}
+Every quadruplet after the first carries a \emph{certificate} over its
+predecessors: a short equation whose terms are earlier chain members, with
+the base term identifying the previous quadruplet. The chain is therefore
+self-referential in a strong sense: nothing outside $\Q_0,\dots,\Q_{k-1}$
+is needed to write down $\Q_k$ once it is known. The certificate also
+turns the search for the next quadruplet into a bounded additive search:
+if the conjecture holds with $K$ terms, then the first member of $\Q_k$ is
+of the form $m_k+D$ with $D\equiv 22\pmod{30}$ and $D$ a sum of at most
+$K$ distinct pool members, and the candidate can be tested by four
+primality tests. The utility does exactly this in reverse, producing the
+certificate after the sieve has found the quadruplet.
+
+\paragraph{What it does not give.}
+The candidates produced by the additive search are far more numerous than
+quadruplets: near $10^9$ the number of two-term sums of pool members below
+a typical gap is already in the thousands, and almost every admissible $D$
+has some short representation. So the conjecture does not point at the
+next quadruplet, it only says where it will be found once it exists, and
+in practice a sieve remains the faster way to find it. Nor does the
+conjecture imply that a next quadruplet exists; infinitude of prime
+quadruplets is a separate, open problem.
+
+\paragraph{Why representations are plentiful.}
+The Bateman--Horn heuristic predicts roughly $C_4\,y/(\log y)^4$
+quadruplets below $y$, and so four times as many pool members. The number
+of $j$-element subsets of pool members below $D$ grows like
+\[
+\frac{1}{j!}\left(\frac{4C_4\,D}{(\log D)^4}\right)^{j},
+\]
+while their sums range over $O(D)$ even numbers, so for $j\ge2$ the
+expected number of $j$-term representations of a given gap grows without
+bound as $D$ grows, and grows faster the larger $j$ is. This is the reason the mean minimal length stays flat, and it
+suggests the answer to the following question is yes.
+
+\begin{question}
+Is every sufficiently large gap a sum of \emph{two} distinct earlier
+members? Equivalently, do the lengths $4,6,8$ in Table~\ref{tab:K}
+eventually disappear?
+\end{question}
+
+\begin{question}
+Is a royal value ever needed again beyond the ten exceptional gaps, i.e.\
+is Conjecture~\ref{conj:B} true with exactly these exceptions and $K=8$,
+or even $K=6$ beyond some point?
+\end{question}
+
+\begin{question}
+The same construction applies to any prime constellation, for instance
+twin primes or sexy prime triplets, with the corresponding admissible
+residues. Which constellations admit a bounded chain, and with what $K$?
+\end{question}
+
+\begin{question}
+The exceptional gaps are exactly the coverage holes of $\Q_1\cup\Q_2$. Is
+there a simple description of the set of gaps that are not sums of pool
+members at the moment they are first met, for the general constellation?
+\end{question}
+
+\section{Availability and reproducibility}
+\label{sec:avail}
+
+The utility, the checker and the statistics script are released in the
+folder \code{LC} of the repository
+\begin{center}\url{https://github.com/SPAlgorithm/LE}\end{center}
+The commands below rebuild everything reported here from scratch.
+\begin{small}\begin{verbatim}
+  python3 lc.py --upto 999999999 --cache paper/qarray_1e9.json   # 85 s
+  python3 paper/check.py paper/qarray_1e9.json                   # 0 bad
+  python3 paper/stats.py paper/qarray_1e9.json                   # all figures
+  python3 lc.py 25 -AME --cache paper/qarray_1e9.json            # the examples
+\end{verbatim}\end{small}
+The dataset \code{qarray\_1e9.json} ($48{,}068{,}688$ bytes) has SHA-256
+\begin{center}\footnotesize\code{72dabebf238cfb792ccb4fc51d126128b497967d9e9b29d68077e7e0cd360477}\end{center}
+and \code{quads\_1e9.csv} lists, for each of the $113{,}548$ members
+(including $\Q_1$), the base, the gap, the four A/M/E1/E2 equations (the base-free M1/E3
+equations are in the JSON only) and the three
+minimal lengths. Interactive use: \code{python3 lc.py} asks for a number of
+quadruplets; \code{-M}, \code{-E}, \code{-AME} select the ways;
+\code{--all} shows all four members; \code{-v} shows which quadruplet each
+term comes from; \code{-d N} prints a derivation of any integer $N$ as in
+Section~\ref{sec:cover}, extending the chain first if $N$ lies beyond the
+cache.
+
+\paragraph{Videos.}
+Two narrated explanations accompany this note: \emph{Ladhe's Quad
+Conjecture: A New Pattern in Prime Quadruplets} (28~min,
+\url{https://youtu.be/_XSOJ0Yj77Q}), which covers Sections
+\ref{sec:conj}--\ref{sec:next}, and \emph{Build Any Number From Prime
+Quadruplets} (11~min, \url{https://youtu.be/JNWvt3hS540}), which walks
+through the coverage proposition of Section~\ref{sec:cover} by hand.
+
+\paragraph{App.}
+An interactive companion to this note is being added to the authors' free
+iOS app \emph{LE-Games}: \url{https://apps.apple.com/app/id6767880385}.
+
+\paragraph{Conflict of interest.}
+The authors declare no competing interests related to this note.
+
+\begin{thebibliography}{9}
+
+\bibitem{HardyLittlewood1923}
+G.~H. Hardy and J.~E. Littlewood,
+\emph{Some problems of `Partitio numerorum'; III: On the expression of a
+number as a sum of primes},
+Acta Mathematica 44 (1923), 1--70.
+
+\bibitem{BatemanHorn1962}
+P.~T. Bateman and R.~A. Horn,
+\emph{A heuristic asymptotic formula concerning the distribution of prime
+numbers},
+Mathematics of Computation 16 (1962), no.~79, 363--367.
+
+\bibitem{OEIS_A007530}
+OEIS Foundation Inc.,
+\emph{Sequence A007530: Prime quadruples: numbers $k$ such that $k$, $k+2$,
+$k+6$, $k+8$ are all prime},
+The On-Line Encyclopedia of Integer Sequences,
+\url{https://oeis.org/A007530}.
+
+\bibitem{Zhang2014}
+Y.~Zhang,
+\emph{Bounded gaps between primes},
+Annals of Mathematics 179 (2014), no.~3, 1121--1174.
+
+\bibitem{Maynard2015}
+J.~Maynard,
+\emph{Small gaps between primes},
+Annals of Mathematics 181 (2015), no.~1, 383--413.
+
+\bibitem{Forbes1999}
+T.~Forbes,
+\emph{Prime clusters and Cunningham chains},
+Mathematics of Computation 68 (1999), no.~228, 1739--1747.
+
+\bibitem{LadheConj}
+S.~Ladhe and P.~Ladhe,
+\emph{Ladhe's Conjecture: additive decompositions of primes},
+Zenodo, \url{https://doi.org/10.5281/zenodo.19354450}.
+
+\bibitem{LadheScheme}
+S.~Ladhe and P.~Ladhe,
+\emph{Ladhe: A compact hash-based one-time signature from additive prime
+decompositions},
+Zenodo, \url{https://doi.org/10.5281/zenodo.20575084}.
+
+\end{thebibliography}
+
+\appendix
+
+\section{The first 25 quadruplets}
+\label{app:table}
+
+For each member: the quad index $k$, the member $t$, the base $m_k$, the gap
+$D$, the additive equation stored by the utility (base first), its length
+including the base, the minimal pure length $K$ of the gap (``--'' for the
+exceptional gaps), and, when the gap was met before, the quad where its
+equation was first found. $\Q_1$ is written from royal members only.
+
+\begin{footnotesize}
+\begin{longtable}{rrrrlrrr}
+\toprule
+$k$ & $t$ & $m_k$ & $D$ & additive equation & len & $K$ & from \\
+\midrule
+\endfirsthead
+\toprule
+$k$ & $t$ & $m_k$ & $D$ & additive equation & len & $K$ & from \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\input{appendix_rows.tex}
+\end{longtable}
+\end{footnotesize}
+
+\section{The ten exceptional gaps}
+\label{app:exc}
+
+Gaps that are not a sum of distinct pool members at the moment they are
+first met, with the additive (A), multiplicative (M) and exponential (E1)
+representations of the gap stored by the utility.
+
+\begin{scriptsize}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rrrlll}
+\toprule
+$D$ & $k$ & $t$ & A & M & E1 \\
+\midrule
+22  & 169 & 1006331 & \code{19 + 3} & \code{(11*2)} & \code{(3\^{}2) + 13} \\
+82  & 2   & 101     & \code{17 + 13 + 11 + (5*7) + (2*3)} & \code{(17*3) + (13*2) + 5} & \code{(7\^{}2) + (11*3)} \\
+84  & 2   & 103     & \code{11 + (2*5*7) + 3} & \code{(17*3) + (13*2) + 7} & \code{(7\^{}2) + 17 + 13 + 5} \\
+88  & 2   & 107     & \code{17 + 13 + 11 + (2*3*7) + 5} & \code{(17*5) + 3} & \code{(7\^{}2) + (13*3)} \\
+90  & 2   & 109     & \code{17 + (2*5*7) + 3} & \code{(17*5) + 3 + 2} & \code{(7\^{}2) + 17 + 13 + 11} \\
+172 & 435 & 3512231 & \code{109 + 19 + 17 + 13 + 11 + 3} & \code{(19*7) + (17*2) + 5} & \code{(13\^{}2) + 3} \\
+174 & 435 & 3512233 & \code{109 + 19 + 17 + 13 + 11 + 5} & \code{(19*7) + (13*3) + 2} & \code{(13\^{}2) + 5} \\
+178 & 435 & 3512237 & \code{109 + 19 + 17 + 13 + 11 + 7 + 2} & \code{(19*7) + (17*2) + 11} & \code{(11\^{}2) + (19*3)} \\
+180 & 435 & 3512239 & \code{103 + 19 + 17 + 13 + 11 + 7 + 5 + 3 + 2} & \code{(19*7) + (17*2) + 13} & \code{(13\^{}2) + 11} \\
+382 & 6   & 1871    & \code{109 + 107 + 103 + 19 + 17 + 13 + 11 + 3} & \code{(191*2)} & \code{(19\^{}2) + (7*3)} \\
+\bottomrule
+\end{tabular}
+\end{scriptsize}
+
+\section{Notation}
+
+\begin{small}
+\begin{tabular}{ll}
+\toprule
+$\Q_0$ & the royal quad $(2,3,5,7)$ \\
+$\Q_k$, $k\ge1$ & the $k$-th prime quadruplet $(p,p+2,p+6,p+8)$, $p\ge11$ \\
+$q_k^{(d)}$ & the member of $\Q_k$ ending in digit $d\in\{1,3,7,9\}$ \\
+$m_k=q_{k-1}^{(9)}$ & the base of $\Q_k$ \\
+$D=t-m_k$ & the gap of a member $t$ of $\Q_k$ \\
+$\Pool_k=\Q_1\cup\dots\cup\Q_{k-1}$ & the pool available to $\Q_k$ \\
+$\R$, $\Rflat$, $\Radd$ & royal values: all ($68$), flat ($38$), additive ($11$) \\
+$\R^{\pm}$ & non-negative royal values with $+,-,\times$ ($83$) \\
+$K$ & minimal length of a representation of a gap \\
+$C_k$, $T_k$ & integers with a derivation over $\Q_0..\Q_k$; largest $T$ with $[0,T]\subseteq C_k$ \\
+$S_k$ & $S_3=T_3$, $S_k=S_{k-1}+4p_k+16$: the proven lower bound for $T_k$ \\
+\bottomrule
+\end{tabular}
+\end{small}
+
+\end{document}

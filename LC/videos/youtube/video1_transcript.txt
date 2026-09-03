@@ -1,0 +1,115 @@
+Prime numbers are the darling of nature. Every whole number is built from them, and yet, after more than two thousand years, they still keep secrets. Today I want to show you a brand new pattern. Not in single primes. In prime quadruplets, the tightest little families of four primes that exist. And the pattern is this: every one of these families can be built, by simple addition, from the families that came before it. All of them. As far as we have looked. This is Ladhe's Quad Conjecture. Let's dive in.
+
+Quick refresher. A prime is a whole number bigger than one that only divides by one and itself. Two, three, five, seven, eleven, thirteen. They are the atoms of arithmetic. Multiply them and you get every other number. And there are infinitely many of them. Euclid proved that around 300 BC, with an argument so short you can hold it in your head: multiply all the primes you know, add one, and the result has a prime factor you did not know.
+
+Here is the thing that drives mathematicians a little crazy. Primes look random. There are big gaps, then sudden clusters. Nobody has a formula that spits out the next prime. We know roughly how many there are up to any point, that is the prime number theorem, but where exactly the next one lands, no. And that irregularity is exactly why any new regularity is such a big deal.
+
+Sometimes two primes sit just two apart. Eleven and thirteen. Seventeen and nineteen. Twenty nine and thirty one. These are twin primes. Are there infinitely many? Nobody knows. It is one of the most famous open problems in mathematics. In 2013 Yitang Zhang proved that infinitely many pairs of primes are within seventy million of each other, and within a year the world had pushed that bound down to two hundred forty six. Two is still out of reach.
+
+Now take it further. Four primes, packed as tightly as four primes can ever be packed: p, p plus two, p plus six, p plus eight. Eleven, thirteen, seventeen, nineteen. That is a prime quadruplet. And here is a lovely fact: apart from the very first one, every prime quadruplet has its four members ending in the digits one, three, seven and nine. Always in that order.
+
+Why is that forced? Because of the numbers three and five. Among any four numbers spaced zero, two, six and eight apart, one of them is divisible by three unless the first one leaves remainder two when divided by three. And one of them is divisible by five unless the first leaves remainder one when divided by five. Put those together and the first member must be eleven more than a multiple of thirty. Eleven, forty one, seventy one, one hundred one. So the last digits are locked in: one, three, seven, nine.
+
+The quadruplets start at eleven. Then one hundred and one. One hundred ninety one. Eight hundred twenty one. Fourteen eighty one. Eighteen seventy one. Two thousand eighty one. They get rarer and rarer, like all primes do, but they never seem to stop. Whether there are infinitely many is, again, unknown. It is a special case of a conjecture by Hardy and Littlewood from 1923, and Bateman and Horn later gave a formula for how many to expect below any number. The formula fits the data beautifully. It has never been proved.
+
+Before we go on, meet the royal quad. Two, three, five, seven. The first four primes. They are not a quadruplet in the technical sense, but they are the seed of everything that follows. We call them royal because they get a special job. Hold that thought.
+
+So here is our chain. Q zero is the royal quad. Q one is eleven, thirteen, seventeen, nineteen. Q two is one hundred one, one hundred three, one hundred seven, one hundred nine. Q three is one ninety one to one ninety nine. And so on, forever. The question the Ladhe family asked is beautifully simple. Can each link of the chain be built from the links before it?
+
+Start small. Can we make eleven, thirteen, seventeen and nineteen out of two, three, five and seven? Yes. Two times three plus five is eleven. Two times five plus three is thirteen. Seven plus five plus three plus two is seventeen. Two times seven plus five is nineteen. Each royal member used at most once. The first link is built.
+
+Now the real rule. To build any member of a new quadruplet, start from the largest member of the previous quadruplet. Call it the base. Then add distinct members of earlier quadruplets, each one used once. If a small remainder is left over, close it with a little expression in the royal members, using only plus and times. That is the whole recipe. Three lines.
+
+Let's build one hundred one. The previous quadruplet ends in nineteen, so nineteen is our base. The gap is eighty two. Now, eighty two is too big to make from seventeen, thirteen and eleven alone, they only add to forty one. So we add all three, and close the remaining forty one with five times seven plus two times three. Thirty five plus six. Check it: nineteen plus seventeen plus thirteen plus eleven is sixty, plus forty one is one hundred one. Done.
+
+The other three members of the quadruplet work the same way. One hundred three is nineteen plus eleven plus two times five times seven plus three. One hundred seven is nineteen plus seventeen plus thirteen plus eleven plus two times three times seven plus five. One hundred nine is nineteen plus seventeen plus seventy plus three. Every member of the family gets its own equation.
+
+Next quadruplet: one hundred ninety one. The base is now one hundred nine, the top of the previous family. The gap is, again, eighty two. So the very same equation closes it. This happens a lot. Consecutive quadruplets are often the same distance apart, and the tool that builds the chain remembers every gap it has already solved and simply reuses the answer.
+
+Eight hundred twenty one. Base one ninety nine. And now watch: the gap of six hundred twenty two is one ninety seven plus one ninety three plus one ninety one plus nineteen plus seventeen plus five. Nothing but addition. The royal multiplication was only ever a crutch for the very beginning, when the chain had almost nothing to work with.
+
+Fourteen eighty one is eight twenty nine plus one ninety nine, one ninety seven, one ninety three, nineteen, seventeen, thirteen, eleven and three. Eighteen seventy one is fourteen eighty nine plus one hundred nine, one hundred seven, one hundred three, nineteen, seventeen, thirteen, eleven and three. Long, yes. But look at what they are made of: nothing but earlier members of the chain, and the single royal number three at the end.
+
+And then it gets short. Two thousand eighty one is eighteen seventy nine plus one ninety nine plus three. Three thousand four hundred sixty one is thirty two fifty nine plus one ninety nine plus three. The same gap of two hundred two, twice. Once the chain has a few dozen members to choose from, almost every gap closes in two or three terms.
+
+And it keeps getting cleaner. Thirteen thousand and one. Base nine thousand four hundred thirty nine. Gap three thousand five hundred sixty two, which is exactly three thousand four hundred sixty one plus one hundred one. Two earlier quadruplet members. That's it. About one gap in four is a sum of just two earlier members.
+
+There is hidden arithmetic behind that. Every quadruplet starts at a number that is eleven more than a multiple of thirty. So the gap to a first member always leaves remainder twenty two when divided by thirty. And a sum of two members can only do that if both of them are first members. Eleven plus eleven is twenty two. That is why three thousand four hundred sixty one and one hundred one both end in one. The pattern is not random. It has structure all the way down.
+
+Does this survive at scale? Here is a quadruplet at thirty five million. Its first member is thirty five million five hundred forty five thousand four hundred twenty one. The base is the top of the previous quadruplet. And the gap is eighteen thousand forty nine plus two thousand eighty nine plus eight hundred twenty one plus three. Four terms. Every one of them a member of an earlier family, plus the royal three.
+
+The very next quadruplet, six thousand further on, is thirty five million five hundred fifty one thousand four hundred twenty one. Its base plus five thousand six hundred fifty nine plus one ninety nine plus one hundred nine plus seventeen plus five plus three. These two were the first examples ever worked out by hand, before there was any program. The program simply confirmed them.
+
+We pushed it to one billion. Every prime quadruplet below one billion, twenty eight thousand three hundred eighty seven of them, more than one hundred thirteen thousand individual primes, and every single one has such an equation. The last one, nine hundred ninety nine million nine hundred eighty six thousand one hundred seventy one, is its base plus eighty two thousand seven hundred twenty nine plus two thousand eighty nine plus eight hundred twenty one plus three.
+
+So here is the conjecture, in three strengths. One: every member of every prime quadruplet is its base plus a sum of distinct earlier members, with at most a small royal expression. Two, the bounded form: the gap is always a sum of at most eight earlier members, with exactly ten small exceptions. Three, the strongest: allow one flat royal expression and six terms always suffice, with no exceptions at all.
+
+Why do we care about the bound? Because the unbounded version is almost too easy. With thousands of members to choose from you can hit almost any number. The surprise is that a fixed number of terms keeps working while the gaps between quadruplets grow and grow. Near one billion the average gap is about thirty five thousand, only about ninety chain members fit underneath it, and still two, four, or six of them do the job.
+
+The exceptions are charming. There are exactly ten gaps that cannot be made from earlier members alone: twenty two, eighty two, eighty four, eighty eight, ninety, one seventy two, one seventy four, one seventy eight, one eighty, and three eighty two. All of them tiny, all of them early, all of them holes in what the first two quadruplets can reach. After the four hundred thirty fifth quadruplet, no exception ever appears again, all the way to a billion.
+
+Here is a number that surprised us. Cut the chain into eight blocks of about three and a half thousand quadruplets each, and ask what share of gaps are a sum of just two earlier members. Twenty three percent. Twenty three. Twenty three. Twenty four. Twenty two. Flat, all the way to a billion. The average number of terms needed sits near three point seven in every block. The chain does not get harder as the numbers get bigger. If anything, it gets easier.
+
+Let me be honest with you, because honesty is what makes mathematics beautiful. This is a conjecture. It is verified to one billion with an independent checker. It is not proved. A single enormous gap between two quadruplets, far out in the number line, could break the bounded form. We do not think it will. But we do not know. That is the difference between a theorem and a pattern, and this is a pattern.
+
+People ask: does this help you find the next quadruplet? Here is the careful answer. The conjecture says where the next quadruplet will be found: at the base plus a short sum of earlier members. It gives every quadruplet a certificate over its ancestors. What it does not do is point at the one right number. The candidates outnumber the quadruplets by far, so a sieve still finds them faster. The value is in the structure, not the speed.
+
+How does the program choose one equation when there are many? It ranks them. Addition comes first: a royal product is used only when plain addition cannot reach the gap. Then fewer terms. Then larger members first, so the member ending in nine is used before the member ending in one. Those preferences are exactly the ones a person uses working by hand, and the program reproduces the hand-made examples character for character.
+
+But here is a second discovery, and this one we can actually prove. Take the royal quad and the first quadruplet: two, three, five, seven, eleven, thirteen, seventeen, nineteen. Allow plus, minus and times among the royal members, and only addition for the quadruplet members. Then every integer from zero up to one hundred one, in fact up to one hundred fifty six, can be built. Every single one.
+
+Sixteen is eleven plus five. Fifty three is nineteen plus eleven plus seven times five minus two. Fifty five is nineteen plus eleven plus seven times five. And there are many other ways. The chain is not just a pattern in the primes. It is a complete counting system, and we made a second video that is nothing but this game.
+
+The proof is a two-line lemma. If you can already make every number up to some total T, and you add a new member no bigger than T plus one, then you can make every number up to T plus that member. The royal members alone reach thirty eight. Eleven fits, so we reach forty nine. Thirteen fits. Seventeen fits. Nineteen fits. Each new quadruplet adds four more rungs to the ladder, and the ladder always grows faster than the next quadruplet arrives.
+
+With the royal quad we reach thirty eight. With the first quadruplet, one hundred fifty six. With the second, five hundred seventy six. With the third, one thousand three hundred fifty six. With the fourth, four thousand six hundred fifty six. And it snowballs. The only thing that could stop it is a quadruplet more than four times the sum of all earlier ones, and that never comes close to happening below a billion. So this part is a theorem, not a guess.
+
+The tool that does all this writes each gap in three ways. The additive way, which we have seen. A multiplicative way, where any two members may be multiplied: one hundred one is nineteen plus seventeen times three plus thirteen times two plus five. And an exponential way, with powers: one hundred one is nineteen plus seven squared plus eleven times three.
+
+The exponential way can be dramatic. Five thousand six hundred fifty one is its base plus two to the eleventh power plus nineteen times five plus thirteen times three. Two to the eleven is two thousand forty eight, one power covers most of the gap. Eighteen seventy one is its base plus nineteen squared plus seven times three. Same numbers, a completely different face.
+
+The multiplicative way is often the shortest of all. Eighteen seventy one is fourteen eighty nine plus one ninety one times two. Two thousand eighty one is eighteen seventy nine plus one hundred one times two. Nine thousand four hundred thirty one is its base plus eighteen seventy nine times two plus eleven plus three. Three faces of the same chain, and researchers can pick whichever one suits their question.
+
+And here is the newest face of the chain. Two more ways that need no base at all. Take eight hundred fifty four thousand nine hundred twenty one. Multiplicatively, it is four hundred twenty seven thousand two hundred forty nine times two, plus one hundred nine times three, plus seventeen times five, plus eleven. Exponentially, we take the largest power that fits, eight hundred twenty nine squared, then again the largest power that covers at least half of what is left: eleven to the fifth, then seventeen cubed, and the small rest by plain addition: fourteen eighty nine, one hundred seven, one hundred one, nineteen. Or take nineteen million four hundred ninety seven thousand two hundred twenty one: eleven to the seventh, two to the thirteenth, then four members added. No base from the previous family. The whole prime, built straight from the chain. Additive, multiplicative, exponential: every prime quadruplet is a combination of its predecessors in all three languages.
+
+All of this is generated by a small free tool called LC. One Python file, no dependencies. You type a number of quadruplets and it prints the chain with every equation. It builds the chain to one billion in about ninety seconds, and it remembers every gap it has solved, so the next run is instant.
+
+It also has a derive mode. Give it any integer and it writes that integer as a sum of quadruplet members below it, closed with a small royal expression. Fifty three is nineteen plus seventeen plus thirteen plus seven minus three. Seventy six is nineteen plus seventeen plus thirteen plus eleven plus three times seven minus five. Give it two numbers and it does the whole range.
+
+The dataset is public. Twenty eight thousand quadruplets, one hundred thirteen thousand members, four equations each, four hundred fifty four thousand equations, and an independent checker that re-verifies every one of them from scratch, arithmetic, distinct members, base never reused. Zero errors. Only thirteen thousand six hundred distinct gaps occur in all of that, because consecutive quadruplets so often sit the same distance apart.
+
+A fair question: is this numerology, seeing faces in clouds? Three things say no. The statement is precise, with a definition for every word. It makes a bound that a single counterexample would destroy. And anyone can run the checker on their own laptop and try to break it. Patterns that survive a billion tests and an open invitation to break them are how conjectures earn their names.
+
+This work is by Shubham Ladhe, Saloni Ladhe and Pankaj Ladhe. It grew out of their earlier work on writing primes as sums of three primes, Ladhe's Conjecture, which powers a signature scheme. This time the object is not one prime but a whole family of four, and the family is built from its own ancestors.
+
+And here is a note we are proud to add. A new mathematician is born! This conjecture was invented by Shubham Ladhe, Saloni Ladhe and Pankaj Ladhe. Remember those names. Discoveries in the primes do not come along often, and this one has three inventors who found it by asking a simple question and refusing to let it go.
+
+Why am I so excited? Because patterns in primes are rare, and patterns in prime constellations are rarer still. Here is one that runs through the entire sequence, that can be checked by anyone with a laptop, and that comes with a piece that is actually proved. Prime numbers are the darling of nature. When they show you a new face, you pay attention.
+
+What could it be used for? We do not know yet, and that is the honest and thrilling answer. Additive structure in primes is the basis of the Ladhe signature scheme, so cryptography is the first place to look. A self-referential chain where each link certifies itself over its ancestors sounds like something a ledger could use. And as a teaching tool, it is a gift: students can discover the chain themselves with pencil and paper.
+
+Think about what a certificate that verifies by addition alone could mean. No heavy arithmetic, just a handful of numbers to add and compare. Think about encoding a nine-digit prime as five smaller numbers from a public list. And think about the Bateman-Horn heuristic: this chain is a new place to test it, gap by gap, with a statistic nobody has looked at before. Who knows what it will reveal once it is properly studied.
+
+The open questions are where the fun begins. Is every sufficiently large gap a sum of just two earlier members? The share of two-term gaps sits stubbornly at about twenty three percent all the way to a billion. Does it eventually climb to one hundred? The heuristics say yes, because the number of ways to write a gap as a sum of two members grows without bound. Nobody has proved it.
+
+Does the same chain exist for twin primes? For prime triplets? For every constellation? Each one has its own forbidden residues and its own royal seed. Which ones admit a bounded chain, and with how many terms? Every constellation is a new playground, and the tool is a few lines away from trying each of them.
+
+And the ten exceptions: are they really the only ones, forever? They are exactly the numbers the first two quadruplets cannot reach, the coverage holes of the very start of the chain. Is there a clean description of such holes for any constellation? Could the count be read off from the seed alone?
+
+Can the bound itself be proved? The coverage theorem shows how a growth argument can turn base cases into a proof. The bounded conjecture might yield to the same kind of reasoning, if someone finds the right invariant. That is a problem a strong student could spend a very happy year on.
+
+You can check the small cases yourself tonight. Write down the first three quadruplets. Take one ninety one, subtract one hundred nine, get eighty two. Now build eighty two from seventeen, thirteen, eleven and the royal members. You will find the equation in a minute, and you will feel the pattern click. Then try eight hundred twenty one. That one is pure addition.
+
+If you want to break it, here is what you need. A gap between consecutive quadruplets that no eight earlier members can add up to. Or, for the coverage theorem, a quadruplet more than four times the sum of all the quadruplets before it. The first would be a stunning gap. The second is far beyond anything prime gaps have ever done. Neither has appeared below one billion. Push further.
+
+The paper, the tool, the dataset and the checker are free. The code is at github dot com slash S P Algorithm slash L E, in the folder L C. The paper and the data are on Zenodo. Run it, break it, extend it, and tell us what you find.
+
+Let's recap. Prime quadruplets are the tightest families of four primes. Line them up in a chain, seeded by the royal quad two, three, five, seven. Then every member of every family is the top of the previous family plus a short sum of earlier members.
+
+At most eight terms, with ten tiny exceptions that all sit below four hundred. Verified for all twenty eight thousand quadruplets below one billion. And with subtraction allowed among the royal members, the chain builds every integer there is, and that part is proved.
+
+For two thousand years people have stared at the primes and seen noise. Every now and then someone finds a thread running through the noise. This is one of those threads. Who knows what it will reveal once it is studied properly? That is the best kind of question in science: the one whose answer you cannot yet see.
+
+So here is my invitation. If you are a student, build the first ten links by hand and feel it. If you are a programmer, run the tool to ten billion and tell us the share of two-term gaps out there. If you are a mathematician, take the coverage proof apart and see how far its idea can be pushed. The chain is waiting.
+
+Ladhe's Quad Conjecture. A new pattern in the prime numbers, found by adding old primes together. Thank you for watching, and go find the next one.
