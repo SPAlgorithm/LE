@@ -14,6 +14,7 @@ A brand new pattern in the prime numbers. Every prime quadruplet (p, p+2, p+6, p
 Invented by Shubham Ladhe, Saloni Ladhe and Pankaj Ladhe.
 
 Companion iOS app (LE-Games, free): https://apps.apple.com/app/id6767880385
+Paper on Zenodo: https://doi.org/10.5281/zenodo.22286847
 Paper, tool (LC) and the full dataset to 10^9: https://github.com/SPAlgorithm/LE (folder LC)
 Part 2, "Build any number from prime quadruplets": https://youtu.be/JNWvt3hS540
 
