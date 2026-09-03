@@ -1,0 +1,41 @@
+FILE TO UPLOAD
+  /Users/pankajladhe/Pankaj/2018/AIStuff/RSAL/LC/videos/Build_Any_Number_Video2.mp4   (232 MB, 10:57, 1080p)
+THUMBNAIL
+  /Users/pankajladhe/Pankaj/2018/AIStuff/RSAL/LC/videos/thumbnail_video2.png
+TRANSCRIPT
+  /Users/pankajladhe/Pankaj/2018/AIStuff/RSAL/LC/videos/youtube/video2_transcript.txt
+
+TITLE (71 characters)
+Build Any Number From Prime Quadruplets (Ladhe's Quad Conjecture, Part 2)
+
+DESCRIPTION
+Give me any whole number and I can build it from prime quadruplets using nothing but plus, minus and times. With the royal quad 2, 3, 5, 7 and the first quadruplet 11, 13, 17, 19 you can already write every integer from 0 to 156, for example 53 = 19 + 17 + 13 + 7 - 3 and 76 = 19 + 17 + 13 + 11 + (3*7) - 5. Each new quadruplet extends the range, and a two-line lemma proves the ladder never breaks. This is the hands-on half of Ladhe's Quad Conjecture: the rules, worked examples you can check in your head, the proof idea, and the LC tool's -d switch that derives any number or range for you.
+
+Invented by Shubham Ladhe, Saloni Ladhe and Pankaj Ladhe.
+
+Companion iOS app (LE-Games, free): https://apps.apple.com/app/id6767880385
+Paper, tool (LC) and dataset: https://github.com/SPAlgorithm/LE (folder LC)
+Part 1, the conjecture itself: https://youtu.be/_XSOJ0Yj77Q
+
+Chapters
+00:00 Any number from prime quadruplets
+00:54 The three rules
+01:16 Warm-up: 1, 4, 6, 10 from the royal quad
+02:01 The first hole: 39
+02:42 53, 55 and the greedy habit
+03:36 76 and the flat-closing rule
+04:04 The promise: every integer up to 156
+04:28 The ladder lemma, the proof
+05:45 Crossing into a new quadruplet
+06:42 Big numbers: 999,986,171
+07:42 The tool: -d and ranges
+08:52 What this means, and applications
+09:38 Try it yourself: 77 and 88
+10:19 The inventors
+
+TAGS
+prime numbers, prime quadruplets, number theory, Ladhe's Quad Conjecture, Ladhe, primes, additive basis, math puzzle, mathematics, math for everyone, prime patterns, LESecure
+
+SETTINGS
+  Same as Video 1: Private now, not made for kids, Education, English, same playlist.
+  End screen: point to Part 1.
