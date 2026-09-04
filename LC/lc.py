@@ -74,10 +74,12 @@ Usage
 -----
     python3 lc.py                 # asks for a number
     python3 lc.py 25              # show the first 25 quads after the royal quad
+    python3 lc.py 2000 2005       # quads 2000 to 2005 (both ends included)
     python3 lc.py --upto 35551421 # every quad whose first prime is <= value
     python3 lc.py 25 -M           # multiplicative ways M, M1;  -E exponential E1, E2, E3
     python3 lc.py 25 -AME         # all ways, labeled A:, M:, M1:, E1:, E2:, E3:
     python3 lc.py 2000 -o         # only the 2000th quad (-one and --only work too)
+    python3 lc.py 2000 2005 -o    # only quads 2000 and 2005, the ends of the range
     python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
     python3 lc.py 25 --all        # equations for all four primes, not just the first
     python3 lc.py 25 -v           # also show which quad each term came from
@@ -1240,15 +1242,20 @@ WAY_LINES = {"A": [("A", None)], "M": [("M", "mul"), ("M1", "mul_nb")],
 NOBASE_KEYS = {"mul_nb", "exp_nb"}
 
 
-def show(data, count=None, upto=None, verbose=False, all_members=False,
+def show(data, start=None, end=None, upto=None, verbose=False, all_members=False,
          ways="A", only=False, out=sys.stdout):
+    """start / end are quad numbers (1-based, inclusive); either may be None.
+    One number N from the command line means end=N, the first N quads."""
     quads, diffs = data["quads"], data["diffs"]
-    if count is not None:
-        quads = quads[:count]
+    if start is not None:
+        quads = [q for q in quads if q["n"] >= start]
+    if end is not None:
+        quads = [q for q in quads if q["n"] <= end]
     if upto is not None:
         quads = [q for q in quads if q["primes"][0] <= upto]
-    if only and quads:
-        quads = quads[-1:]              # -o: just the last quad of the range
+    if only and quads:                  # -o: the ends of the selection
+        quads = ([quads[0], quads[-1]] if start is not None and len(quads) > 1
+                 else quads[-1:])
     w = out.write
     w("Royal quad (0): " + ", ".join(map(str, ROYAL)) + "\n\n")
     quad_of = {p: q["n"] for q in data["quads"] for p in q["primes"]}
@@ -1400,32 +1407,64 @@ def derive_numbers(data, first, last, deriver, verbose=False, out=sys.stdout):
 
 
 # --------------------------------------------------------------------------
+def range_error(vals):
+    """The message for a bad list of quad numbers, or None when it is good.
+    Shared by the command line and the prompt so the two cannot drift."""
+    if len(vals) > 2:
+        return ("give one number N (the first N quads) or two numbers N M "
+                "(quads N through M)")
+    if any(v < 1 for v in vals):
+        return "quad numbers must be whole numbers >= 1"
+    if len(vals) == 2 and vals[0] > vals[1]:
+        return "the first quad number must not be larger than the second (N <= M)"
+    return None
+
+
+def range_of(vals):
+    """[] -> (None, None);  [N] -> (None, N);  [N, M] -> (N, M)."""
+    if not vals:
+        return None, None
+    if len(vals) == 1:
+        return None, vals[0]
+    return vals[0], vals[1]
+
+
 def ask_number():
+    """Returns (start, end, upto) from the prompt."""
     while True:
         try:
             raw = input("How many quads after the royal quad? "
-                        "(a count, or 'upto <value>'): ").strip()
-        except EOFError:
+                        "(a count, a range 'N M', or 'upto <value>'): ").strip()
+        except (EOFError, KeyboardInterrupt):
             sys.exit(0)
         if raw.lower().startswith("upto"):
             try:
-                return None, int(raw[4:].strip().replace(",", ""))
+                return None, None, int(raw[4:].strip().replace(",", ""))
             except ValueError:
                 print("  please type: upto 35551421")
                 continue
         try:
-            n = int(raw.replace(",", ""))
-            if n >= 1:
-                return n, None
+            vals = [int(t.replace(",", "")) for t in raw.split()]
         except ValueError:
-            pass
-        print("  please type a whole number >= 1")
+            vals = None
+        if vals:
+            problem = range_error(vals)
+            if problem is None:
+                start, end = range_of(vals)
+                return start, end, None
+            print("  " + problem)
+            continue
+        print("  please type a count (25), a range (2000 2005), or 'upto 35551421'")
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Quad chain builder (royal quad 2,3,5,7).")
-    ap.add_argument("count", nargs="?", type=int,
-                    help="number of quads to show after the royal quad")
+    ap = argparse.ArgumentParser(
+        usage="lc [-h] [--upto VALUE] [-d N [M]] [-v] [-A] [-M] [-E] [-o] [--all] "
+              "[--one-per-quad] [--recompute] [--cache FILE] [N [M]]",
+        description="Quad chain builder (royal quad 2,3,5,7).")
+    ap.add_argument("count", nargs="*", type=int, metavar="N",
+                    help="N: the first N quads after the royal quad.  "
+                         "N M: quads N through M inclusive.")
     ap.add_argument("--upto", type=int, metavar="VALUE",
                     help="show every quad whose first prime is <= VALUE")
     ap.add_argument("-d", "--derive", type=int, nargs="+", metavar="N",
@@ -1443,9 +1482,9 @@ def main(argv=None):
                     help="exponential way, two options: E1 largest base first, "
                          "E2 largest power first; combine flags, e.g. -AME or -aem")
     ap.add_argument("-o", "-one", "--only", dest="only", action="store_true",
-                    help="show only one quad: with a count, the COUNT-th one "
-                         "(2000 -o shows quad 2000); with --upto, the last quad "
-                         "whose first prime is <= VALUE")
+                    help="show only the ends of the selection: with a count N, "
+                         "quad N; with a range N M, quads N and M; with --upto, "
+                         "the last quad whose first prime is <= VALUE")
     ap.add_argument("--all", action="store_true",
                     help="show the equation of all four primes of a quad "
                          "(default: only the first one, e.g. 101)")
@@ -1474,16 +1513,20 @@ def main(argv=None):
                             verbose=args.verbose)
         return 0 if ok else 1
 
-    count, upto = args.count, args.upto
-    if count is None and upto is None:
-        count, upto = ask_number()
-    if count is not None and count < 1:
-        ap.error("count must be >= 1")
+    problem = range_error(args.count)
+    if problem:
+        ap.error(problem)
+    start, end = range_of(args.count)
+    if start is not None and args.upto is not None:
+        ap.error("--upto cannot be combined with a quad range N M")
+    upto = args.upto
+    if end is None and upto is None:
+        start, end, upto = ask_number()
 
-    added = extend_chain(data, want_count=count, upto=upto,
+    added = extend_chain(data, want_count=end, upto=upto,
                          one_per_quad=args.one_per_quad)
     ways = "".join(w for w, on in (("A", args.A), ("M", args.M), ("E", args.E)) if on)
-    show(data, count=count, upto=upto, verbose=args.verbose,
+    show(data, start=start, end=end, upto=upto, verbose=args.verbose,
          all_members=args.all, ways=ways or "A", only=args.only)
     if args.verbose:
         print(f"({cached} quads came from {os.path.basename(path)}, "

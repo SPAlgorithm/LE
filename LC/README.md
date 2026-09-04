@@ -8,6 +8,7 @@ every prime in every quad is derived from earlier ones.
 ```
 python3 lc.py                  # asks: how many quads?
 python3 lc.py 25               # first 25 quads after the royal quad
+python3 lc.py 2000 2005        # quads 2000 to 2005, both ends included
 python3 lc.py --upto 35551421  # every quad whose first prime is <= value
 python3 lc.py 25 -v            # also show which quad each term came from
 python3 lc.py 25 -M            # multiplicative ways M and M1 (see "Three ways")
@@ -15,6 +16,7 @@ python3 lc.py 25 -E            # exponential ways E1, E2 and E3
 python3 lc.py 25 -AME          # every way, labeled A:, M:, M1:, E1:, E2:, E3: (-AM, -ME also work)
 python3 lc.py 25 -aem          # lowercase works too, alone or combined (-a -e -m, -aeM)
 python3 lc.py 2000 -o          # only the 2000th quad (-one and --only do the same)
+python3 lc.py 2000 2005 -o     # only quads 2000 and 2005, the ends of the range
 python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
 python3 lc.py 25 --all         # equations for all four primes, not just the first
 python3 lc.py -d 53            # derive any integer from the quad members below it
@@ -23,7 +25,8 @@ python3 lc.py 25 --recompute   # ignore qarray.json and rebuild
 python3 lc.py 25 --one-per-quad   # stricter rule, see below
 ```
 
-At the prompt you can type a count (`25`) or `upto 35551421`.
+At the prompt you can type a count (`25`), a range (`2000 2005`) or
+`upto 35551421`.
 
 ## The rules
 
@@ -87,10 +90,15 @@ At the prompt you can type a count (`25`) or `upto 35551421`.
    Pass `-v` to also see the difference, whether its equation was reused,
    and which quad each term came from.
 
-   `-o` (also `-one` or `--only`) narrows the output to a single quad: with a
-   count it is the count-th quad, with `--upto` the last quad at or below the
-   value. It combines with the other switches, so `./lc 2000 -o -AME --all`
-   prints every way of all four primes of quad 2000 and nothing else:
+   One number is a count, two numbers are a range: `./lc 25` shows the first
+   25 quads and `./lc 2000 2005` shows the six quads from 2000 to 2005, both
+   ends included.
+
+   `-o` (also `-one` or `--only`) keeps just the ends of that selection: with a
+   count N it is quad N, with a range N M it is quads N and M, with `--upto`
+   the last quad at or below the value. It combines with the other switches, so
+   `./lc 2000 -o -AME --all` prints every way of all four primes of quad 2000
+   and nothing else:
 
    ```
    Quad 2000: 31252931
