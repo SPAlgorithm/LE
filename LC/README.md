@@ -16,7 +16,9 @@ python3 lc.py 25 -E            # exponential ways E1, E2 and E3
 python3 lc.py 25 -AME          # every way, labeled A:, M:, M1:, E1:, E2:, E3: (-AM, -ME also work)
 python3 lc.py 25 -aem          # lowercase works too, alone or combined (-a -e -m, -aeM)
 python3 lc.py 2000 -o          # only the 2000th quad (-one and --only do the same)
-python3 lc.py 2000 2005 -o     # only quads 2000 and 2005, the ends of the range
+python3 lc.py 2000 2005 -o     # only quads 2000 and 2005
+python3 lc.py 2000 2005 1223 -o    # only those three, in the order you typed
+python3 lc.py 2000 2005 1223 -o -s # the same three, sorted (-sort, --sorted too)
 python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
 python3 lc.py 25 --all         # equations for all four primes, not just the first
 python3 lc.py -d 53            # derive any integer from the quad members below it
@@ -94,11 +96,14 @@ At the prompt you can type a count (`25`), a range (`2000 2005`) or
    25 quads and `./lc 2000 2005` shows the six quads from 2000 to 2005, both
    ends included.
 
-   `-o` (also `-one` or `--only`) keeps just the ends of that selection: with a
-   count N it is quad N, with a range N M it is quads N and M, with `--upto`
-   the last quad at or below the value. It combines with the other switches, so
-   `./lc 2000 -o -AME --all` prints every way of all four primes of quad 2000
-   and nothing else:
+   `-o` (also `-one` or `--only`) changes the numbers from a range into a list:
+   it shows exactly the quads you name and nothing else, **in the order you type
+   them**. `./lc 2000 -o` is quad 2000, `./lc 2000 2005 -o` is those two, and
+   `./lc 2000 2005 1223 -o` prints 2000, 2005, 1223 in that order. Add `-s`
+   (also `-sort` or `--sorted`) to list them in ascending order instead. With
+   `--upto` and no numbers, `-o` is the last quad at or below the value. It
+   combines with the other switches, so `./lc 2000 -o -AME --all` prints every
+   way of all four primes of quad 2000 and nothing else:
 
    ```
    Quad 2000: 31252931
