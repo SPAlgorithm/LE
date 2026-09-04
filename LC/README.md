@@ -20,6 +20,8 @@ python3 lc.py 2000 2005 -o     # only quads 2000 and 2005
 python3 lc.py 2000 2005 1223 -o    # only those three, in the order you typed
 python3 lc.py 2000 2005 1223 -o -s # the same three, sorted (-sort, --sorted too)
 python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
+python3 lc.py 1 200 -c 5       # of quads 1 to 200, only the 5-column equations
+python3 lc.py 1 200 -c 3 8     # ... three to eight columns (-cols, --columns too)
 python3 lc.py 25 --all         # equations for all four primes, not just the first
 python3 lc.py -d 53            # derive any integer from the quad members below it
 python3 lc.py -d 53 83         # every integer from 53 to 83, one line each
@@ -109,6 +111,35 @@ At the prompt you can type a count (`25`), a range (`2000 2005`) or
    Quad 2000: 31252931
      31252931 = 31210849 + 34849 + 5651 + 1481 + 101
    ```
+
+## Counting columns
+
+`-c N` keeps only the quads whose additive equation has N terms on the right,
+counting the base and each top-level piece of the royal expression:
+
+```
+15731 = 15649 + 17 + 13 + 11 + (5*7) + (2*3)     6 columns
+        ^base   ^1   ^2   ^3   ^4      ^5
+```
+
+`-c N M` keeps a range, so `-c 3 8` is three to eight columns. The footer says
+how many quads survived out of how many were scanned, and `-v` prints the whole
+distribution:
+
+```
+$ python3 lc.py 1 200 -c 5 -v | tail -2
+115 quads shown (of 200 scanned), 2500 quads in the cache
+(columns in the additive equation -> how many members: 2: 1, 3: 44, 5: 115, 6: 3, 7: 31, 8: 2, 9: 4)
+```
+
+Two things are worth noticing in that distribution. There is no 4, and there
+never can be: the gap is even and every quadruplet member is odd, so the base
+plus an even number of members lands on an odd column count unless the royal
+part contributes a second piece. And the three 6-column equations among the
+first 200 quads all end the same way, because all three share the gap 82.
+
+With `--all` the filter applies to each of the four primes separately, so a quad
+can appear with only the members that match.
 
 ## Three ways
 
@@ -212,7 +243,8 @@ remainder (82 to 98) that no `+`/`*` expression in `2, 3, 5, 7` produces.
 
 ## How far it can go
 
-Output ends with a plain `N quads shown`; `-v` adds cache and reuse
+Output ends with `N quads shown, M quads in the cache`, so you always know how
+much of the chain is already built; `-v` adds the column distribution and reuse
 statistics. Measured on this Mac (Intel, Python 3.13):
 
 | upper bound | digits | quads | time to build | cache size |

@@ -83,6 +83,8 @@ Usage
     python3 lc.py 2000 2005 1223 -o    # only those three, in the order typed
     python3 lc.py 2000 2005 1223 -o -s # the same three, sorted
     python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
+    python3 lc.py 1 200 -c 5      # of quads 1 to 200, only the 5-column equations
+    python3 lc.py 1 200 -c 3 8    # ... anything from three to eight columns
     python3 lc.py 25 --all        # equations for all four primes, not just the first
     python3 lc.py 25 -v           # also show which quad each term came from
     python3 lc.py 25 --one-per-quad   # stricter rule: at most one member per quad
@@ -1107,6 +1109,17 @@ def ops_parse(text):
     return terms
 
 
+def columns_of(quad, der, diffs):
+    """How many terms the additive equation of this member shows on the right,
+    counting the base and every top-level piece of the royal expression:
+        15731 = 15649 + 17 + 13 + 11 + (5*7) + (2*3)      ->  6 columns
+    Quad 1 has no base, so only its royal pieces are counted."""
+    if quad["n"] == 1:
+        return top_terms(der["royal"])
+    e = diffs[str(der["diff"])]
+    return 1 + len(e["terms"]) + (top_terms(e["royal"]) if e["royal"] else 0)
+
+
 def ops_ways_nobase(deriver, target, avail, quad_of):
     """M1 and E3 for the whole prime, no base term.  M1 is the M greedy
     over the whole pool (deeper node budget); E3 is power_chain_way, with
@@ -1244,11 +1257,12 @@ WAY_LINES = {"A": [("A", None)], "M": [("M", "mul"), ("M1", "mul_nb")],
 NOBASE_KEYS = {"mul_nb", "exp_nb"}
 
 
-def show(data, start=None, end=None, upto=None, picks=None, verbose=False,
-         all_members=False, ways="A", only=False, out=sys.stdout):
+def show(data, start=None, end=None, upto=None, picks=None, cols=None,
+         verbose=False, all_members=False, ways="A", only=False, out=sys.stdout):
     """start / end are quad numbers (1-based, inclusive); either may be None.
     One number N from the command line means end=N, the first N quads.
-    picks is the -o list: show exactly those quads, in that order."""
+    picks is the -o list: show exactly those quads, in that order.
+    cols is the -c filter: (low, high) terms in the additive equation."""
     quads, diffs = data["quads"], data["diffs"]
     if start is not None:
         quads = [q for q in quads if q["n"] >= start]
@@ -1289,10 +1303,24 @@ def show(data, start=None, end=None, upto=None, picks=None, verbose=False,
             src.append("search gave up, simpler way copied")
         return "      [" + "; ".join(src) + "]\n"
 
-    for q in quads:
-        primes = q["primes"] if all_members else q["primes"][:1]
+    scanned = len(quads)
+    tally = {}
+    rows = []
+    for q in quads:                     # decide what survives before printing
+        ders = q["derivations"] if all_members else q["derivations"][:1]
+        for d in ders:
+            n = columns_of(q, d, diffs)
+            tally[n] = tally.get(n, 0) + 1
+        if cols is not None:
+            ders = [d for d in ders if cols[0] <= columns_of(q, d, diffs) <= cols[1]]
+            if not ders:
+                continue
+        rows.append((q, ders))
+    quads = [q for q, _ in rows]
+
+    for q, shown in rows:
+        primes = [d["target"] for d in shown]
         w(f"Quad {q['n']}: " + ", ".join(map(str, primes)) + "\n")
-        shown = q["derivations"] if all_members else q["derivations"][:1]
         for d in shown:
             first = q["n"] == 1
             entry = None
@@ -1366,10 +1394,15 @@ def show(data, start=None, end=None, upto=None, picks=None, verbose=False,
                         w(sources(d, entry, ops_members(e["terms"]), None,
                                   e.get("fallback", False)))
         w("\n")
-    w(f"{len(quads)} quad{'s' if len(quads) != 1 else ''} shown\n")
+    held = len(data["quads"])
+    tail = f" (of {scanned} scanned)" if cols is not None else ""
+    w(f"{len(quads)} quad{'s' if len(quads) != 1 else ''} shown{tail}, "
+      f"{held} quad{'s' if held != 1 else ''} in the cache\n")
+    if verbose and tally:
+        spread = ", ".join(f"{n}: {tally[n]}" for n in sorted(tally))
+        w(f"(columns in the additive equation -> how many members: {spread})\n")
     if verbose:
-        w(f"(q-array holds {len(data['quads'])} quads after the royal quad; "
-          f"differences shown: {new} new, {reused} reused; "
+        w(f"(differences shown: {new} new, {reused} reused; "
           f"{len(diffs)} unique differences stored)\n")
 
 
@@ -1496,6 +1529,11 @@ def main(argv=None):
                          "them (2000 2005 1223 -o shows those three; add -s to "
                          "sort them); with --upto and no numbers, the last quad "
                          "whose first prime is <= VALUE")
+    ap.add_argument("-c", "-cols", "--columns", dest="columns", type=int,
+                    nargs="+", metavar="N",
+                    help="keep only quads whose additive equation has N terms on "
+                         "the right, counting the base; -c N M keeps a range, so "
+                         "-c 3 8 is three to eight columns")
     ap.add_argument("-s", "-sort", "--sorted", dest="sort", action="store_true",
                     help="with -o, list the quads in ascending order instead of "
                          "the order you typed them")
@@ -1530,6 +1568,14 @@ def main(argv=None):
     problem = range_error(args.count, args.only)
     if problem:
         ap.error(problem)
+    cols = None
+    if args.columns is not None:
+        if len(args.columns) > 2:
+            ap.error("-c takes one number N or a range N M")
+        lo, hi = args.columns[0], args.columns[-1]
+        if lo < 1 or hi < lo:
+            ap.error("-c needs whole numbers >= 1 with N <= M")
+        cols = (lo, hi)
     vals, upto = args.count, args.upto
     if not vals and upto is None:
         vals, upto = ask_number(args.only)
@@ -1548,7 +1594,8 @@ def main(argv=None):
     added = extend_chain(data, want_count=end, upto=upto,
                          one_per_quad=args.one_per_quad)
     ways = "".join(w for w, on in (("A", args.A), ("M", args.M), ("E", args.E)) if on)
-    show(data, start=start, end=end, upto=upto, picks=picks, verbose=args.verbose,
+    show(data, start=start, end=end, upto=upto, picks=picks, cols=cols,
+         verbose=args.verbose,
          all_members=args.all, ways=ways or "A", only=args.only)
     if args.verbose:
         print(f"({cached} quads came from {os.path.basename(path)}, "
@@ -1557,4 +1604,10 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except BrokenPipeError:              # piped into head, less, grep -m ...
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        sys.exit(0)
+    except KeyboardInterrupt:
+        sys.exit(130)
