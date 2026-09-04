@@ -77,6 +77,8 @@ Usage
     python3 lc.py --upto 35551421 # every quad whose first prime is <= value
     python3 lc.py 25 -M           # multiplicative ways M, M1;  -E exponential E1, E2, E3
     python3 lc.py 25 -AME         # all ways, labeled A:, M:, M1:, E1:, E2:, E3:
+    python3 lc.py 2000 -o         # only the 2000th quad (-one and --only work too)
+    python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
     python3 lc.py 25 --all        # equations for all four primes, not just the first
     python3 lc.py 25 -v           # also show which quad each term came from
     python3 lc.py 25 --one-per-quad   # stricter rule: at most one member per quad
@@ -1239,12 +1241,14 @@ NOBASE_KEYS = {"mul_nb", "exp_nb"}
 
 
 def show(data, count=None, upto=None, verbose=False, all_members=False,
-         ways="A", out=sys.stdout):
+         ways="A", only=False, out=sys.stdout):
     quads, diffs = data["quads"], data["diffs"]
     if count is not None:
         quads = quads[:count]
     if upto is not None:
         quads = [q for q in quads if q["primes"][0] <= upto]
+    if only and quads:
+        quads = quads[-1:]              # -o: just the last quad of the range
     w = out.write
     w("Royal quad (0): " + ", ".join(map(str, ROYAL)) + "\n\n")
     quad_of = {p: q["n"] for q in data["quads"] for p in q["primes"]}
@@ -1350,7 +1354,7 @@ def show(data, count=None, upto=None, verbose=False, all_members=False,
                         w(sources(d, entry, ops_members(e["terms"]), None,
                                   e.get("fallback", False)))
         w("\n")
-    w(f"{len(quads)} quads shown\n")
+    w(f"{len(quads)} quad{'s' if len(quads) != 1 else ''} shown\n")
     if verbose:
         w(f"(q-array holds {len(data['quads'])} quads after the royal quad; "
           f"differences shown: {new} new, {reused} reused; "
@@ -1438,6 +1442,10 @@ def main(argv=None):
     ap.add_argument("-E", "-e", dest="E", action="store_true",
                     help="exponential way, two options: E1 largest base first, "
                          "E2 largest power first; combine flags, e.g. -AME or -aem")
+    ap.add_argument("-o", "-one", "--only", dest="only", action="store_true",
+                    help="show only one quad: with a count, the COUNT-th one "
+                         "(2000 -o shows quad 2000); with --upto, the last quad "
+                         "whose first prime is <= VALUE")
     ap.add_argument("--all", action="store_true",
                     help="show the equation of all four primes of a quad "
                          "(default: only the first one, e.g. 101)")
@@ -1476,7 +1484,7 @@ def main(argv=None):
                          one_per_quad=args.one_per_quad)
     ways = "".join(w for w, on in (("A", args.A), ("M", args.M), ("E", args.E)) if on)
     show(data, count=count, upto=upto, verbose=args.verbose,
-         all_members=args.all, ways=ways or "A")
+         all_members=args.all, ways=ways or "A", only=args.only)
     if args.verbose:
         print(f"({cached} quads came from {os.path.basename(path)}, "
               f"{added} computed now)")
