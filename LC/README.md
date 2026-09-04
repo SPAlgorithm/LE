@@ -128,7 +128,7 @@ distribution:
 
 ```
 $ python3 lc.py 1 200 -c 5 -v | tail -2
-115 quads shown (of 200 scanned), 2500 quads in the cache
+115 quads shown (of 200 scanned), 2500 quads in the cache (qarray.json)
 (columns in the additive equation -> how many members: 2: 1, 3: 44, 5: 115, 6: 3, 7: 31, 8: 2, 9: 4)
 ```
 
@@ -243,9 +243,18 @@ remainder (82 to 98) that no `+`/`*` expression in `2, 3, 5, 7` produces.
 
 ## How far it can go
 
-Output ends with `N quads shown, M quads in the cache`, so you always know how
-much of the chain is already built; `-v` adds the column distribution and reuse
-statistics. Measured on this Mac (Intel, Python 3.13):
+Output ends with `N quads shown, M quads in the cache (file)`, so you always
+know how much of the chain is built and which file it came from; `-v` adds the
+column distribution and reuse statistics.
+
+Two caches ship with the tool. `qarray.json` beside `lc.py` is the working one,
+small and fast to load, and it grows as you ask for more. `paper/qarray_1e9.json`
+is the published dataset, all 28,387 quadruplets below 10^9. When a command asks
+for more than the working cache holds, the tool reads the published dataset
+instead of rebuilding what already exists, so `./lc 20000 -o` answers in under a
+second rather than spending two minutes on a chain that is already on disk. The
+published file is only ever read: anything computed beyond it is written to
+`qarray.json`. Pass `--cache FILE` to choose a file yourself. Measured on this Mac (Intel, Python 3.13):
 
 | upper bound | digits | quads | time to build | cache size |
 | --- | --- | --- | --- | --- |

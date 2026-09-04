@@ -112,6 +112,9 @@ else:
     HERE = os.path.dirname(os.path.abspath(__file__))
 CACHE_DEFAULT = os.path.join(HERE, "qarray.json")
 CACHE_STRICT = os.path.join(HERE, "qarray_one_per_quad.json")
+# Bigger chains that ship beside the tool.  They are read but never written to:
+# anything computed on top of them is saved to CACHE_DEFAULT instead.
+EXTRA_CACHES = [os.path.join(HERE, "paper", "qarray_1e9.json")]
 
 
 # --------------------------------------------------------------------------
@@ -891,16 +894,53 @@ def empty_cache(mode):
             "quads": [], "diffs": {}}
 
 
-def load_cache(path, mode):
+def load_cache(path, mode, quiet=False):
     if os.path.exists(path):
         with open(path) as fh:
             data = json.load(fh)
         if (data.get("royal") == list(ROYAL) and data.get("mode") == mode
                 and data.get("format") == FORMAT):
             return data
-        print(f"note: {os.path.basename(path)} is in an older layout; "
-              f"rebuilding it", file=sys.stderr)
+        if not quiet:
+            print(f"note: {os.path.basename(path)} is in an older layout; "
+                  f"rebuilding it", file=sys.stderr)
     return empty_cache(mode)
+
+
+def cache_name(data):
+    """The cache actually read, as a short path relative to the tool."""
+    src = data.get("_source") or data.get("_path") or ""
+    rel = os.path.relpath(src, HERE)
+    return rel if not rel.startswith("..") else os.path.basename(src)
+
+
+def cache_covers(data, want_count, upto):
+    """Can this cache answer the request without building anything?"""
+    quads = data["quads"]
+    if not quads:
+        return False
+    if want_count is not None and len(quads) < want_count:
+        return False
+    if upto is not None and quads[-1]["primes"][0] < upto:
+        return False
+    return True
+
+
+def richer_cache(data, mode, want_count, upto, write_path):
+    """When the default cache is too short for what was asked, read the bigger
+    dataset that ships beside it instead of rebuilding what already exists.
+    That file is never modified; anything new is written to write_path."""
+    if cache_covers(data, want_count, upto):
+        return data
+    for cand in EXTRA_CACHES:
+        if not os.path.exists(cand) or os.path.abspath(cand) == os.path.abspath(write_path):
+            continue
+        alt = load_cache(cand, mode, quiet=True)
+        if len(alt["quads"]) > len(data["quads"]):
+            alt["_path"] = write_path          # extensions go to the writable cache
+            alt["_source"] = cand
+            return alt
+    return data
 
 
 def save_cache(path, data):
@@ -1113,7 +1153,10 @@ def columns_of(quad, der, diffs):
     """How many terms the additive equation of this member shows on the right,
     counting the base and every top-level piece of the royal expression:
         15731 = 15649 + 17 + 13 + 11 + (5*7) + (2*3)      ->  6 columns
-    Quad 1 has no base, so only its royal pieces are counted."""
+    Quad 1 has no base, so only its royal pieces are counted.  A member with
+    no derivation at all (possible under --one-per-quad) has no columns."""
+    if der.get("failed") or der.get("diff") is None:
+        return 0
     if quad["n"] == 1:
         return top_terms(der["royal"])
     e = diffs[str(der["diff"])]
@@ -1310,7 +1353,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
         ders = q["derivations"] if all_members else q["derivations"][:1]
         for d in ders:
             n = columns_of(q, d, diffs)
-            tally[n] = tally.get(n, 0) + 1
+            if n:
+                tally[n] = tally.get(n, 0) + 1
         if cols is not None:
             ders = [d for d in ders if cols[0] <= columns_of(q, d, diffs) <= cols[1]]
             if not ders:
@@ -1397,7 +1441,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     held = len(data["quads"])
     tail = f" (of {scanned} scanned)" if cols is not None else ""
     w(f"{len(quads)} quad{'s' if len(quads) != 1 else ''} shown{tail}, "
-      f"{held} quad{'s' if held != 1 else ''} in the cache\n")
+      f"{held} quad{'s' if held != 1 else ''} in the cache ({cache_name(data)})\n")
     if verbose and tally:
         spread = ", ".join(f"{n}: {tally[n]}" for n in sorted(tally))
         w(f"(columns in the additive equation -> how many members: {spread})\n")
@@ -1552,7 +1596,7 @@ def main(argv=None):
     path = args.cache or (CACHE_STRICT if args.one_per_quad else CACHE_DEFAULT)
     data = empty_cache(mode) if args.recompute else load_cache(path, mode)
     data["_path"] = path
-    cached = len(data["quads"])
+    data["_source"] = path
 
     if args.derive is not None:
         if len(args.derive) > 2:
@@ -1591,6 +1635,9 @@ def main(argv=None):
     if start is not None and upto is not None:
         ap.error("--upto cannot be combined with a quad range N M")
 
+    if not args.cache and not args.recompute:
+        data = richer_cache(data, mode, end, upto, path)
+    cached = len(data["quads"])
     added = extend_chain(data, want_count=end, upto=upto,
                          one_per_quad=args.one_per_quad)
     ways = "".join(w for w, on in (("A", args.A), ("M", args.M), ("E", args.E)) if on)
@@ -1598,7 +1645,7 @@ def main(argv=None):
          verbose=args.verbose,
          all_members=args.all, ways=ways or "A", only=args.only)
     if args.verbose:
-        print(f"({cached} quads came from {os.path.basename(path)}, "
+        print(f"({cached} quads came from {cache_name(data)}, "
               f"{added} computed now)")
     return 0
 
