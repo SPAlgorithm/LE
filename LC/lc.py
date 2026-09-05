@@ -83,6 +83,7 @@ Usage
     python3 lc.py 2000 2005 1223 -o    # only those three, in the order typed
     python3 lc.py 2000 2005 1223 -o -s # the same three, sorted
     python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
+    python3 lc.py 1210872 -o --near     # the quads either side of any value
     python3 lc.py 2000 -o --chain # under the A line, the equation of every term
     python3 lc.py 1 200 -c 5      # of quads 1 to 200, only the 5-column equations
     python3 lc.py 1 200 -c 3 8    # ... anything from three to eight columns
@@ -1538,6 +1539,23 @@ def range_of(vals):
     return vals[0], vals[1]
 
 
+def near_picks(data, values, fail):
+    """Quad numbers either side of each value: the last quad whose first member
+    is at or below it, and the first quad above it."""
+    firsts = [q["primes"][0] for q in data["quads"]]
+    out = []
+    for v in values:
+        if v >= firsts[-1]:
+            fail(f"{v} is past the end of the chain (largest first member "
+                 f"{firsts[-1]}); build further first, for example  "
+                 f"lc --upto {v}")
+        i = bisect.bisect_right(firsts, v)      # first quad above v
+        if i:
+            out.append(data["quads"][i - 1]["n"])
+        out.append(data["quads"][i]["n"])
+    return list(dict.fromkeys(out))
+
+
 def ask_number(only=False):
     """Returns (vals, upto) from the prompt: the quad numbers typed, or an
     'upto' value.  main() turns them into a count, a range or a list."""
@@ -1569,7 +1587,7 @@ def ask_number(only=False):
 def main(argv=None):
     ap = argparse.ArgumentParser(
         usage="lc [-h] [--upto VALUE] [-d N [M]] [-v] [-A] [-M] [-E] [-o] [-s] "
-              "[-c N [M]] [--chain] [--all] [--one-per-quad] [--recompute] "
+              "[-c N [M]] [-n] [--chain] [--all] [--one-per-quad] [--recompute] "
               "[--cache FILE] [N [M]]",
         description="Quad chain builder (royal quad 2,3,5,7).")
     ap.add_argument("count", nargs="*", type=int, metavar="N",
@@ -1608,6 +1626,10 @@ def main(argv=None):
     ap.add_argument("--chain", action="store_true",
                     help="under each A line, show the equation of every term it "
                          "uses (members below 101 are left alone); needs -o")
+    ap.add_argument("-n", "-near", "--near", dest="near", action="store_true",
+                    help="read the numbers as values, not quad numbers, and show "
+                         "the quad at or below each one and the quad above it "
+                         "(1210872 -o --near shows quads 205 and 206); needs -o")
     ap.add_argument("--all", action="store_true",
                     help="show the equation of all four primes of a quad "
                          "(default: only the first one, e.g. 101)")
@@ -1636,9 +1658,13 @@ def main(argv=None):
                             verbose=args.verbose)
         return 0 if ok else 1
 
-    problem = range_error(args.count, args.only)
-    if problem:
-        ap.error(problem)
+    if args.near:                       # the numbers are values, not quad numbers
+        if any(v < 1 for v in args.count):
+            ap.error("--near needs whole numbers >= 1")
+    else:
+        problem = range_error(args.count, args.only)
+        if problem:
+            ap.error(problem)
     cols = None
     if args.columns is not None:
         if len(args.columns) > 2:
@@ -1649,12 +1675,20 @@ def main(argv=None):
         cols = (lo, hi)
     if args.chain and not args.only:
         ap.error("--chain needs -o, so it expands only the quads you name")
+    if args.near and not args.only:
+        ap.error("--near needs -o, so it shows the quads around the values you name")
     vals, upto = args.count, args.upto
     if not vals and upto is None:
         vals, upto = ask_number(args.only)
 
-    picks = start = end = None
-    if args.only and vals:              # -o: exactly the quads named
+    picks = start = end = near_upto = None
+    if args.near:                       # neighbours of each value, resolved below
+        if not vals:
+            ap.error("--near needs at least one value")
+        if upto is not None:
+            ap.error("--near cannot be combined with --upto")
+        near_upto = max(vals)                   # only to pick the right cache
+    elif args.only and vals:            # -o: exactly the quads named
         picks = list(dict.fromkeys(vals))       # de-duplicate, keep the order typed
         if args.sort:
             picks.sort()
@@ -1665,7 +1699,13 @@ def main(argv=None):
         ap.error("--upto cannot be combined with a quad range N M")
 
     if not args.cache and not args.recompute:
-        data = richer_cache(data, mode, end, upto, path)
+        data = richer_cache(data, mode, end,
+                            upto if upto is not None else near_upto, path)
+    if args.near:
+        picks = near_picks(data, vals, ap.error)
+        if args.sort:
+            picks.sort()
+        end = max(picks)                        # already built, so nothing to do
     cached = len(data["quads"])
     added = extend_chain(data, want_count=end, upto=upto,
                          one_per_quad=args.one_per_quad)

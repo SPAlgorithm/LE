@@ -20,6 +20,7 @@ python3 lc.py 2000 2005 -o     # only quads 2000 and 2005
 python3 lc.py 2000 2005 1223 -o    # only those three, in the order you typed
 python3 lc.py 2000 2005 1223 -o -s # the same three, sorted (-sort, --sorted too)
 python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
+python3 lc.py 1210872 -o --near     # the two quads either side of any value
 python3 lc.py 2000 -o --chain  # under the A line, the equation of every term
 python3 lc.py 1 200 -c 5       # of quads 1 to 200, only the 5-column equations
 python3 lc.py 1 200 -c 3 8     # ... three to eight columns (-cols, --columns too)
@@ -30,8 +31,60 @@ python3 lc.py 25 --recompute   # ignore qarray.json and rebuild
 python3 lc.py 25 --one-per-quad   # stricter rule, see below
 ```
 
-At the prompt you can type a count (`25`), a range (`2000 2005`) or
-`upto 35551421`.
+## Asking at the prompt
+
+Run `python3 lc.py` with no numbers and it asks. The prompt takes the same
+grammar as the command line:
+
+```
+How many quads after the royal quad? (a count, a range 'N M', or 'upto <value>'):
+```
+
+| you type | you get |
+| --- | --- |
+| `25` | the first 25 quads |
+| `2000 2005` | quads 2000 to 2005, six of them |
+| `upto 200` | every quad whose first prime is at most 200 |
+| `2 5 9` (with `-o` on the command line) | exactly those three quads |
+| `1,000` | commas are ignored, so this is 1000 |
+
+Every switch still applies, so `python3 lc.py -o -aem` asks for the numbers and
+then prints those quads in all six ways. Bad input is explained rather than
+accepted, and it asks again:
+
+```
+  please type a count (25), a range (2000 2005), or 'upto 35551421'
+  quad numbers must be whole numbers >= 1
+  the first quad number must not be larger than the second (N <= M)
+  give one number N (the first N quads), two numbers N M (quads N through M),
+  or list the quads you want and add -o
+```
+
+Ctrl-D or Ctrl-C leaves without building anything.
+
+
+## All the switches
+
+| switch | what it does |
+| --- | --- |
+| `N` | the first N quads |
+| `N M` | quads N to M, both included |
+| `--upto VALUE` | every quad whose first prime is at most VALUE |
+| `-o`, `-one`, `--only` | the numbers are a list: show exactly those quads |
+| `-s`, `-sort`, `--sorted` | with `-o`, list them in ascending order |
+| `-n`, `-near`, `--near` | the numbers are values: show the quad either side of each |
+| `--chain` | under each A line, the equation of every term it uses |
+| `-c N`, `-cols`, `--columns` | keep only equations with N columns; `-c N M` for a range |
+| `-A`, `-M`, `-E` | which ways to print; lower case works too, combine as `-AME` or `-aem` |
+| `--all` | all four primes of a quad, not just the first |
+| `-v`, `--verbose` | where each term came from, plus the column distribution |
+| `-d N`, `--derive` | derive any integer; `-d N M` for a range of them |
+| `--one-per-quad` | the stricter rule, at most one member per quad |
+| `--recompute` | ignore the saved equations and rebuild |
+| `--cache FILE` | read and write a particular cache |
+
+`--chain` and `--near` both need `-o`, because they only make sense for quads
+you have named. `-s` only matters with `-o`. Everything else combines freely.
 
 ## The rules
 
@@ -113,6 +166,37 @@ At the prompt you can type a count (`25`), a range (`2000 2005`) or
      31252931 = 31210849 + 34849 + 5651 + 1481 + 101
    ```
 
+## Where does a number sit?
+
+Numbers on the command line are quad numbers, so `./lc 205` means the first 205
+quads. `--near` (also `-n` or `-near`) reads them as **values** instead and shows
+the quad at or below each one together with the quad above it:
+
+```
+$ ./lc 1210872 -o --near
+Quad 205: 1210871
+  1210871 = 1182289 + 25309 + 3259 + 11 + 3
+Quad 206: 1228391
+  1228391 = 1210879 + 15641 + 1871
+```
+
+The value needs no relation to the chain: it can be even, composite, or land
+inside a quadruplet's span. `1210871`, `1210872` and `1210875` all give the same
+pair, because quad 205 is the last one starting at or below each of them. A
+value below 11 has no quad before it, so only quad 1 is shown. Several values
+may be given at once; their neighbours are merged, and `-s` sorts them.
+
+`--near` needs `-o`, and it combines with everything else, so
+`./lc 1210872 -o -aem --chain --near` gives both quads in all six ways with the
+chain lines underneath. A value past the end of the built chain is refused
+rather than silently starting a long build:
+
+```
+$ ./lc 5000000000 -o --near
+lc: error: 5000000000 is past the end of the chain (largest first member
+999986171); build further first, for example  lc --upto 5000000000
+```
+
 ## Following the chain
 
 `--chain` prints, under each A line, the equation of every term that line uses,
@@ -166,6 +250,40 @@ first 200 quads all end the same way, because all three share the gap 82.
 
 With `--all` the filter applies to each of the four primes separately, so a quad
 can appear with only the members that match.
+
+## Putting it together
+
+The switches are meant to be combined. A few that answer real questions:
+
+```
+./lc 1210872 -o -aem --chain --near
+```
+Everything known about the two quadruplets surrounding a number: all six ways,
+with each term of the additive equations expanded one level.
+
+```
+./lc 1 500 -c 3 -v
+```
+Every three-column equation in the first 500 quads, with the distribution of
+column counts printed at the end. Change `-c 3` to `-c 7` to see the long ones.
+
+```
+./lc 2000 2005 1223 -o -s --all
+```
+Three quadruplets you picked out, sorted, with the equations of all twelve
+members.
+
+```
+./lc --upto 999999999 -o -AME
+```
+The last quadruplet below a billion, in every way. Reads the published dataset,
+so it answers at once.
+
+```
+./lc -d 53 83
+```
+Every integer from 53 to 83 built from the chain, one line each. This is the
+other half of the story, described under "Derive any number".
 
 ## Three ways
 
@@ -280,7 +398,9 @@ for more than the working cache holds, the tool reads the published dataset
 instead of rebuilding what already exists, so `./lc 20000 -o` answers in under a
 second rather than spending two minutes on a chain that is already on disk. The
 published file is only ever read: anything computed beyond it is written to
-`qarray.json`. Pass `--cache FILE` to choose a file yourself. Measured on this Mac (Intel, Python 3.13):
+`qarray.json`. Pass `--cache FILE` to choose a file yourself.
+
+Building the chain from nothing, measured on this Mac (Intel, Python 3.13):
 
 | upper bound | digits | quads | time to build | cache size |
 | --- | --- | --- | --- | --- |
