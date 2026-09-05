@@ -83,6 +83,7 @@ Usage
     python3 lc.py 2000 2005 1223 -o    # only those three, in the order typed
     python3 lc.py 2000 2005 1223 -o -s # the same three, sorted
     python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
+    python3 lc.py 2000 -o --chain # under the A line, the equation of every term
     python3 lc.py 1 200 -c 5      # of quads 1 to 200, only the 5-column equations
     python3 lc.py 1 200 -c 3 8    # ... anything from three to eight columns
     python3 lc.py 25 --all        # equations for all four primes, not just the first
@@ -115,6 +116,10 @@ CACHE_STRICT = os.path.join(HERE, "qarray_one_per_quad.json")
 # Bigger chains that ship beside the tool.  They are read but never written to:
 # anything computed on top of them is saved to CACHE_DEFAULT instead.
 EXTRA_CACHES = [os.path.join(HERE, "paper", "qarray_1e9.json")]
+# --chain expands the terms of an A equation, but only members at or above this
+# value; the four members of quad 1 (11, 13, 17, 19) sit below it and are left
+# alone, because their equations are royal expressions rather than chain links.
+CHAIN_MIN = 101
 
 
 # --------------------------------------------------------------------------
@@ -961,6 +966,13 @@ def diff_text(entry):
     return " + ".join(parts)
 
 
+def a_line(qn, der, diffs):
+    """The right-hand side of one member's additive equation."""
+    if qn == 1:
+        return der["royal"]
+    return f"{der['base']} + {diff_text(diffs[str(der['diff'])])}"
+
+
 def ops_ways(deriver, diff, avail, base, quad_of, additive_entry):
     """M and E entries for a difference; each is {"terms": [...]} plus
     "fallback": True when the search gave up and a simpler way was copied."""
@@ -1301,11 +1313,14 @@ NOBASE_KEYS = {"mul_nb", "exp_nb"}
 
 
 def show(data, start=None, end=None, upto=None, picks=None, cols=None,
-         verbose=False, all_members=False, ways="A", only=False, out=sys.stdout):
+         chain=False, verbose=False, all_members=False, ways="A", only=False,
+         out=sys.stdout):
     """start / end are quad numbers (1-based, inclusive); either may be None.
     One number N from the command line means end=N, the first N quads.
     picks is the -o list: show exactly those quads, in that order.
-    cols is the -c filter: (low, high) terms in the additive equation."""
+    cols is the -c filter: (low, high) terms in the additive equation.
+    chain adds, under every A line, the equation of each term at or above
+    CHAIN_MIN."""
     quads, diffs = data["quads"], data["diffs"]
     if start is not None:
         quads = [q for q in quads if q["n"] >= start]
@@ -1321,6 +1336,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     w = out.write
     w("Royal quad (0): " + ", ".join(map(str, ROYAL)) + "\n\n")
     quad_of = {p: q["n"] for q in data["quads"] for p in q["primes"]}
+    der_of = ({d["target"]: (q["n"], d) for q in data["quads"]
+               for d in q["derivations"]} if chain else {})
     reused = new = 0
     labeled = len(ways) > 1
 
@@ -1414,6 +1431,12 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                                   + "  |  ".join(d["alternatives_with_minus"]) + "\n")
                             continue
                         w(f"  {pre}{d['target']} = {d['base']} + {diff_text(entry)}\n")
+                        if chain:
+                            for t in entry["terms"]:
+                                if t < CHAIN_MIN:
+                                    continue
+                                tq, td = der_of[t]
+                                w(f"      -> Q{tq}: {t} = {a_line(tq, td, diffs)}\n")
                         if verbose:
                             note = (f"royal: {entry['royal']} = {entry['royal_value']}"
                                     if entry["royal"] else "no royal part needed")
@@ -1545,8 +1568,9 @@ def ask_number(only=False):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(
-        usage="lc [-h] [--upto VALUE] [-d N [M]] [-v] [-A] [-M] [-E] [-o] [--all] "
-              "[--one-per-quad] [--recompute] [--cache FILE] [N [M]]",
+        usage="lc [-h] [--upto VALUE] [-d N [M]] [-v] [-A] [-M] [-E] [-o] [-s] "
+              "[-c N [M]] [--chain] [--all] [--one-per-quad] [--recompute] "
+              "[--cache FILE] [N [M]]",
         description="Quad chain builder (royal quad 2,3,5,7).")
     ap.add_argument("count", nargs="*", type=int, metavar="N",
                     help="N: the first N quads after the royal quad.  "
@@ -1581,6 +1605,9 @@ def main(argv=None):
     ap.add_argument("-s", "-sort", "--sorted", dest="sort", action="store_true",
                     help="with -o, list the quads in ascending order instead of "
                          "the order you typed them")
+    ap.add_argument("--chain", action="store_true",
+                    help="under each A line, show the equation of every term it "
+                         "uses (members below 101 are left alone); needs -o")
     ap.add_argument("--all", action="store_true",
                     help="show the equation of all four primes of a quad "
                          "(default: only the first one, e.g. 101)")
@@ -1620,6 +1647,8 @@ def main(argv=None):
         if lo < 1 or hi < lo:
             ap.error("-c needs whole numbers >= 1 with N <= M")
         cols = (lo, hi)
+    if args.chain and not args.only:
+        ap.error("--chain needs -o, so it expands only the quads you name")
     vals, upto = args.count, args.upto
     if not vals and upto is None:
         vals, upto = ask_number(args.only)
@@ -1642,7 +1671,7 @@ def main(argv=None):
                          one_per_quad=args.one_per_quad)
     ways = "".join(w for w, on in (("A", args.A), ("M", args.M), ("E", args.E)) if on)
     show(data, start=start, end=end, upto=upto, picks=picks, cols=cols,
-         verbose=args.verbose,
+         chain=args.chain, verbose=args.verbose,
          all_members=args.all, ways=ways or "A", only=args.only)
     if args.verbose:
         print(f"({cached} quads came from {cache_name(data)}, "

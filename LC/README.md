@@ -20,6 +20,7 @@ python3 lc.py 2000 2005 -o     # only quads 2000 and 2005
 python3 lc.py 2000 2005 1223 -o    # only those three, in the order you typed
 python3 lc.py 2000 2005 1223 -o -s # the same three, sorted (-sort, --sorted too)
 python3 lc.py --upto 35551421 -o   # only the last quad at or below the value
+python3 lc.py 2000 -o --chain  # under the A line, the equation of every term
 python3 lc.py 1 200 -c 5       # of quads 1 to 200, only the 5-column equations
 python3 lc.py 1 200 -c 3 8     # ... three to eight columns (-cols, --columns too)
 python3 lc.py 25 --all         # equations for all four primes, not just the first
@@ -111,6 +112,31 @@ At the prompt you can type a count (`25`), a range (`2000 2005`) or
    Quad 2000: 31252931
      31252931 = 31210849 + 34849 + 5651 + 1481 + 101
    ```
+
+## Following the chain
+
+`--chain` prints, under each A line, the equation of every term that line uses,
+so you can see one step further back without running the tool again:
+
+```
+$ ./lc 2000 -o --chain
+Quad 2000: 31252931
+  31252931 = 31210849 + 34849 + 5651 + 1481 + 101
+      -> Q23: 34849 = 31729 + 2089 + 829 + 199 + 3
+      -> Q10: 5651 = 3469 + 2081 + 101
+      -> Q5: 1481 = 829 + 199 + 197 + 193 + 19 + 17 + 13 + 11 + 3
+      -> Q2: 101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
+```
+
+Four rules. It hangs off the **A line only**, so `-aem` still prints M, M1, E1,
+E2 and E3 untouched. It goes **one level deep**; the sub-lines are not expanded
+again. The **base is not expanded**, only the terms after it. And members below
+**101** are left alone, which means the four members of quad 1 never appear:
+their equations are royal expressions rather than chain links.
+
+`--chain` needs `-o`, since expanding every quad of a long listing would bury
+it. A sub-line may name a quad that `-c` filtered out of the listing, because
+the lookups go through the whole cache rather than the rows on screen.
 
 ## Counting columns
 
