@@ -364,8 +364,20 @@ python3 lc.py -d 53     53 = 19 + 17 + 13 + 7 - 3
 python3 lc.py -d 55     55 = 19 + 17 + 13 + 5 + 3 - 2
 python3 lc.py -d 76     76 = 19 + 17 + 13 + 11 + (3*7) - 5
 python3 lc.py -d 101    101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
-python3 lc.py -d 0      0 = 5 - (3 + 2)
+python3 lc.py -d 0      0 = 3 + 2 - 5
+python3 lc.py -d 5      5 = 2 + 3
+python3 lc.py -d 7      7 = 2 + 5
+python3 lc.py -d 2      2 = 2
 ```
+
+A royal member is written from the royal members *below* it, never from
+itself and never from a larger one: `-d 5` gives `5 = 2 + 3` rather than
+`5 = 5`, and `-d 7` gives `7 = 2 + 5`. Each of those two has exactly one
+such form. `2` and `3` keep `2 = 2` and `3 = 3`, because nothing below them
+adds up to them - they are where the chain starts. Any other target picks up
+a quad prime first, so this affects only 5 and 7; the chain equations are
+unchanged, and a royal closing there is still the shortest one (`... + 5`,
+not `... + 2 + 3`).
 
 Every integer from 0 up to the next quad's first prime has such a
 derivation (with 2, 3, 5, 7, 11, 13, 17, 19 every integer up to 156, so in

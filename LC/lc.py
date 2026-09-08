@@ -98,6 +98,7 @@ Usage
 
 import argparse
 import bisect
+import itertools
 import json
 import math
 import os
@@ -341,6 +342,35 @@ ROYAL_SIGNED = royal_expressions_signed()
 # values whose best form is flat (no product containing a sum); -d closes
 # with one of these whenever the quad primes can be chosen to allow it
 ROYAL_SIGNED_FLAT = {v: t for v, t in ROYAL_SIGNED.items() if paren_depth(t) <= 1}
+
+def _royal_self_forms():
+    """A royal member written from *smaller* royal members only - nothing may
+    be used before it is derived, so 5 = 2 + 3 and 7 = 2 + 5, while 2 and 3
+    have nothing below them to build from and stay themselves."""
+    out = {}
+    for i, v in enumerate(ROYAL):
+        for r in range(2, i + 1):
+            hit = next((c for c in itertools.combinations(ROYAL[:i], r)
+                        if sum(c) == v), None)
+            if hit:
+                out[v] = " + ".join(map(str, hit))
+                break
+    return out
+
+
+# ROYAL_SIGNED maps a royal member to itself, and "5 = 5" says nothing, so -d
+# writes it from the smaller members instead.  Only reached when no quad prime
+# is below the target, i.e. only for 5 and 7 - every other number picks up a
+# quad prime first, and the chain equations are not affected at all.
+ROYAL_SELF = _royal_self_forms()
+
+
+def royal_closing(rem, terms):
+    """The royal part of a -d line: a bare royal member only when some quad
+    prime carries the rest of the number."""
+    if not terms and rem in ROYAL_SELF:
+        return ROYAL_SELF[rem]
+    return ROYAL_SIGNED[rem]
 # the coverage argument in the paper relies on 0..38 being reachable
 assert all(v in ROYAL_SIGNED for v in range(39)), "royal coverage broken"
 
@@ -1497,7 +1527,7 @@ def derive_numbers(data, first, last, deriver, verbose=False, out=sys.stdout):
         rem = n - sum(terms)
         parts = [str(t) for t in terms]
         if rem or not terms:
-            parts.append(ROYAL_SIGNED[rem])
+            parts.append(royal_closing(rem, terms))
         w(f"{n} = " + " + ".join(parts) + "\n")
         if verbose:
             by_quad = {}
@@ -1506,8 +1536,8 @@ def derive_numbers(data, first, last, deriver, verbose=False, out=sys.stdout):
             src = [f"pool: royal members and {len(pool)} quad primes below {n}"]
             for qn in sorted(by_quad, reverse=True):
                 src.append(f"quad {qn}: " + ", ".join(map(str, by_quad[qn])))
-            src.append(f"royal: {ROYAL_SIGNED[rem]} = {rem}" if (rem or not terms)
-                       else "no royal part needed")
+            src.append(f"royal: {royal_closing(rem, terms)} = {rem}"
+                       if (rem or not terms) else "no royal part needed")
             w("    [" + "; ".join(src) + "]\n")
     return ok
 
