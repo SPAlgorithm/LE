@@ -441,7 +441,8 @@ Companion iOS app (the authors' free LE-Games app; the Quad Conjecture feature i
 ## Paper
 
 `paper/` holds the Zenodo preprint *Ladhe's Quad Conjecture* (DOI
-https://doi.org/10.5281/zenodo.22286847) and everything needed to reproduce its
+https://doi.org/10.5281/zenodo.22286846, which always resolves to the latest
+version) and everything needed to reproduce its
 figures:
 
 | File | Purpose |

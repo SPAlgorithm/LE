@@ -32,13 +32,15 @@
 Every Prime Quadruplet Is an Additive/Multiplicative/Exponential\\
 Combination of Its Predecessors\thanks{Correspondence:
 \texttt{spalgorithm@gmail.com}. Paper and dataset are archived on Zenodo,
-\url{https://doi.org/10.5281/zenodo.22286847}, and released under
+\url{https://doi.org/10.5281/zenodo.22286846} (this DOI always
+resolves to the latest version), and released under
 CC~BY~4.0; the code is released under the licence of the repository
 \url{https://github.com/SPAlgorithm/LE}.}}
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286847}{10.5281/zenodo.22286847}}}
+\date{Version 2, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+(all versions)}}
 
 \begin{document}
 \maketitle
@@ -62,8 +64,13 @@ exception at all. We call this \emph{Ladhe's Quad Conjecture} and verify it
 for all $28{,}387$ prime quadruplets below $10^9$, i.e.\ for $113{,}544$
 quadruplet members, with an independent checker. Two further
 representations of each gap, one that prefers multiplication and one that
-prefers powers of chain members, are also computed and released. We also
-prove, from a two-line lemma and computed base cases, that the chain is an
+prefers powers of chain members, are also computed and released. We test
+the objection that the pattern is a consequence of density rather than of
+primality by running the same solver on control chains of identical
+spacing whose members are not prime: the bound of eight and the parity of
+the term counts are reproduced by a control that preserves the residue
+class, and are therefore structural, but no control reproduces the small
+closed set of exceptions. We also prove, from a two-line lemma and computed base cases, that the chain is an
 additive basis for all integers: every integer up to the next quadruplet
 (indeed up to a bound that grows like the sum of all earlier members) is a
 sum of distinct chain members plus one expression in $2,3,5,7$ with
@@ -236,8 +243,12 @@ $\Pool_k$. The data support $K=8$, with exactly ten exceptional gaps:
 \[
 D\in\{22,\;82,\;84,\;88,\;90,\;172,\;174,\;178,\;180,\;382\},
 \]
-each of which needs a royal value. No exception occurs beyond $\Q_{435}$
-(first member $3{,}512{,}231$) up to $10^9$.
+each of which needs a royal value. No \emph{new} exceptional gap occurs
+beyond $\Q_{435}$ (first member $3{,}512{,}231$) up to $10^9$: the ten
+values are complete there and recur without addition, the last occurrence
+being at $\Q_{28063}$ (first member $985{,}124{,}051$). In all, $254$ of
+the $113{,}544$ members meet an exceptional gap, spread over $98$
+quadruplets.
 \end{conjecture}
 
 \begin{conjecture}[bounded form with one flat royal value]
@@ -602,6 +613,84 @@ search) and are stored and verified. The E3 chain has one power for
 $16{,}926$ members, two for $35{,}775$, three for $46{,}553$ and four for
 $14{,}291$; we do not analyse these representations further here.
 
+\section{Is this a property of primes, or of density?}
+\label{sec:density}
+
+A natural objection to Conjecture~\ref{conj:B} is that the chain grows dense
+enough for representability to be forced by counting alone. By the time we
+reach $\Q_k$ the pool $\Pool_k$ holds $4(k-1)$ members, so the number of
+sums of at most eight distinct members is $\binom{4(k-1)}{8}$, vastly
+exceeding the range of $D$. On that reading the conjecture would say nothing
+about primes. This section separates what the objection explains from what
+it does not.
+
+\subsection*{What is structural}
+
+Two features of the data are not evidence about primes, and we do not claim
+them as such.
+
+The first is the parity of the term counts. Every representation observed
+uses an \emph{even} number of pool members --- the counts are $2,4,6,8$ and
+never odd --- and this is forced. Every member of every $\Q_j$ is an odd
+prime, so $D=t-m_k$ is a difference of two odd numbers and hence even; a sum
+of $j$ odd numbers is congruent to $j$ modulo $2$; therefore $j$ is even.
+No arithmetic beyond parity is involved.
+
+The second is the bound $K=8$ itself. To test it we ran the same solver on
+control chains built to have the same spacing as the real one, differing
+only in that their members are not prime:
+\begin{itemize}
+  \item \textbf{jitter} --- each quadruplet displaced inside its own local
+        gap, preserving order and local density;
+  \item \textbf{uniform} --- each first member redrawn uniformly in the
+        interval between its neighbours;
+  \item \textbf{shift} --- each first member displaced by a multiple of
+        $30$, preserving the residue class $11 \bmod 30$, and with it the
+        parity argument above, while destroying primality.
+\end{itemize}
+Every control keeps the shape $(q,q+2,q+6,q+8)$, the same counting function
+and the same base rule $m_k=q_{k-1}^{(9)}$, so any difference is
+attributable to the arithmetic of the members and not to how many there are.
+The \textbf{shift} control attains the same bound of eight terms and the
+same all-even distribution. The bound is a consequence of the residue class,
+not of primality.
+
+\subsection*{What is not}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+chain & worst gap & exceptional gaps & occurrences & largest \\
+\midrule
+real prime quadruplets & 8 & \textbf{10} & 254 & \textbf{382} \\
+control, jitter (seed 1) & 12 & 665 & 2334 & 1700 \\
+control, jitter (seed 2) & 11 & 194 & 535 & 1193 \\
+control, uniform (seed 1) & 10 & 613 & 17790 & 2416 \\
+control, uniform (seed 2) & 11 & 152 & 12728 & 1334 \\
+control, shift & 8 & 101 & 3057 & 3390 \\
+\bottomrule
+\end{tabular}
+\caption{All $28{,}387$ quadruplets of each chain below $10^9$, $113{,}544$
+members, under the base rule of Section~\ref{sec:defs}. ``Exceptional
+gaps'' counts distinct values of $D$ admitting no purely additive
+representation.}
+\label{tab:controls}
+\end{table}
+
+The exceptions are a different matter. The real chain has ten, the best
+control has $101$ --- an order of magnitude more --- and every control
+admits exceptions several times larger than the real chain's maximum of
+$382$. The contrast survives every control family we tried, including the
+one that reproduces the bound and the parity exactly.
+
+Density and residue structure together predict that exceptions should be
+\emph{rare}. They do not predict that there should be only ten, that all
+ten should be small, or that the set should close: no new exceptional gap
+appears after $\Q_{435}$, while $28{,}000$ further quadruplets add none.
+That is the part of Conjecture~\ref{conj:B} we regard as genuinely
+arithmetic, and the part we would most like to see explained.
+
 \section{What the conjecture says about the next quadruplet}
 \label{sec:next}
 
@@ -681,13 +770,16 @@ The commands below rebuild everything reported here from scratch.
   python3 paper/check.py paper/qarray_1e9.json                   # 0 bad
   python3 paper/stats.py paper/qarray_1e9.json                   # all figures
   python3 lc.py 25 -AME --cache paper/qarray_1e9.json            # the examples
+  python3 paper/density.py 28387                     # Section 7, ~20 min
 \end{verbatim}\end{small}
 The dataset \code{qarray\_1e9.json} ($48{,}068{,}688$ bytes) has SHA-256
 \begin{center}\footnotesize\code{72dabebf238cfb792ccb4fc51d126128b497967d9e9b29d68077e7e0cd360477}\end{center}
 and \code{quads\_1e9.csv} lists, for each of the $113{,}548$ members
 (including $\Q_1$), the base, the gap, the four A/M/E1/E2 equations (the base-free M1/E3
 equations are in the JSON only) and the three
-minimal lengths. Interactive use: \code{python3 lc.py} asks for a number of
+minimal lengths. The control chains of Section~\ref{sec:density} are generated inside
+\code{density.py} from a fixed seed, so its table is reproducible without
+any further data. Interactive use: \code{python3 lc.py} asks for a number of
 quadruplets; \code{-M}, \code{-E}, \code{-AME} select the ways;
 \code{--all} shows all four members; \code{-v} shows which quadruplet each
 term comes from; \code{-d N} prints a derivation of any integer $N$ as in
