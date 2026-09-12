@@ -90,7 +90,7 @@ def main(path):
         total = 0
         for q in quads[1:]:
             for der in pick(q):
-                e = diffs[str(der["diff"])]
+                e = lc.der_entry(der, diffs)
                 total += 1
                 terms[a_terms(e)] += 1
                 kinds[royal_kind(e.get("royal"))] += 1
@@ -155,7 +155,7 @@ def main(path):
         nterms = Counter()
         for q in quads[1:]:
             for der in q["derivations"][:1]:
-                e = diffs[str(der["diff"])][way]
+                e = lc.der_entry(der, diffs)[way]
                 fb += e.get("fallback", False)
                 nterms[len(e["terms"])] += 1
                 for t in e["terms"]:
@@ -165,8 +165,8 @@ def main(path):
         print(f"\n{label} way, first prime per quad: term kinds {dict(kinds)}, "
               f"royal x royal products {rr}, fallbacks {fb}")
         print("  terms per equation:", dict(sorted(nterms.items())))
-    same = sum(diffs[str(q["derivations"][0]["diff"])]["exp"]["terms"]
-               == diffs[str(q["derivations"][0]["diff"])]["expv"]["terms"]
+    same = sum(lc.der_entry(q["derivations"][0], diffs)["exp"]["terms"]
+               == lc.der_entry(q["derivations"][0], diffs)["expv"]["terms"]
                for q in quads[1:])
     print(f"E1 and E2 identical for {same:,} of {len(quads) - 1:,} first primes")
 
@@ -220,7 +220,7 @@ def main(path):
                 kp = ka = kf = ""
                 src = ""
             else:
-                e = diffs[str(der["diff"])]
+                e = lc.der_entry(der, diffs)
                 eq = f"{der['base']} + {lc.diff_text(e)}"
                 m, e1, e2 = (f"{der['base']} + {lc.ops_text(e[w]['terms'])}"
                              for w in ("mul", "exp", "expv"))

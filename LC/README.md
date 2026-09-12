@@ -1,5 +1,9 @@
 # LC - quad chain builder
 
+> **Ladhe's Quad Conjecture: every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.**
+>
+> (A plain sum for 113,425 of the 113,548 members below 10^9; the other 123 need one product of royal members, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`.)
+
 `lc.py` grows a q-array of prime "quads" from the royal quad and shows how
 every prime in every quad is derived from earlier ones.
 
@@ -132,10 +136,19 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    prime, only the base (the last-quad member) and the difference, e.g.
    `191 = 109 + 82` is stored as base 109, diff 82. A separate `diffs`
    table holds one equation per unique difference
-   (`82 = 17 + 13 + 11 + (5*7) + (2*3)`). When a later quad produces a
+   (`82 = 19 + 17 + 11 + (5*7)`). When a later quad produces a
    difference already in the table, its equation is reused and the output
    says so; only a new difference triggers a new search. The next run loads
    the file and computes only quads that are not there yet.
+
+   That shared equation is searched over every member below the difference,
+   the base included, because any quad reusing it has a base larger than its
+   own difference. A member whose base is *below* its difference cannot use
+   the base as a term, so it keeps its own equation in the derivation record
+   instead: quad 2 writes `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)` while
+   quad 3, reusing the same difference 82 with the base 109, writes the
+   shorter `191 = 109 + 19 + 17 + 11 + (5*7)`. Below 10^9 exactly 8 members
+   need their own equation, the four of quad 2 and the four of quad 4.
 6. The display shows one line per quad, the prime ending in 1 with its full
    equation (base first, then the difference written out):
 
@@ -228,8 +241,8 @@ the lookups go through the whole cache rather than the rows on screen.
 counting the base and each top-level piece of the royal expression:
 
 ```
-15731 = 15649 + 17 + 13 + 11 + (5*7) + (2*3)     6 columns
-        ^base   ^1   ^2   ^3   ^4      ^5
+15731 = 15649 + 19 + 17 + 11 + (5*7)     5 columns
+        ^base   ^1   ^2   ^3   ^4
 ```
 
 `-c N M` keeps a range, so `-c 3 8` is three to eight columns. The footer says
@@ -238,15 +251,18 @@ distribution:
 
 ```
 $ python3 lc.py 1 200 -c 5 -v | tail -2
-115 quads shown (of 200 scanned), 2500 quads in the cache (qarray.json)
-(columns in the additive equation -> how many members: 2: 1, 3: 44, 5: 115, 6: 3, 7: 31, 8: 2, 9: 4)
+117 quads shown (of 200 scanned), 2500 quads in the cache (qarray.json)
+(columns in the additive equation -> how many members: 2: 1, 3: 44, 5: 117, 6: 1, 7: 31, 8: 2, 9: 4)
 ```
 
 Two things are worth noticing in that distribution. There is no 4, and there
 never can be: the gap is even and every quadruplet member is odd, so the base
 plus an even number of members lands on an odd column count unless the royal
-part contributes a second piece. And the three 6-column equations among the
-first 200 quads all end the same way, because all three share the gap 82.
+part contributes a second piece. And the single 6-column equation among the
+first 200 quads is quad 2 itself, `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`:
+it is the only quad there whose base lies below its own difference, so it
+cannot use 19 as a term, while every later quad with the gap 82 can and needs
+five columns.
 
 With `--all` the filter applies to each of the four primes separately, so a quad
 can appear with only the members that match.

@@ -43,7 +43,7 @@ def main(path):
         for der in q["derivations"]:
             target = der["target"]
             first = q["n"] == 1
-            src = der if first else diffs[str(der["diff"])]
+            src = der if first else lc.der_entry(der, diffs)
             base = der["base"]
             want = target if first else der["diff"]
             # additive way

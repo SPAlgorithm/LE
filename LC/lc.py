@@ -63,10 +63,15 @@ Storage (qarray.json next to this script)
 * "quads": for every quad its primes and, per prime, the base and the
   difference  (191 = 109 + 82  is stored as base 109, diff 82).
 * "diffs": one entry per UNIQUE difference with the equations that build
-  the difference (82 -> terms 17 + 13 + 11 + (5*7) + (2*3);  "mul", "exp"
+  the difference (82 -> terms 19 + 17 + 11 + (5*7);  "mul", "exp"
   and "expv" hold the M, E1 and E2 term lists).  When a later quad produces
   a difference that is already in the table its equations are reused; only
-  a new difference triggers a new search.
+  a new difference triggers a new search.  The search runs over every member
+  below the difference, the base included, because a quad that reuses the
+  entry has a base above its difference.  A member whose base is below its
+  own difference (the base may then not be a term) keeps its own equations
+  in "own" of its derivation record; below 10^9 that is 8 members, the four
+  of quad 2 and the four of quad 4.
 * M1 and E3 depend on the prime itself, not on the difference, so they are
   stored with the member ("mul_nb", "exp_nb" in the derivation record).
 
@@ -106,7 +111,7 @@ import sys
 import time
 
 ROYAL = (2, 3, 5, 7)
-FORMAT = 13
+FORMAT = 14
 # Folder that holds the cache: next to the script, or next to the binary
 # when packaged with PyInstaller.
 if getattr(sys, "frozen", False):
@@ -536,14 +541,18 @@ class Deriver:
         self.one_per_quad = one_per_quad
         self.node_limit = node_limit
 
-    def solve(self, diff, avail, base, quad_of):
+    def solve(self, diff, avail, base, quad_of, exclude_base=True):
         """avail: ascending list of primes of all earlier quads (incl. last).
         base: the last-quad member already used, never a term.
+        exclude_base False keeps the base among the candidates, for the
+        shared equation of a difference, which is used only by quads whose
+        base is above the difference and therefore cannot clash with it.
         Returns (terms, royal_value, royal_text) or None
         (royal_value 0 / royal_text None = no royal part)."""
         if diff < MIN_ROYAL:
             return None
-        cand = [p for p in avail[:bisect.bisect_right(avail, diff)] if p != base]
+        skip = base if exclude_base else None
+        cand = [p for p in avail[:bisect.bisect_right(avail, diff)] if p != skip]
         prefix = [0]
         for p in cand:
             prefix.append(prefix[-1] + p)
@@ -678,7 +687,7 @@ class Deriver:
             m.extend(avail[k:])
         return m
 
-    def solve_ops(self, diff, avail, base, quad_of, mode):
+    def solve_ops(self, diff, avail, base, quad_of, mode, exclude_base=True):
         """M ("mul") or E ("exp" / "expv") way for a difference.
 
         Members = quad primes <= diff (base excluded) plus the royal members,
@@ -695,7 +704,8 @@ class Deriver:
         if nobase:
             members = self._nb_pool(avail)            # M1 / E3: whole pool, cached
         else:
-            primes = [p for p in avail[:bisect.bisect_right(avail, diff)] if p != base]
+            skip = base if exclude_base else None
+            primes = [p for p in avail[:bisect.bisect_right(avail, diff)] if p != skip]
             members = list(ROYAL) + primes            # ascending
         n = len(members)
         small_idx = []
@@ -1001,25 +1011,26 @@ def a_line(qn, der, diffs):
     """The right-hand side of one member's additive equation."""
     if qn == 1:
         return der["royal"]
-    return f"{der['base']} + {diff_text(diffs[str(der['diff'])])}"
+    return f"{der['base']} + {diff_text(der_entry(der, diffs))}"
 
 
-def ops_ways(deriver, diff, avail, base, quad_of, additive_entry):
+def ops_ways(deriver, diff, avail, base, quad_of, additive_entry,
+             exclude_base=True):
     """M and E entries for a difference; each is {"terms": [...]} plus
     "fallback": True when the search gave up and a simpler way was copied."""
-    mul = deriver.solve_ops(diff, avail, base, quad_of, "mul")
+    mul = deriver.solve_ops(diff, avail, base, quad_of, "mul", exclude_base)
     if mul is None:
         conv = additive_to_ops(additive_entry)
         mul_entry = {"terms": conv, "fallback": True} if conv else None
     else:
         mul_entry = {"terms": mul}
-    exp = deriver.solve_ops(diff, avail, base, quad_of, "exp")
+    exp = deriver.solve_ops(diff, avail, base, quad_of, "exp", exclude_base)
     if exp is None:
         exp_entry = ({"terms": mul_entry["terms"], "fallback": True}
                      if mul_entry else None)
     else:
         exp_entry = {"terms": exp}
-    expv = deriver.solve_ops(diff, avail, base, quad_of, "expv")
+    expv = deriver.solve_ops(diff, avail, base, quad_of, "expv", exclude_base)
     if expv is None:
         expv_entry = ({"terms": exp_entry["terms"], "fallback": True}
                       if exp_entry else None)
@@ -1202,7 +1213,7 @@ def columns_of(quad, der, diffs):
         return 0
     if quad["n"] == 1:
         return top_terms(der["royal"])
-    e = diffs[str(der["diff"])]
+    e = der_entry(der, diffs)
     return 1 + len(e["terms"]) + (top_terms(e["royal"]) if e["royal"] else 0)
 
 
@@ -1224,6 +1235,12 @@ def ops_ways_nobase(deriver, target, avail, quad_of):
                 exp_text = ops_text(terms)
                 break
     return mul_text, exp_text
+
+
+def der_entry(der, diffs):
+    """The equations of one member: its own when its base sits below its
+    difference, otherwise the shared entry of that difference."""
+    return der.get("own") or diffs[str(der["diff"])]
 
 
 def entry_members(entry):
@@ -1289,21 +1306,42 @@ def extend_chain(data, want_count=None, upto=None, one_per_quad=False,
                     continue
                 key = str(diff)
                 entry = diffs.get(key)
-                if entry is not None and base not in entry_members(entry):
-                    record = {"target": target, "base": base, "diff": diff,
-                              "reused": True}
-                    break
-                res = deriver.solve(diff, avail, base, quad_of)
-                if res is not None:
+                if entry is None:
+                    # the shared equation of a difference is searched over
+                    # every member below it, the base included: the quads
+                    # that reuse it have a base above the difference, which
+                    # no term of it can equal
+                    res = deriver.solve(diff, avail, base, quad_of,
+                                        exclude_base=False)
+                    if res is None:
+                        continue
                     terms, rv, text = res
-                    new_entry = {"terms": terms, "royal_value": rv,
-                                 "royal": text, "first": [n, target]}
-                    new_entry["mul"], new_entry["exp"], new_entry["expv"] = ops_ways(
-                        deriver, diff, avail, base, quad_of, new_entry)
-                    diffs[key] = new_entry
+                    entry = {"terms": terms, "royal_value": rv,
+                             "royal": text, "first": [n, target]}
+                    entry["mul"], entry["exp"], entry["expv"] = ops_ways(
+                        deriver, diff, avail, base, quad_of, entry,
+                        exclude_base=False)
+                    diffs[key] = entry
                     record = {"target": target, "base": base, "diff": diff,
                               "reused": False}
-                    break
+                else:
+                    record = {"target": target, "base": base, "diff": diff,
+                              "reused": True}
+                if base in entry_members(entry):
+                    # this member's base is below its own difference, so the
+                    # shared equation would use it as a term; it gets its own
+                    own = deriver.solve(diff, avail, base, quad_of)
+                    if own is None:
+                        record = None
+                        continue
+                    terms, rv, text = own
+                    own_entry = {"terms": terms, "royal_value": rv,
+                                 "royal": text}
+                    own_entry["mul"], own_entry["exp"], own_entry["expv"] = \
+                        ops_ways(deriver, diff, avail, base, quad_of, own_entry)
+                    record["own"] = own_entry
+                    record["reused"] = False
+                break
             if record is None:
                 record = {"target": target, "base": None, "diff": None,
                           "reused": False, "failed": True}
@@ -1417,7 +1455,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
             first = q["n"] == 1
             entry = None
             if not first and not d.get("failed"):
-                entry = diffs[str(d["diff"])]
+                entry = der_entry(d, diffs)
                 if d["reused"]:
                     reused += 1
                 else:

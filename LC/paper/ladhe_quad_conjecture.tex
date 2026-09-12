@@ -39,13 +39,19 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 2, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 4, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
 \maketitle
 
+\begin{center}
+\large\itshape ``Every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.''
+\end{center}
+
 \begin{abstract}
+\emph{Every prime quadruplet after $2,3,5,7$ is a sum of the ones before
+it.}
 Prime quadruplets are the constellations $(p,\,p+2,\,p+6,\,p+8)$ of four
 primes, the densest possible packing of four primes beyond $(5,7,11,13)$.
 We order them into a chain $\Q_1=(11,13,17,19)$, $\Q_2=(101,103,107,109)$,
@@ -58,7 +64,9 @@ $35545421 = 35524459 + 18049 + 2089 + 821 + 3$.
 The precise form of the observation is that the gap $D$ between a
 quadruplet member and its base is a sum of at most $8$ distinct earlier
 members, with exactly ten exceptional gaps, all at most $382$, that need a
-small expression in the royal members $2,3,5,7$; allowing one such
+small expression in the royal members $2,3,5,7$; a congruence lemma modulo
+$210$ shows that these ten are the only exceptions in the entire admissible
+range below $10^9$, not merely the ones we met. Allowing one such
 expression in every gap brings the bound down to six terms with no
 exception at all. We call this \emph{Ladhe's Quad Conjecture} and verify it
 for all $28{,}387$ prime quadruplets below $10^9$, i.e.\ for $113{,}544$
@@ -70,7 +78,7 @@ primality by running the same solver on control chains of identical
 spacing whose members are not prime: the bound of eight and the parity of
 the term counts are reproduced by a control that preserves the residue
 class, and are therefore structural, but no control reproduces the small
-closed set of exceptions. We also prove, from a two-line lemma and computed base cases, that the chain is an
+closed set of exceptions. We also prove, from a two-line covering lemma and computed base cases, that the chain is an
 additive basis for all integers: every integer up to the next quadruplet
 (indeed up to a bound that grows like the sum of all earlier members) is a
 sum of distinct chain members plus one expression in $2,3,5,7$ with
@@ -109,7 +117,15 @@ sequence of prime quadruplets, at least as far as we have looked. Order the
 quadruplets by size and call the $k$-th one $\Q_k$; put the four primes
 $2,3,5,7$ in front as $\Q_0$, the \emph{royal quad}. Then every member of
 $\Q_k$ is obtained from the largest member of $\Q_{k-1}$ by adding a few
-distinct members of earlier quadruplets. Section~\ref{sec:conj} states this
+distinct members of earlier quadruplets. In one line:
+\begin{center}
+\emph{Every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.}
+\end{center}
+The word ``sum'' is literal for $113{,}425$ of the $113{,}548$ quadruplet
+members below $10^9$; the other $123$, namely $11$, $13$, $19$ and the
+members whose gap is $82$, $84$, $88$ or $90$, need one product of royal
+members, as in $101=19+17+13+11+(5\times7)+(2\times3)$.
+Section~\ref{sec:conj} states this
 precisely in three forms of increasing strength, Section~\ref{sec:cover}
 proves a companion statement, that with subtraction allowed among the
 royal members every integer below the next quadruplet is such a sum,
@@ -171,18 +187,62 @@ a remainder in $\R$.) A member $t$ of $\Q_1$ is written as a royal
 expression alone, e.g.\ $11=(2\times3)+5$.
 \end{definition}
 
-The following congruences are elementary but shape everything below. All
-first members satisfy $p\equiv 11\pmod{30}$, so consecutive first members
-differ by a multiple of $30$, and the gaps of the four members of $\Q_k$
-satisfy
+The following congruences are elementary but shape everything below.
+
+\begin{lemma}
+\label{lem:residues}
+Let $\Q_k=(p,p+2,p+6,p+8)$ be a prime quadruplet with $p\ge11$ and write
+$M=p+4$, so that its members are $M-4,\,M-2,\,M+2,\,M+4$. Then
+\begin{enumerate}[label=(\roman*),nosep]
+\item $M\equiv 15 \pmod{30}$, equivalently $p\equiv 11\pmod{30}$;
+\item $M\not\equiv \pm2,\,\pm4 \pmod 7$, hence $M\equiv 15,\,105,\,195
+  \pmod{210}$ and
+  \[
+  p\equiv 11,\;101,\;191 \pmod{210},
+  \]
+  equivalently $p\equiv 2,\,3,\,4 \pmod 7$;
+\item consecutive first members differ by
+  $h\equiv 0,\,30,\,90,\,120,\,180 \pmod{210}$;
+\item the gaps of the four members of $\Q_k$ satisfy
+  \[
+  D\equiv 22,\;24,\;28,\;0 \pmod{30}
+  \quad\text{for } t=q_k^{(1)},q_k^{(3)},q_k^{(7)},q_k^{(9)}
+  \text{ respectively,}
+  \]
+  and, more precisely, $D$ lies in one of the twenty classes
+  \[
+  \begin{aligned}
+  D\equiv\;&0,\;22,\;24,\;28,\;30,\;82,\;84,\;88,\;90,\;112,\\
+           &114,\;118,\;120,\;172,\;174,\;178,\;180,\;202,\;204,\;208
+  \end{aligned}
+  \quad\pmod{210},
+  \]
+  the five classes $22,\,82,\,112,\,172,\,202$ being those of a first
+  member;
+\item every gap is even while every pool member is odd, so a representation
+  with $r=0$ has an even number of terms.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+All four members are primes larger than $7$, hence coprime to $2,3,5,7$.
+Modulo $3$ they are $M+2,\,M+1,\,M+2,\,M+1$, so $M\equiv0$; modulo $5$ they
+are $M+1,\,M+3,\,M+2,\,M+4$, so $M\equiv0$; and $M$ is odd. This is (i).
+Modulo $7$ none of $M\pm2$, $M\pm4$ may vanish, so $M\equiv 0,\,\pm1$, and
+combining with (i) leaves the three classes of (ii). Part (iii) is the set
+of differences of $\{11,101,191\}$ modulo $210$. For (iv), writing
+$\delta\in\{0,2,6,8\}$ for the offset of $t$ inside $\Q_k$,
 \[
-D\equiv 22,\;24,\;28,\;0 \pmod{30}
-\quad\text{for } t=q_k^{(1)},q_k^{(3)},q_k^{(7)},q_k^{(9)} \text{ respectively.}
+D=(p_k+\delta)-(p_{k-1}+8)\equiv h+\delta-8 \pmod{210},
 \]
-Every gap is even while every pool member is odd, so a representation with
-$r=0$ has an even number of terms. Pool members are $\equiv 11,13,17,19
-\pmod{30}$, hence a two-term representation of the gap of a first member
-($D\equiv22$) must add two first members ($11+11\equiv22$).
+and the four values of $\delta$ give the four classes modulo $30$, the five
+values of $h$ from (iii) the twenty classes modulo $210$. Finally $D$ is a
+difference of two odd numbers, hence even, and a sum of $j$ odd numbers is
+congruent to $j$ modulo $2$, which is (v).
+\end{proof}
+
+Pool members are $\equiv 11,13,17,19 \pmod{30}$, hence a two-term
+representation of the gap of a first member ($D\equiv22$) must add two
+first members ($11+11\equiv22$).
 
 \paragraph{Three ways.}
 The utility described in Section~\ref{sec:evidence} computes, for every
@@ -244,11 +304,18 @@ $\Pool_k$. The data support $K=8$, with exactly ten exceptional gaps:
 D\in\{22,\;82,\;84,\;88,\;90,\;172,\;174,\;178,\;180,\;382\},
 \]
 each of which needs a royal value. No \emph{new} exceptional gap occurs
-beyond $\Q_{435}$ (first member $3{,}512{,}231$) up to $10^9$: the ten
-values are complete there and recur without addition, the last occurrence
-being at $\Q_{28063}$ (first member $985{,}124{,}051$). In all, $254$ of
-the $113{,}544$ members meet an exceptional gap, spread over $98$
-quadruplets.
+beyond $\Q_{435}$ (first member $3{,}512{,}231$) up to $10^9$, and the list
+is in fact complete in a stronger sense than observation: by
+Lemma~\ref{lem:residues} every gap lies in one of twenty classes modulo
+$210$, and among all $38{,}092$ even numbers in those classes up to
+$400{,}000$---a range that covers every gap below $10^9$, the largest being
+$395{,}520$---exactly these ten are not sums of at most eight distinct
+chain members below themselves. Ten further small values, $52$, $54$, $58$, $262$, $472$, $474$,
+$478$, $772$, $774$ and $778$, are equally unreachable but can never occur
+as gaps, their classes being excluded by the lemma. The last occurrence of
+an exceptional gap below $10^9$ is at $\Q_{28063}$ (first member
+$985{,}124{,}051$). In all, $254$ of the $113{,}544$ members meet an
+exceptional gap, spread over $98$ quadruplets.
 \end{conjecture}
 
 \begin{conjecture}[bounded form with one flat royal value]
@@ -283,7 +350,13 @@ pool is $\Q_1$ alone, whose subset sums cannot reach $82$. The gaps $22$,
 $172$--$180$ and $382$ are coverage holes of $\Q_1\cup\Q_2$: for instance
 $382=1871-1489$ needs all of $109,107,103,19,17,13,11$ plus $3$. With the
 $11$ royal addition values allowed, only $82,84,88,90$ remain exceptional;
-with $\Rflat$ allowed there is no exception. Appendix~\ref{app:exc} lists
+with $\Rflat$ allowed there is no exception. In the light of
+Lemma~\ref{lem:residues} the ten are exactly the coverage holes that
+survive the congruence filter: of the twenty values below $400{,}000$ that
+no sum of at most eight distinct members reaches, ten lie in classes no gap
+can occupy. Within the admissible classes the pressure relaxes quickly:
+below $400{,}000$ six terms suffice for every value above $1560$, and four
+for every value above $53{,}370$. Appendix~\ref{app:exc} lists
 the ten gaps with their forced representations.
 \end{remark}
 
@@ -425,14 +498,17 @@ flat, $(5\times7)+(2\times3)$.
   E3: 101 = (7^2) + 19 + 17 + 13 + 3
 \end{verbatim}\end{small}
 
-\paragraph{$\Q_3=(191,193,197,199)$: the same gap again.}
-$191-109=82$, so the representation of the gap is reused with the new
-base. The utility stores one equation per distinct gap and reuses it. The
-base-free lines M1 and E3 are computed per member and cannot be reused;
-here they need only $\Q_1$ and the royal quad.
+\paragraph{$\Q_3=(191,193,197,199)$: the same gap with a larger pool.}
+$191-109=82$ is the gap of $\Q_2$ again, but the base is now $109$ and
+$19$ is free, which shortens the equation: $82=19+17+11+35$ with the flat
+royal $35=5\times7$, one product where $\Q_2$ needed two. The utility
+stores one equation per distinct gap, searched over every member below the
+gap; a member whose base lies \emph{below} its own gap, as at $\Q_2$ and
+$\Q_4$, cannot use that base as a term and keeps its own equation instead.
+Below $10^9$ only eight members do.
 \begin{small}\begin{verbatim}
-  A:  191 = 109 + 17 + 13 + 11 + (5*7) + (2*3)
-  M:  191 = 109 + (17*3) + (13*2) + 5
+  A:  191 = 109 + 19 + 17 + 11 + (5*7)
+  M:  191 = 109 + (19*3) + (7*2) + 11
   M1: 191 = (19*7) + (17*3) + 5 + 2
   E1: 191 = 109 + (7^2) + (11*3)
   E3: 191 = (13^2) + (5*3) + 7
@@ -572,7 +648,7 @@ Table~\ref{tab:A} summarises the additive representations chosen by the
 utility. Because addition is exhausted before any royal product is used,
 these are often longer than the minimum: only $120$ of the $113{,}544$
 member equations contain a royal product (all with gap $82,84,88$ or
-$90$), $52{,}790$ end with an added royal value, and $60{,}634$ are pure
+$90$), $52{,}872$ end with an added royal value, and $60{,}552$ are pure
 sums of pool members. The longest stored equation has nine terms after
 the base. Of the $28{,}386$ first-member gaps, $24{,}977$ repeat a gap seen
 earlier in the chain; there are only $13{,}636$ distinct gaps among the
@@ -591,15 +667,15 @@ Length counts the terms after the base, a royal value counting as one.}
 \cmidrule(lr){2-9}
 scope & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & none / $+$ / $\times$ \\
 \midrule
-first member of each quad & 6493 & -- & 19472 & 30 & 2173 & 119 & 99 & -- & 14776 / 13580 / 30 \\
-all four members          & 26875 & 60 & 77222 & 60 & 8323 & 227 & 755 & 22 & 60634 / 52790 / 120 \\
+first member of each quad & 6493 & -- & 19501 & 1 & 2173 & 119 & 99 & -- & 14776 / 13580 / 30 \\
+all four members          & 26875 & 31 & 77280 & 2 & 8323 & 256 & 755 & 22 & 60552 / 52872 / 120 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \paragraph{Multiplicative and exponential ways.}
 For the $28{,}386$ first-member gaps, the M representations use $90{,}661$
-products and $50{,}439$ plain terms, never more than nine terms; $2{,}935$
+products and $50{,}439$ plain terms, never more than nine terms; $3{,}005$
 of the products multiply two royal members. E1 uses $60{,}176$ powers,
 $49{,}728$ products and $79{,}246$ plain terms (at most $14$ terms); E2
 uses $63{,}213$ powers, $34{,}739$ products and $78{,}861$ plain terms (at
@@ -633,7 +709,8 @@ The first is the parity of the term counts. Every representation observed
 uses an \emph{even} number of pool members --- the counts are $2,4,6,8$ and
 never odd --- and this is forced. Every member of every $\Q_j$ is an odd
 prime, so $D=t-m_k$ is a difference of two odd numbers and hence even; a sum
-of $j$ odd numbers is congruent to $j$ modulo $2$; therefore $j$ is even.
+of $j$ odd numbers is congruent to $j$ modulo $2$; therefore $j$ is even
+(Lemma~\ref{lem:residues}(v)).
 No arithmetic beyond parity is involved.
 
 The second is the bound $K=8$ itself. To test it we ran the same solver on
@@ -707,7 +784,8 @@ self-referential in a strong sense: nothing outside $\Q_0,\dots,\Q_{k-1}$
 is needed to write down $\Q_k$ once it is known. The certificate also
 turns the search for the next quadruplet into a bounded additive search:
 if the conjecture holds with $K$ terms, then the first member of $\Q_k$ is
-of the form $m_k+D$ with $D\equiv 22\pmod{30}$ and $D$ a sum of at most
+of the form $m_k+D$ with $D\equiv 22,\,82,\,112,\,172$ or
+$202 \pmod{210}$, by Lemma~\ref{lem:residues}(iv), and $D$ a sum of at most
 $K$ distinct pool members, and the candidate can be tested by four
 primality tests. The utility does exactly this in reverse, producing the
 certificate after the sieve has found the quadruplet.
@@ -737,7 +815,14 @@ suggests the answer to the following question is yes.
 \begin{question}
 Is every sufficiently large gap a sum of \emph{two} distinct earlier
 members? Equivalently, do the lengths $4,6,8$ in Table~\ref{tab:K}
-eventually disappear?
+eventually disappear? Lemma~\ref{lem:residues} leaves room for a yes: of
+the twenty-eight even classes modulo $210$ lying over the four gap classes
+modulo $30$, eight contain no sum of two members at all. A two-term sum is
+$(p+\delta)+(p'+\delta')$ with $p,p'\equiv 2,3,4 \pmod 7$ by
+Lemma~\ref{lem:residues}(ii), so $p+p'$ reaches only
+$\equiv 4,5,6,0,1 \pmod 7$, and $\delta+\delta'$ is fixed by the class
+modulo $30$; two classes modulo $7$ are missed in each case. The twenty
+classes the lemma allows for gaps are exactly the twenty that survive.
 \end{question}
 
 \begin{question}
@@ -770,10 +855,11 @@ The commands below rebuild everything reported here from scratch.
   python3 paper/check.py paper/qarray_1e9.json                   # 0 bad
   python3 paper/stats.py paper/qarray_1e9.json                   # all figures
   python3 lc.py 25 -AME --cache paper/qarray_1e9.json            # the examples
+  python3 paper/residues.py paper/quads_1e9.csv      # Lemma 1, 4 s
   python3 paper/density.py 28387                     # Section 7, ~20 min
 \end{verbatim}\end{small}
-The dataset \code{qarray\_1e9.json} ($48{,}068{,}688$ bytes) has SHA-256
-\begin{center}\footnotesize\code{72dabebf238cfb792ccb4fc51d126128b497967d9e9b29d68077e7e0cd360477}\end{center}
+The dataset \code{qarray\_1e9.json} ($48{,}075{,}713$ bytes) has SHA-256
+\begin{center}\footnotesize\code{75589aa7dd663b0f5eafd72c00c76ed15907882802495e9acbfcab6e76da42f4}\end{center}
 and \code{quads\_1e9.csv} lists, for each of the $113{,}548$ members
 (including $\Q_1$), the base, the gap, the four A/M/E1/E2 equations (the base-free M1/E3
 equations are in the JSON only) and the three
