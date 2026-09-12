@@ -1239,8 +1239,13 @@ def ops_ways_nobase(deriver, target, avail, quad_of):
 
 def der_entry(der, diffs):
     """The equations of one member: its own when its base sits below its
-    difference, otherwise the shared entry of that difference."""
-    return der.get("own") or diffs[str(der["diff"])]
+    difference, otherwise the shared entry of that difference.  None for a
+    member with no derivation at all, which --one-per-quad produces."""
+    own = der.get("own")
+    if own is not None:
+        return own
+    diff = der.get("diff")
+    return diffs.get(str(diff)) if diff is not None else None
 
 
 def entry_members(entry):

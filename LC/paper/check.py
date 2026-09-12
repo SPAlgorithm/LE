@@ -30,7 +30,7 @@ def main(path):
     with open(path) as fh:
         data = json.load(fh)
     quads, diffs = data["quads"], data["diffs"]
-    checked = bad = fallbacks = 0
+    checked = bad = fallbacks = skipped = 0
     problems = []
 
     def report(msg):
@@ -44,6 +44,9 @@ def main(path):
             target = der["target"]
             first = q["n"] == 1
             src = der if first else lc.der_entry(der, diffs)
+            if src is None:                  # --one-per-quad leaves some members
+                skipped += 1                 # without any derivation at all
+                continue
             base = der["base"]
             want = target if first else der["diff"]
             # additive way
@@ -98,7 +101,8 @@ def main(path):
     print(f"file      : {os.path.basename(path)}  ({os.path.getsize(path):,} bytes)")
     print(f"sha256    : {sha}")
     print(f"quads     : {len(quads):,}  (largest first prime {quads[-1]['primes'][0]:,})")
-    print(f"equations : {checked:,} checked, {bad} bad, {fallbacks} fallback flags")
+    print(f"equations : {checked:,} checked, {bad} bad, {fallbacks} fallback flags"
+          + (f", {skipped} members without a derivation" if skipped else ""))
     for p in problems:
         print("  problem:", p)
     return 1 if bad else 0
