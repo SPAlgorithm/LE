@@ -6,13 +6,17 @@
 Also writes quads_1e9.csv (one row per quad member) and appendix_rows.tex
 (LaTeX rows for the appendix table) next to the dataset.
 
+Only the first prime of each quad is searched for; the other three are the
+fixed forms p + 2, p + (2*3), (p+6) + 2 and are counted, not measured.
+
 Minimal term counts K are computed by iterative deepening with
 lc.Deriver._fixed for three vocabularies:
     pure : distinct members of earlier quads only
     add  : members plus at most one royal value reachable by addition
            of distinct royal members (2, 3, 5, 7, 8, 9, 10, 12, 14, 15, 17)
-    flat : members plus at most one royal value with a flat +/* expression
-           (no product containing a sum), the vocabulary lc.py prefers
+    flat : members plus at most one royal value (+ and *, products of two
+           royal members) - every royal expression is flat by construction,
+           so this is the whole of lc.py's vocabulary, 30 values
 A royal value counts as one term.  K is evaluated when the difference is
 first met in the chain, using only the quads available at that moment.
 """
@@ -70,35 +74,36 @@ def main(path):
 
     # ---- mod 30 facts ---------------------------------------------------
     assert all(q["primes"][0] % 30 == 11 for q in quads)
-    res = Counter()
-    for q in quads[1:]:
-        for i, der in enumerate(q["derivations"]):
-            res[(i, der["diff"] % 30)] += 1
-    print("difference residues mod 30 (member index, residue) -> count:",
-          dict(sorted(res.items())))
+    res = Counter(q["derivations"][0]["diff"] % 30 for q in quads[1:])
+    print("first-prime difference residues mod 30 -> count:", dict(sorted(res.items())))
+    later = sum(len(q["derivations"]) - 1 for q in quads[1:])
+    print(f"later primes in their fixed form p + 2, p + (2*3), (p+6) + 2: {later:,}")
     gaps = [quads[i + 1]["primes"][0] - quads[i]["primes"][0] for i in range(len(quads) - 1)]
     print(f"gaps between consecutive quads: min {min(gaps)}, max {max(gaps):,}, "
           f"mean {statistics.mean(gaps):,.0f}; all multiples of 30: "
           f"{all(g % 30 == 0 for g in gaps)}")
 
     # ---- additive way: terms and royal part -----------------------------
-    for scope, pick in (("first prime per quad", lambda q: q["derivations"][:1]),
-                        ("all four members", lambda q: q["derivations"])):
-        terms = Counter()
-        kinds = Counter()
-        reused = 0
-        total = 0
-        for q in quads[1:]:
-            for der in pick(q):
-                e = lc.der_entry(der, diffs)
-                total += 1
-                terms[a_terms(e)] += 1
-                kinds[royal_kind(e.get("royal"))] += 1
-                reused += der["reused"]
-        print(f"\nadditive way, {scope}: {total:,} equations, {reused:,} reuse an earlier difference")
-        print("  terms per equation:", dict(sorted(terms.items())))
-        print("  royal part:", dict(kinds))
-        print(f"  max terms: {max(terms)}")
+    terms = Counter()
+    kinds = Counter()
+    reused = 0
+    total = 0
+    for q in quads[1:]:
+        der = q["derivations"][0]
+        e = lc.der_entry(der, diffs)
+        total += 1
+        terms[a_terms(e)] += 1
+        kinds[royal_kind(e.get("royal"))] += 1
+        reused += der["reused"]
+    print(f"\nadditive way, first prime per quad: {total:,} equations, "
+          f"{reused:,} reuse an earlier difference")
+    print("  terms per equation:", dict(sorted(terms.items())))
+    print("  royal part:", dict(kinds))
+    print(f"  max terms: {max(terms)}")
+    literal = sum(1 for q in quads for der in q["derivations"][:1]
+                  if "*" not in ((der if q["n"] == 1 else lc.der_entry(der, diffs)).get("royal") or ""))
+    print(f"  first primes written as a literal sum (no product), quad 1 included: "
+          f"{literal:,} of {len(quads):,}")
 
     # ---- minimal K per unique difference ---------------------------------
     avail, quad_of = [], {}
@@ -108,7 +113,8 @@ def main(path):
     for q in quads:
         if q["n"] > 1:
             for i, der in enumerate(q["derivations"]):
-                if der["reused"] or der.get("failed"):
+                # later primes are p + 2, p + (2*3), (p+6) + 2 - nothing to measure
+                if i >= 1 or der["reused"] or der.get("failed"):
                     continue
                 diff, base = der["diff"], der["base"]
                 cand = [p for p in avail[:bisect.bisect_right(avail, diff)] if p != base]
@@ -217,6 +223,15 @@ def main(path):
                 m, e1, e2 = (lc.ops_text(der[w]["terms"]) for w in ("mul", "exp", "expv"))
                 base = diff = ""
                 nt = lc.top_terms(eq)
+                kp = ka = kf = ""
+                src = ""
+            elif i >= 1:
+                # the fixed form of a later prime: no search, no M / E ways
+                e = lc.der_entry(der, diffs)
+                eq = f"{der['base']} + {lc.diff_text(e)}"
+                m = e1 = e2 = ""
+                base, diff = der["base"], der["diff"]
+                nt = 2
                 kp = ka = kf = ""
                 src = ""
             else:

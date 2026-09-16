@@ -8,23 +8,26 @@ Rules
 * Every later quad is the next group of four primes ending in 1, 3, 7, 9
   that sit together:  p, p+2, p+6, p+8   (a prime quadruplet).
 * Quad 1 (11, 13, 17, 19) is written purely with + and * over royal members.
-* Every prime of quad k (k >= 2) is derived as
+* The FIRST prime p of quad k (k >= 2) is derived as
 
         one member of the LAST quad (quad k-1)        -> the "base"
       + a difference, written as
             members of earlier non-royal quads, every prime used at most once
           + optionally an expression in royal members using only + and *
 
+  The other three primes of the quad need no search: they follow from the
+  first one, and are stored in exactly this form
+        p+2 = p + 2          p+6 = p + (2*3)          p+8 = (p+6) + 2
   Quad members are exhausted with addition before any multiplication among
-  royal members is used, and nested royal expressions are a last resort.
-  Candidates are ranked by (depth of the royal part, number of
-  multiplications, number of terms, larger primes first):
+  royal members is used.  A royal expression uses each of 2, 3, 5, 7 at
+  most once, and a product may multiply only TWO of them: (5*7) + (2*3) is
+  allowed, (2*5*7) and 5*(7 + (2*3)) are not.  Candidates are ranked by
+  (number of multiplications, number of terms, larger primes first):
       13001 = 9439 + 3461 + 101                      plain addition, 2 terms
       1871  = 1489 + 109 + 107 + 103 + 19 + 17 + 13 + 11 + 3
                                                      addition only, any length
-      101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)      flat products, only when
+      101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)      products, only when
                                                      addition cannot reach it
-      not   19 + 17 + (5*(7 + (2*3)))                nested, rejected
 
 Three ways
 ----------
@@ -61,19 +64,23 @@ addition only when nothing can be multiplied; backtrack on a dead end.
 Storage (qarray.json next to this script)
 -----------------------------------------
 * "quads": for every quad its primes and, per prime, the base and the
-  difference  (191 = 109 + 82  is stored as base 109, diff 82).
+  difference  (191 = 109 + 82  is stored as base 109, diff 82).  The
+  second, third and fourth primes are stored with their own first prime (or
+  third, for p+8) as the base and a difference of 2 or 6 - nothing else.
 * "diffs": one entry per UNIQUE difference with the equations that build
   the difference (82 -> terms 19 + 17 + 11 + (5*7);  "mul", "exp"
   and "expv" hold the M, E1 and E2 term lists).  When a later quad produces
   a difference that is already in the table its equations are reused; only
-  a new difference triggers a new search.  The search runs over every member
-  below the difference, the base included, because a quad that reuses the
-  entry has a base above its difference.  A member whose base is below its
-  own difference (the base may then not be a term) keeps its own equations
-  in "own" of its derivation record; below 10^9 that is 8 members, the four
-  of quad 2 and the four of quad 4.
+  a new difference triggers a new search.  The entries "2" and "6" are the
+  fixed forms shared by every quad's later primes.  The search runs over
+  every member below the difference, the base included, because a quad that
+  reuses the entry has a base above its difference.  A member whose base is
+  below its own difference (the base may then not be a term) keeps its own
+  equations in "own" of its derivation record; below 10^9 that is two
+  members, 101 (quad 2) and 821 (quad 4).
 * M1 and E3 depend on the prime itself, not on the difference, so they are
-  stored with the member ("mul_nb", "exp_nb" in the derivation record).
+  stored with the member ("mul_nb", "exp_nb" in the derivation record) -
+  for the first prime of each quad only.
 
 Usage
 -----
@@ -92,12 +99,13 @@ Usage
     python3 lc.py 2000 -o --chain # under the A line, the equation of every term
     python3 lc.py 1 200 -c 5      # of quads 1 to 200, only the 5-column equations
     python3 lc.py 1 200 -c 3 8    # ... anything from three to eight columns
-    python3 lc.py 25 --all        # equations for all four primes, not just the first
+    python3 lc.py 25 --all        # list all four primes in each heading (the
+                                  #   equations are always the first prime's)
     python3 lc.py 25 -v           # also show which quad each term came from
     python3 lc.py 25 --one-per-quad   # stricter rule: at most one member per quad
     python3 lc.py -d 53           # derive any integer from the quad members below it:
-                                  #   53 = 19 + 17 + 13 + 7 - 3   (quad primes added,
-                                  #   + - * only among royal members)
+                                  #   53 = 19 + 17 + 7 + 5 + 3 + 2  (quad primes added,
+                                  #   + * - only among royal members, - last resort)
     python3 lc.py -d 53 83        # the same for every integer from 53 to 83
 """
 
@@ -111,7 +119,7 @@ import sys
 import time
 
 ROYAL = (2, 3, 5, 7)
-FORMAT = 14
+FORMAT = 15          # 15: only the first prime is searched; products of two royal members
 # Folder that holds the cache: next to the script, or next to the binary
 # when packaged with PyInstaller.
 if getattr(sys, "frozen", False):
@@ -187,6 +195,11 @@ def royal_expressions(allow_minus=False):
                                 a = (va, ta, topa, list(pa))
                                 b = (vb, tb, topb, list(pb))
                                 for op in "+*":
+                                    # a product may multiply two royal members
+                                    # only: (5*7) yes, (2*5*7) and 5*(7 + 3) no
+                                    if op == "*" and (bin(sub).count("1") != 1
+                                                      or bin(other).count("1") != 1):
+                                        continue
                                     val, text, top, parts = combine(op, a, b)
                                     res.setdefault(val, set()).add((text, top, tuple(parts)))
                                 if allow_minus and va != vb:
@@ -252,6 +265,10 @@ for _v, _forms in ROYAL_FORMS.items():
         ROYAL_SETS.setdefault(_k, set()).add(_v)
 MAX_DEPTH = max(k[0] for k in ROYAL_SETS)
 MAX_MULTS = max(k[1] for k in ROYAL_SETS)
+# With products limited to two members every royal expression is flat:
+# 30 values from 2 to 41, at most two multiplications.
+assert len(ROYAL_BEST) == 30 and MAX_DEPTH == 1 and MAX_MULTS == 2, \
+    (len(ROYAL_BEST), MAX_DEPTH, MAX_MULTS)
 
 
 # --------------------------------------------------------------------------
@@ -271,11 +288,12 @@ def top_terms_signed(text):
     return count
 
 
-def royal_expressions_signed():
+def royal_expressions_signed(two_factor=False):
     """Map value -> best expression text over distinct royal members with
     +, - and *, minus allowed anywhere.  Best = fewest multiplications, then
     fewest minus signs, then fewest terms, then least nesting, then shortest.
-    Only values 0..210 are kept."""
+    Only values 0..210 are kept.  With two_factor, a product may multiply
+    only two members and never a sum (the rule of the chain equations)."""
     n = len(ROYAL)
     memo = {}
 
@@ -316,9 +334,11 @@ def royal_expressions_signed():
                             (pa if topa == "*" else ((va, ta, topa),))
                             + (pb if topb == "*" else ((vb, tb, topb),)),
                             key=lambda t: (t[0], t[1])))
-                        res.add((va * vb,
-                                 "(" + "*".join(wrap(t, tp) for _, t, tp in factors) + ")",
-                                 "*", factors))
+                        if not two_factor or (len(factors) == 2
+                                              and all(tp == "atom" for _, _, tp in factors)):
+                            res.add((va * vb,
+                                     "(" + "*".join(wrap(t, tp) for _, t, tp in factors) + ")",
+                                     "*", factors))
                         # differences, both orders; the left operand is
                         # inlined (left-associative reading keeps the value)
                         for (x, tx, topx), (y, ty, topy) in (((va, ta, topa), (vb, tb, topb)),
@@ -344,9 +364,35 @@ def royal_expressions_signed():
 
 
 ROYAL_SIGNED = royal_expressions_signed()
-# values whose best form is flat (no product containing a sum); -d closes
-# with one of these whenever the quad primes can be chosen to allow it
+# values whose best form is flat (no product containing a sum)
 ROYAL_SIGNED_FLAT = {v: t for v, t in ROYAL_SIGNED.items() if paren_depth(t) <= 1}
+# values reachable with products of two members only - the rule of the chain
+# equations.  -d closes with one of these whenever the quad primes can be
+# chosen to allow it, backtracking past a larger prime if that is what it
+# takes (928 = 827 + 101, not 829 + 19 + 13 + (2*5*7) - 3).  The wider
+# tables above are the last resort; below 300,000 only 99 = 19 + 13 + 67
+# needs them, its pool 11, 13, 17, 19 being too small for anything else.
+ROYAL_SIGNED_TWO = royal_expressions_signed(two_factor=True)
+assert len(ROYAL_SIGNED_TWO) == 39 and all(v in ROYAL_SIGNED_TWO for v in range(25)), \
+    sorted(ROYAL_SIGNED_TWO)
+# The closing sets -d tries, in order, re-choosing the quad primes between
+# passes: royal members added (no product), then one product, then two - the
+# vocabulary of the chain equations, fewest multiplications first - and only
+# then the signed forms, two-factor before the rest.  Below 300,000 all but
+# 43 integers close in the first pass, 9 need a minus and 1 (99) a
+# three-factor product.
+_by_mults = {}
+for (_d, _m, _t), _vals in ROYAL_SETS.items():
+    _by_mults.setdefault(_m, set()).update(_vals)
+ROYAL_PASSES = []
+_acc = set()
+for _m in sorted(_by_mults):
+    _acc = _acc | _by_mults[_m]
+    ROYAL_PASSES.append(frozenset(_acc))
+_acc = _acc | set(ROYAL_SIGNED_TWO); ROYAL_PASSES.append(frozenset(_acc))
+_acc = _acc | set(ROYAL_SIGNED_FLAT); ROYAL_PASSES.append(frozenset(_acc))
+_acc = _acc | set(ROYAL_SIGNED); ROYAL_PASSES.append(frozenset(_acc))
+assert len(ROYAL_PASSES) == 6 and ROYAL_PASSES[2] == frozenset(ROYAL_BEST)
 
 def _royal_self_forms():
     """A royal member written from *smaller* royal members only - nothing may
@@ -372,10 +418,13 @@ ROYAL_SELF = _royal_self_forms()
 
 def royal_closing(rem, terms):
     """The royal part of a -d line: a bare royal member only when some quad
-    prime carries the rest of the number."""
+    prime carries the rest of the number.  The + and * form when there is
+    one, then the two-factor signed form, the wider table only for the rest."""
     if not terms and rem in ROYAL_SELF:
         return ROYAL_SELF[rem]
-    return ROYAL_SIGNED[rem]
+    if rem in ROYAL_BEST:
+        return ROYAL_BEST[rem]
+    return ROYAL_SIGNED_TWO.get(rem, ROYAL_SIGNED[rem])
 # the coverage argument in the paper relies on 0..38 being reachable
 assert all(v in ROYAL_SIGNED for v in range(39)), "royal coverage broken"
 
@@ -522,8 +571,9 @@ class Deriver:
     """Ranks candidate equations for a difference by
 
         1. depth of the royal part: 0 = none or plain addition of royal
-           members, 1 = flat products such as (5*7) + 3, 2 and 3 =
-           products that contain sums (nested parentheses);
+           members, 1 = products of two royal members such as (5*7) + 3
+           (a product of three members, or one containing a sum, is never
+           a candidate);
         2. number of multiplications in the royal part - addition takes
            precedence, multiply only when addition is not possible
            (1871 = 1489 + 199 + 109 + 19 + 17 + (5*7) + 3, one product,
@@ -874,7 +924,7 @@ class Deriver:
         form.  pool: ascending primes < n.  Returns the primes or None.
         A flat royal closing (no product containing a sum) is preferred:
         nested forms are used only when no choice of primes avoids them."""
-        for allowed in (ROYAL_SIGNED_FLAT, ROYAL_SIGNED):
+        for allowed in ROYAL_PASSES:
             terms = self._search(n, pool, None, quad_of, False,
                                  allowed=allowed, min_allowed=0)
             if terms is not None:
@@ -1274,6 +1324,25 @@ def derive_quad_one(deriver):
     return out
 
 
+# The second, third and fourth primes of a quad are not searched for: they
+# follow from the first one.  These are their fixed equations, kept in the
+# "diffs" table under "2" and "6" so that every quad shares them.
+CANON = {2: {"terms": [], "royal_value": 2, "royal": "2",
+             "mul": {"terms": [["p", 2]]}, "exp": {"terms": [["p", 2]]},
+             "expv": {"terms": [["p", 2]]}},
+         6: {"terms": [], "royal_value": 6, "royal": "(2*3)",
+             "mul": {"terms": [["*", 3, 2]]}, "exp": {"terms": [["*", 3, 2]]},
+             "expv": {"terms": [["*", 3, 2]]}}}
+# (index of the base within the quad, difference) for p+2, p+6 and p+8:
+#     p+2 = p + 2        p+6 = p + (2*3)        p+8 = (p+6) + 2
+CANON_STEPS = ((0, 2), (0, 6), (2, 2))
+
+
+def is_canonical(q, i):
+    """True for the second, third and fourth prime of any quad after quad 1."""
+    return q["n"] >= 2 and i >= 1
+
+
 def extend_chain(data, want_count=None, upto=None, one_per_quad=False,
                  progress=True):
     quads, diffs = data["quads"], data["diffs"]
@@ -1302,59 +1371,71 @@ def extend_chain(data, want_count=None, upto=None, one_per_quad=False,
             break
         last = quads[-1]["primes"]
         n = len(quads) + 1
-        derivs = []
-        for target in quad:
-            record = None
-            for base in sorted(last, reverse=True):
-                diff = target - base
-                if diff < MIN_ROYAL:
+        # Only the first prime is searched for.
+        target = quad[0]
+        record = None
+        for base in sorted(last, reverse=True):
+            diff = target - base
+            if diff < MIN_ROYAL:
+                continue
+            key = str(diff)
+            entry = diffs.get(key)
+            if entry is None:
+                # the shared equation of a difference is searched over
+                # every member below it, the base included: the quads
+                # that reuse it have a base above the difference, which
+                # no term of it can equal
+                res = deriver.solve(diff, avail, base, quad_of,
+                                    exclude_base=False)
+                if res is None:
                     continue
-                key = str(diff)
-                entry = diffs.get(key)
-                if entry is None:
-                    # the shared equation of a difference is searched over
-                    # every member below it, the base included: the quads
-                    # that reuse it have a base above the difference, which
-                    # no term of it can equal
-                    res = deriver.solve(diff, avail, base, quad_of,
-                                        exclude_base=False)
-                    if res is None:
-                        continue
-                    terms, rv, text = res
-                    entry = {"terms": terms, "royal_value": rv,
-                             "royal": text, "first": [n, target]}
-                    entry["mul"], entry["exp"], entry["expv"] = ops_ways(
-                        deriver, diff, avail, base, quad_of, entry,
-                        exclude_base=False)
-                    diffs[key] = entry
-                    record = {"target": target, "base": base, "diff": diff,
-                              "reused": False}
-                else:
-                    record = {"target": target, "base": base, "diff": diff,
-                              "reused": True}
-                if base in entry_members(entry):
-                    # this member's base is below its own difference, so the
-                    # shared equation would use it as a term; it gets its own
-                    own = deriver.solve(diff, avail, base, quad_of)
-                    if own is None:
-                        record = None
-                        continue
-                    terms, rv, text = own
-                    own_entry = {"terms": terms, "royal_value": rv,
-                                 "royal": text}
-                    own_entry["mul"], own_entry["exp"], own_entry["expv"] = \
-                        ops_ways(deriver, diff, avail, base, quad_of, own_entry)
-                    record["own"] = own_entry
-                    record["reused"] = False
-                break
-            if record is None:
-                record = {"target": target, "base": None, "diff": None,
-                          "reused": False, "failed": True}
-            # M1 / E3: the whole prime without the base term (per member,
-            # because they depend on the target, not on the difference)
-            record["mul_nb"], record["exp_nb"] = ops_ways_nobase(
-                deriver, target, avail, quad_of)
-            derivs.append(record)
+                terms, rv, text = res
+                entry = {"terms": terms, "royal_value": rv,
+                         "royal": text, "first": [n, target]}
+                entry["mul"], entry["exp"], entry["expv"] = ops_ways(
+                    deriver, diff, avail, base, quad_of, entry,
+                    exclude_base=False)
+                diffs[key] = entry
+                record = {"target": target, "base": base, "diff": diff,
+                          "reused": False}
+            else:
+                record = {"target": target, "base": base, "diff": diff,
+                          "reused": True}
+            if base in entry_members(entry):
+                # this member's base is below its own difference, so the
+                # shared equation would use it as a term; it gets its own
+                own = deriver.solve(diff, avail, base, quad_of)
+                if own is None:
+                    record = None
+                    continue
+                terms, rv, text = own
+                own_entry = {"terms": terms, "royal_value": rv,
+                             "royal": text}
+                own_entry["mul"], own_entry["exp"], own_entry["expv"] = \
+                    ops_ways(deriver, diff, avail, base, quad_of, own_entry)
+                record["own"] = own_entry
+                record["reused"] = False
+            break
+        if record is None:
+            record = {"target": target, "base": None, "diff": None,
+                      "reused": False, "failed": True}
+        # M1 / E3: the whole prime without the base term (they depend on
+        # the target, not on the difference)
+        record["mul_nb"], record["exp_nb"] = ops_ways_nobase(
+            deriver, target, avail, quad_of)
+        derivs = [record]
+        # The other three primes follow from the first without a search:
+        #     p+2 = p + 2        p+6 = p + (2*3)        p+8 = (p+6) + 2
+        # They share the entries "2" and "6" and carry no M1 / E3.
+        for bi, d in CANON_STEPS:
+            key = str(d)
+            if key not in diffs:
+                diffs[key] = dict(CANON[d], first=[n, quad[bi] + d])
+                reused = False
+            else:
+                reused = True
+            derivs.append({"target": quad[bi] + d, "base": quad[bi],
+                           "diff": d, "reused": reused})
         quads.append({"n": n, "primes": list(quad), "derivations": derivs})
         for p in quad:
             avail.append(p)
@@ -1441,7 +1522,10 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     tally = {}
     rows = []
     for q in quads:                     # decide what survives before printing
-        ders = q["derivations"] if all_members else q["derivations"][:1]
+        # The equations shown are always the first prime's; the other three
+        # primes are p + 2, p + (2*3) and (p+6) + 2, and --all only lists
+        # them in the heading.
+        ders = q["derivations"][:1]
         for d in ders:
             n = columns_of(q, d, diffs)
             if n:
@@ -1454,7 +1538,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     quads = [q for q, _ in rows]
 
     for q, shown in rows:
-        primes = [d["target"] for d in shown]
+        primes = q["primes"] if all_members else [d["target"] for d in shown]
         w(f"Quad {q['n']}: " + ", ".join(map(str, primes)) + "\n")
         for d in shown:
             first = q["n"] == 1
@@ -1704,8 +1788,10 @@ def main(argv=None):
                          "the quad at or below each one and the quad above it "
                          "(1210872 -o --near shows quads 205 and 206); needs -o")
     ap.add_argument("--all", action="store_true",
-                    help="show the equation of all four primes of a quad "
-                         "(default: only the first one, e.g. 101)")
+                    help="list all four primes of a quad in its heading "
+                         "(default: only the first one, e.g. 101); the "
+                         "equations shown are always the first prime's, the "
+                         "others being p + 2, p + (2*3) and (p+6) + 2")
     ap.add_argument("--one-per-quad", action="store_true",
                     help="stricter rule: an equation may take at most one member "
                          "from each quad (uses its own cache file)")

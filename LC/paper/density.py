@@ -5,11 +5,14 @@ the previous quadruplet, with no fallback to a smaller base.
 
 Runs lc.py's own Deriver on the real prime-quadruplet chain and on control
 chains that have the same spacing but are not prime.  Measures the paper's
-Mode 1 claim: the gap is a sum of at most 8 distinct earlier members, with
-exactly ten exceptional gaps (all <= 382) that need a royal expression.
+Mode 1 claim for the first member of each quadruplet (the other three are
+p + 2, p + 6, p + 8): the gap is a sum of at most 8 distinct earlier
+members, with exactly four exceptional gaps (22, 82, 172, 382) that need a
+royal expression.
 """
-import bisect, json, random, sys, time
-sys.path.insert(0, "/Users/pankajladhe/Pankaj/2018/AIStuff/RSAL/LC")
+import bisect, json, os, random, sys, time
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, ".."))
 import lc
 
 MAXK = 12
@@ -43,14 +46,14 @@ def run(chain, label, report=True):
     for i in range(1, len(chain)):
         quad = chain[i]
         base = chain[i - 1][-1]        # m_k, the largest member of Q_{k-1}
-        for target in quad:
-            diff = target - base
-            k = pure_k(deriver, diff, avail, base, quad_of)
-            n += 1
-            if k is None:
-                exc.append(diff)
-            else:
-                dist[k] = dist.get(k, 0) + 1
+        target = quad[0]               # only the first member is searched for
+        diff = target - base
+        k = pure_k(deriver, diff, avail, base, quad_of)
+        n += 1
+        if k is None:
+            exc.append(diff)
+        else:
+            dist[k] = dist.get(k, 0) + 1
         for p in quad:
             avail.append(p)
             quad_of[p] = i + 1
@@ -58,8 +61,8 @@ def run(chain, label, report=True):
     ue = sorted(set(exc))
     if report:
         print(f"{label}")
-        print(f"    members {n}   worst pure-additive gap {worst} terms   "
-              f"exceptional gaps {len(ue)} unique / {len(exc)} members"
+        print(f"    first members {n}   worst pure-additive gap {worst} terms   "
+              f"exceptional gaps {len(ue)} unique / {len(exc)} first members"
               + (f"   max {max(ue)}" if ue else ""))
         print("    terms: " + "  ".join(f"{k}:{dist[k]}" for k in sorted(dist))
               + f"    [{time.time()-t0:.0f}s]")
@@ -89,7 +92,7 @@ def controls(firsts, seed, kind):
 
 if __name__ == "__main__":
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
-    d = json.load(open("/Users/pankajladhe/Pankaj/2018/AIStuff/RSAL/LC/paper/qarray_1e9.json"))
+    d = json.load(open(os.path.join(HERE, "qarray_1e9.json")))
     quads = [tuple(q["primes"]) for q in d["quads"][:N]]
     firsts = [q[0] for q in quads]
     print(f"=== chains of {N} quadruplets, lc.py's own Deriver, pure additive only ===\n")

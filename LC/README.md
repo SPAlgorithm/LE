@@ -2,10 +2,10 @@
 
 > **Ladhe's Quad Conjecture: every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.**
 >
-> (A plain sum for 113,425 of the 113,548 members below 10^9; the other 123 need one product of royal members, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`.)
+> (A plain sum for 28,356 of the 28,387 first members below 10^9; the other 31 need one product of two royal members, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
 
 `lc.py` grows a q-array of prime "quads" from the royal quad and shows how
-every prime in every quad is derived from earlier ones.
+the first prime of every quad is derived from earlier ones.
 
 ## Run it
 
@@ -28,7 +28,7 @@ python3 lc.py 1210872 -o --near     # the two quads either side of any value
 python3 lc.py 2000 -o --chain  # under the A line, the equation of every term
 python3 lc.py 1 200 -c 5       # of quads 1 to 200, only the 5-column equations
 python3 lc.py 1 200 -c 3 8     # ... three to eight columns (-cols, --columns too)
-python3 lc.py 25 --all         # equations for all four primes, not just the first
+python3 lc.py 25 --all         # list all four primes in each heading (equations are the first prime's)
 python3 lc.py -d 53            # derive any integer from the quad members below it
 python3 lc.py -d 53 83         # every integer from 53 to 83, one line each
 python3 lc.py 25 --recompute   # ignore qarray.json and rebuild
@@ -80,7 +80,7 @@ Ctrl-D or Ctrl-C leaves without building anything.
 | `--chain` | under each A line, the equation of every term it uses |
 | `-c N`, `-cols`, `--columns` | keep only equations with N columns; `-c N M` for a range |
 | `-A`, `-M`, `-E` | which ways to print; lower case works too, combine as `-AME` or `-aem` |
-| `--all` | all four primes of a quad, not just the first |
+| `--all` | list all four primes of a quad in its heading (the equations are always the first prime's) |
 | `-v`, `--verbose` | where each term came from, plus the column distribution |
 | `-d N`, `--derive` | derive any integer; `-d N M` for a range of them |
 | `--one-per-quad` | the stricter rule, at most one member per quad |
@@ -101,7 +101,7 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    listed under it. Minus is not used anywhere else.
    Layout: products are wrapped in parentheses and larger terms come first,
    so `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`.
-4. Every prime of quad k (k >= 2) is written as
+4. The first prime `p` of quad k (k >= 2) is written as
 
    ```
    one member of the last quad (quad k-1)
@@ -109,17 +109,24 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    + optionally an expression in royal members using only + and *
    ```
 
-   Quad members are exhausted with addition before any multiplication
-   among royal members is used. Candidates are ranked by:
+   The other three primes of the quad need no search - they follow from
+   the first one and are stored in exactly this form:
 
-   1. depth of the royal part: plain addition (none, or royal members
-      added) first, then flat products such as `(5*7) + 3`, and products
-      that contain sums (nested parentheses) only as a last resort;
-   2. fewer multiplications in the royal part: addition takes precedence,
+   ```
+   p+2 = p + 2          p+6 = p + (2*3)          p+8 = (p+6) + 2
+   ```
+
+   Quad members are exhausted with addition before any multiplication
+   among royal members is used. A royal expression uses each of 2, 3, 5, 7
+   at most once, and a product may multiply only **two** of them:
+   `(5*7) + (2*3)` is allowed, `(2*5*7)` and `5*(7 + (2*3))` are not.
+   Candidates are ranked by:
+
+   1. fewer multiplications in the royal part: addition takes precedence,
       multiply only when addition is not possible;
-   3. fewer terms, but no matter how long, an addition-only equation beats
+   2. fewer terms, but no matter how long, an addition-only equation beats
       one with a product;
-   4. larger primes first, compared term by term, so a quad's 9-member is
+   3. larger primes first, compared term by term, so a quad's 9-member is
       used before its 7, 3 and 1 members.
 
    ```
@@ -129,15 +136,15 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
                                                    addition only, 8 terms
    101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)       products only because
                                                    addition cannot reach 82
-   not     19 + 17 + (5*(7 + (2*3)))               nested, rejected
    ```
 
 5. Storage in `qarray.json` beside the script: each quad records, per
-   prime, only the base (the last-quad member) and the difference, e.g.
-   `191 = 109 + 82` is stored as base 109, diff 82. A separate `diffs`
-   table holds one equation per unique difference
-   (`82 = 19 + 17 + 11 + (5*7)`). When a later quad produces a
-   difference already in the table, its equation is reused and the output
+   prime, only the base and the difference, e.g. `191 = 109 + 82` is
+   stored as base 109, diff 82, and `193 = 191 + 2` as base 191, diff 2.
+   A separate `diffs` table holds one equation per unique difference
+   (`82 = 19 + 17 + 11 + (5*7)`; the entries `2` and `6` are the fixed
+   forms shared by every quad's later primes). When a later quad produces
+   a difference already in the table, its equation is reused and the output
    says so; only a new difference triggers a new search. The next run loads
    the file and computes only quads that are not there yet.
 
@@ -147,8 +154,8 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    the base as a term, so it keeps its own equation in the derivation record
    instead: quad 2 writes `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)` while
    quad 3, reusing the same difference 82 with the base 109, writes the
-   shorter `191 = 109 + 19 + 17 + 11 + (5*7)`. Below 10^9 exactly 8 members
-   need their own equation, the four of quad 2 and the four of quad 4.
+   shorter `191 = 109 + 19 + 17 + 11 + (5*7)`. Below 10^9 exactly two
+   members need their own equation, 101 (quad 2) and 821 (quad 4).
 6. The display shows one line per quad, the prime ending in 1 with its full
    equation (base first, then the difference written out):
 
@@ -157,9 +164,11 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
      2081 = 1879 + 199 + 3
    ```
 
-   All four primes are still derived and saved; pass `--all` to print them.
-   Pass `-v` to also see the difference, whether its equation was reused,
-   and which quad each term came from.
+   Pass `--all` to list all four primes in the heading (`Quad 7: 2081, 2083,
+   2087, 2089`); the equation stays the first prime's, the other three being
+   `p + 2`, `p + (2*3)` and `(p+6) + 2`. Pass `-v` to also see the
+   difference, whether its equation was reused, and which quad each term
+   came from.
 
    One number is a count, two numbers are a range: `./lc 25` shows the first
    25 quads and `./lc 2000 2005` shows the six quads from 2000 to 2005, both
@@ -172,7 +181,8 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    (also `-sort` or `--sorted`) to list them in ascending order instead. With
    `--upto` and no numbers, `-o` is the last quad at or below the value. It
    combines with the other switches, so `./lc 2000 -o -AME --all` prints every
-   way of all four primes of quad 2000 and nothing else:
+   way of quad 2000's first prime, under a heading that lists all four, and
+   nothing else:
 
    ```
    Quad 2000: 31252931
@@ -264,8 +274,8 @@ it is the only quad there whose base lies below its own difference, so it
 cannot use 19 as a term, while every later quad with the gap 82 can and needs
 five columns.
 
-With `--all` the filter applies to each of the four primes separately, so a quad
-can appear with only the members that match.
+The filter looks at the first prime's equation; `--all` only widens the
+heading.
 
 ## Putting it together
 
@@ -286,7 +296,7 @@ column counts printed at the end. Change `-c 3` to `-c 7` to see the long ones.
 ```
 ./lc 2000 2005 1223 -o -s --all
 ```
-Three quadruplets you picked out, sorted, with the equations of all twelve
+Three quadruplets you picked out, sorted, each heading listing all four
 members.
 
 ```
@@ -366,19 +376,24 @@ simpler way and is marked `fallback`; `-v` mentions it.
 ## Derive any number
 
 `-d N` writes any integer N as a sum of quad primes below N plus one
-expression in the royal members. Quad primes are only added; `-`, and `*`
+expression in the royal members. Quad primes are only added; `*` and `-`
 appear only among 2, 3, 5, 7. The largest quad prime that fits is taken
-first, then the next, and the remainder is closed with a flat royal
-expression (never a product containing a sum, so `(3*7) - 5` rather than
-`(2*(5 + 3))`), choosing the one with the fewest multiplications, then the
-fewest minus signs. Primes are re-chosen if that is what it takes to keep
-the closing flat.
+first, then the next, and the remainder is closed with a royal expression
+in the same vocabulary as the chain equations: royal members added if that
+suffices, else one product of two members, else two. Primes are re-chosen
+between those passes if that is what it takes, so `53 = 19 + 17 + 7 + 5 + 3 + 2`
+rather than `19 + 17 + 13 + 7 - 3`, and `928 = 823 + 103 + 2` rather than
+`829 + 19 + 13 + (2*5*7) - 3`. Only when no choice of primes closes with
+`+` and `*` does a minus enter, and only when even that fails a product of
+three; below 300,000 that is nine integers (0, 1, 4, 92, 93, 94, 96, 99,
+102) and one (99), whose pool 11, 13, 17, 19 is too small for anything else.
 
 ```
 python3 lc.py -d 16     16 = 13 + 3
-python3 lc.py -d 53     53 = 19 + 17 + 13 + 7 - 3
-python3 lc.py -d 55     55 = 19 + 17 + 13 + 5 + 3 - 2
-python3 lc.py -d 76     76 = 19 + 17 + 13 + 11 + (3*7) - 5
+python3 lc.py -d 53     53 = 19 + 17 + 7 + 5 + 3 + 2
+python3 lc.py -d 55     55 = 19 + 17 + 11 + 5 + 3
+python3 lc.py -d 76     76 = 19 + 17 + (5*7) + 3 + 2
+python3 lc.py -d 99     99 = 19 + 13 + (2*5*7) - 3
 python3 lc.py -d 101    101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
 python3 lc.py -d 0      0 = 3 + 2 - 5
 python3 lc.py -d 5      5 = 2 + 3
@@ -400,8 +415,7 @@ derivation (with 2, 3, 5, 7, 11, 13, 17, 19 every integer up to 156, so in
 particular up to 101); the paper proves this for the whole chain. `-v` adds
 which quad each prime came from. Two numbers give a range: `-d 53 83`
 prints one line for every integer from 53 to 83. If N lies beyond the cached chain, the
-chain is extended first, which for N near 10^9 takes about three minutes
-once.
+chain is extended first, which for N near 10^9 takes under a minute once.
 
 ## About "each quad can be used only once"
 
@@ -432,16 +446,16 @@ Building the chain from nothing, measured on this Mac (Intel, Python 3.13):
 
 | upper bound | digits | quads | time to build | cache size |
 | --- | --- | --- | --- | --- |
-| 35,551,421 | 8 | 2,209 | 14 s | 5.7 MB |
-| 200,000,000 | 9 | 8,096 | 54 s | 16.8 MB |
-| 1,000,000,000 | 10 | 28,387 | 165 s | 48 MB |
-| 10,000,000,000 | 11 | ~180,000 | ~25 min (est.) | ~330 MB |
+| 1,000,000,000 | 10 | 28,387 | 43 s | 23 MB |
+| 10,000,000,000 | 11 | ~180,000 | ~6 min (est.) | ~160 MB |
 
+(Since only the first prime of each quad is searched for, a full build is
+about four times faster than it used to be and the cache is half the size.)
 Recommended limit: 10 digits (`--upto 9999999999`) is comfortable in one
 run. 11 digits works but the JSON cache gets large and slow to load; past
 that the cache would need a database and the sieve a compiled helper. Most
-of the cache size comes from the base-free M1 and E3 equations, which are
-stored per prime rather than per unique difference.
+of the cache size comes from the base-free M1 and E3 equations of the first
+primes, which are stored per prime rather than per unique difference.
 Progress is checkpointed to the cache every 15 seconds, so an interrupted
 run resumes where it stopped.
 
@@ -452,7 +466,7 @@ Two explainer videos, narrated and captioned:
 - Ladhe's Quad Conjecture: A New Pattern in Prime Quadruplets (28 min): https://youtu.be/_XSOJ0Yj77Q
 - Build Any Number From Prime Quadruplets, Part 2 (11 min): https://youtu.be/JNWvt3hS540
 
-Companion iOS app (the authors' free LE-Games app; the Quad Conjecture feature is being added): https://apps.apple.com/app/id6767880385
+Companion iOS app (the authors' free LE-Games app: the chain, the QuadQuest matching game and a printable practice sheet): https://apps.apple.com/app/id6767880385
 
 ## Paper
 
@@ -464,8 +478,8 @@ figures:
 | File | Purpose |
 | --- | --- |
 | `ladhe_quad_conjecture.tex`, `.pdf` | the paper (`pdflatex ladhe_quad_conjecture.tex`, run twice) |
-| `qarray_1e9.json` | the chain up to 10^9 (28,387 quads, 48 MB), built with `python3 lc.py --upto 999999999 --cache paper/qarray_1e9.json`; in the repository it is shipped as `qarray_1e9.json.gz`, run `gunzip` before using it |
-| `quads_1e9.csv` | one row per quad member: base, gap, the A/M/E1/E2 equations, minimal lengths (M1/E3 are in the JSON) |
+| `qarray_1e9.json` | the chain up to 10^9 (28,387 quads, 23 MB), built with `python3 lc.py --upto 999999999 --cache paper/qarray_1e9.json`; in the repository it is shipped as `qarray_1e9.json.gz`, run `gunzip` before using it |
+| `quads_1e9.csv` | one row per quad member: for a first prime the base, gap, the A/M/E1/E2 equations and minimal lengths (M1/E3 are in the JSON); for the other three primes only their fixed form |
 | `check.py` | independent re-verification of every stored equation, prints the dataset SHA-256 |
 | `stats.py` | every number quoted in the paper, plus `appendix_rows.tex` and the CSV |
 

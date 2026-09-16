@@ -5,7 +5,9 @@
 Recomputes, from the released CSV alone:
   * the residues modulo 210 of the first members,
   * the spacings between consecutive first members,
-  * the twenty residue classes of the gaps, against the ones the lemma predicts,
+  * the five residue classes of the first-member gaps, against the ones the
+    lemma predicts (the other three members are p + 2, p + 6, p + 8 and
+    have no gap of their own),
   * the least number of distinct chain members summing to each admissible value
     below 400000 (the largest gap below 10^9 is 395520), and
   * the classes in which a two-term sum is impossible modulo 7.
@@ -20,14 +22,14 @@ MAXK = 8                # the bound K of Conjecture 2
 
 
 def load(path):
-    """first members, all members below LIMIT, distinct gaps."""
+    """first members, all members below LIMIT, distinct first-member gaps."""
     firsts, members, gaps = set(), set(), set()
     for row in csv.DictReader(open(path)):
         firsts.add(int(row["p"]))
         m = int(row["member"])
         if m <= LIMIT:
             members.add(m)
-        if row["difference"]:
+        if row["difference"] and row["member"] == row["p"]:
             gaps.add(int(row["difference"]))
     return sorted(firsts), sorted(members), sorted(gaps)
 
@@ -60,9 +62,8 @@ def main(path):
     spacings = {(b - a) % 210 for a, b in zip(firsts, firsts[1:])}
     print("h mod 210:", sorted(spacings), "(lemma: [0, 30, 90, 120, 180])")
 
-    # (iv) the twenty classes of the gaps
-    predicted = sorted({(h + d - 8) % 210
-                        for h in (0, 30, 90, 120, 180) for d in OFFSETS})
+    # (iv) the five classes of the first-member gaps (offset 0 only)
+    predicted = sorted({(h - 8) % 210 for h in (0, 30, 90, 120, 180)})
     observed = sorted({d % 210 for d in gaps})
     print(f"gap classes mod 210: {len(observed)} observed, "
           f"{len(predicted)} predicted, equal: {observed == predicted}")
@@ -84,7 +85,7 @@ def main(path):
     # only a few members, so check those cases without it
     tight = sorted({(int(r["base"]), int(r["difference"])) for r in
                     csv.DictReader(open(path))
-                    if r["base"] and r["difference"]
+                    if r["base"] and r["difference"] and r["member"] == r["p"]
                     and int(r["base"]) < int(r["difference"])})
     worse = []
     for base, d in tight:
@@ -96,7 +97,7 @@ def main(path):
 
     # the values a gap can never take, though they are equally unreachable
     blocked = [n for n in range(2, LIMIT + 1, 2)
-               if n % 30 in (0, 22, 24, 28) and n % 210 not in predicted
+               if n % 30 == 22 and n % 210 not in predicted
                and kmin(n) is None]
     print("unreachable but excluded by the lemma:", blocked)
 
@@ -107,9 +108,9 @@ def main(path):
         return any((22 + a + b) % 30 == m % 30 and (x + a + y + b) % 7 == m % 7
                    for a in OFFSETS for b in OFFSETS
                    for x in ok7 for y in ok7)
-    over30 = [m for m in range(0, 210, 2) if m % 30 in (0, 22, 24, 28)]
+    over30 = [m for m in range(0, 210, 2) if m % 30 == 22]
     unreachable = [m for m in over30 if not two_term(m)]
-    print(f"of the {len(over30)} classes over the four gap classes mod 30, "
+    print(f"of the {len(over30)} classes over the first-member gap class 22 mod 30, "
           f"{len(unreachable)} admit no two-term sum:", unreachable)
     print("no gap class among them:",
           not set(unreachable) & set(predicted))

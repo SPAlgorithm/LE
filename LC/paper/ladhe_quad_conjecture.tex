@@ -39,7 +39,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 4, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 6, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -56,21 +56,25 @@ Prime quadruplets are the constellations $(p,\,p+2,\,p+6,\,p+8)$ of four
 primes, the densest possible packing of four primes beyond $(5,7,11,13)$.
 We order them into a chain $\Q_1=(11,13,17,19)$, $\Q_2=(101,103,107,109)$,
 $\Q_3=(191,193,197,199)$, \dots, seeded by the \emph{royal quad}
-$\Q_0=(2,3,5,7)$, and observe that every member of every quadruplet can be
-written as the largest member of the previous quadruplet plus a sum of
+$\Q_0=(2,3,5,7)$, and observe that the first member of every quadruplet can
+be written as the largest member of the previous quadruplet plus a sum of
 distinct members of earlier quadruplets, for example
 $13001 = 9439 + 3461 + 101$ and
-$35545421 = 35524459 + 18049 + 2089 + 821 + 3$.
+$35545421 = 35524459 + 18049 + 2089 + 821 + 3$; the other three members
+then follow without any search, as $p+2$, $p+(2\times3)$ and $(p+6)+2$.
 The precise form of the observation is that the gap $D$ between a
-quadruplet member and its base is a sum of at most $8$ distinct earlier
-members, with exactly ten exceptional gaps, all at most $382$, that need a
-small expression in the royal members $2,3,5,7$; a congruence lemma modulo
-$210$ shows that these ten are the only exceptions in the entire admissible
-range below $10^9$, not merely the ones we met. Allowing one such
-expression in every gap brings the bound down to six terms with no
+first member and its base is a sum of at most $8$ distinct earlier
+members, with exactly four exceptional gaps, $22$, $82$, $172$ and $382$,
+that need a small expression in the royal members $2,3,5,7$. Members of
+earlier quadruplets are only ever added; $+$ and $\times$ act on nothing
+but the royal members, each used at most once and never more than two of
+them in a product. A congruence lemma modulo $210$ shows that these four
+are the only exceptions in the entire admissible range below $10^9$, not
+merely the ones we met. Allowing
+one such expression in every gap brings the bound down to six terms with no
 exception at all. We call this \emph{Ladhe's Quad Conjecture} and verify it
-for all $28{,}387$ prime quadruplets below $10^9$, i.e.\ for $113{,}544$
-quadruplet members, with an independent checker. Two further
+for all $28{,}387$ prime quadruplets below $10^9$ with an independent
+checker. Two further
 representations of each gap, one that prefers multiplication and one that
 prefers powers of chain members, are also computed and released. We test
 the objection that the pattern is a consequence of density rather than of
@@ -81,8 +85,9 @@ class, and are therefore structural, but no control reproduces the small
 closed set of exceptions. We also prove, from a two-line covering lemma and computed base cases, that the chain is an
 additive basis for all integers: every integer up to the next quadruplet
 (indeed up to a bound that grows like the sum of all earlier members) is a
-sum of distinct chain members plus one expression in $2,3,5,7$ with
-$+,-,\times$; this is unconditional below $10^9$ and rests beyond that
+sum of distinct chain members plus one expression in $2,3,5,7$ in which,
+unlike in the conjecture itself, $-$ is allowed alongside $+$ and
+$\times$; this is unconditional below $10^9$ and rests beyond that
 only on a mild growth condition. We explain carefully what the conjecture
 does and does not say about locating the next quadruplet, give a heuristic
 for why such representations are plentiful, and state open questions. The utility that builds the chain and
@@ -115,16 +120,18 @@ clusters have been searched for computationally for decades
 This note records an additive structure that runs through the whole
 sequence of prime quadruplets, at least as far as we have looked. Order the
 quadruplets by size and call the $k$-th one $\Q_k$; put the four primes
-$2,3,5,7$ in front as $\Q_0$, the \emph{royal quad}. Then every member of
-$\Q_k$ is obtained from the largest member of $\Q_{k-1}$ by adding a few
-distinct members of earlier quadruplets. In one line:
+$2,3,5,7$ in front as $\Q_0$, the \emph{royal quad}. Then the first member
+of $\Q_k$ is obtained from the largest member of $\Q_{k-1}$ by adding a few
+distinct members of earlier quadruplets, and the other three members of
+$\Q_k$ are that first member plus $2$, plus $2\times3$, and plus
+$2\times3+2$. In one line:
 \begin{center}
 \emph{Every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.}
 \end{center}
-The word ``sum'' is literal for $113{,}425$ of the $113{,}548$ quadruplet
-members below $10^9$; the other $123$, namely $11$, $13$, $19$ and the
-members whose gap is $82$, $84$, $88$ or $90$, need one product of royal
-members, as in $101=19+17+13+11+(5\times7)+(2\times3)$.
+The word ``sum'' is literal for $28{,}356$ of the $28{,}387$ first members
+below $10^9$; the other $31$, namely $11$ and the $30$ first members whose
+gap is $82$, need one product of royal members, as in
+$101=19+17+13+11+(5\times7)+(2\times3)$.
 Section~\ref{sec:conj} states this
 precisely in three forms of increasing strength, Section~\ref{sec:cover}
 proves a companion statement, that with subtraction allowed among the
@@ -164,12 +171,13 @@ earlier quadruplets.
 \begin{definition}[Royal expressions]
 A \emph{royal expression} is an arithmetic expression built from the
 members $2,3,5,7$ of $\Q_0$, each used at most once, with the operations
-$+$ and $\times$ only. Let $\R$ be the set of its values; $\R$ has $68$
-elements between $2$ and $210$. Two subsets matter below: $\Radd$, the
-$11$ values reachable by addition alone,
-$\{2,3,5,7,8,9,10,12,14,15,17\}$, and $\Rflat$, the $38$ values with a
-\emph{flat} expression, one in which no product contains a sum, such as
-$(5\times 7)+(2\times 3)=41$ but not $5\times(7+(2\times3))=65$.
+$+$ and $\times$ only, where a product may multiply only \emph{two} members:
+$(5\times7)+(2\times3)$ is a royal expression, $2\times5\times7$ and
+$5\times(7+(2\times3))$ are not. Let $\R$ be the set of its values; $\R$
+has $30$ elements between $2$ and $41$, and every one of them is
+\emph{flat} (no product contains a sum). One subset matters below:
+$\Radd$, the $11$ values reachable by addition alone,
+$\{2,3,5,7,8,9,10,12,14,15,17\}$.
 \end{definition}
 
 \begin{definition}[Additive representation]
@@ -179,12 +187,23 @@ identity
 t \;=\; m_k \;+\; s_1+s_2+\dots+s_j \;+\; r,
 \qquad s_1>s_2>\dots>s_j,\;\; s_i\in\Pool_k,\;\; r\in\R\cup\{0\},
 \]
-with all $s_i$ distinct and none equal to $m_k$. Its \emph{length} is
+with all $s_i$ distinct and none equal to $m_k$. Members of earlier
+quadruplets are thus only ever added; multiplication occurs only inside the
+royal expression $r$, and only between two of $2,3,5,7$. Its \emph{length} is
 $j$ if $r=0$ and $j+1$ otherwise. Several $s_i$ may come from the same
 quadruplet. (The stricter reading ``at most one member per quadruplet''
 already fails at $\Q_2$: $101-19=82$, and no single member of $\Q_1$ leaves
 a remainder in $\R$.) A member $t$ of $\Q_1$ is written as a royal
 expression alone, e.g.\ $11=(2\times3)+5$.
+
+Only the first member $p$ of $\Q_k$ is given such a representation by
+search. Its three companions are written
+\[
+p+2 \;=\; p+2, \qquad p+6 \;=\; p+(2\times3), \qquad p+8 \;=\; (p+6)+2,
+\]
+which is all the quadruplet pattern requires of them; they are neither
+searched for nor listed. From here on ``the gap'' of $\Q_k$ means the gap
+$D=p_k-m_k$ of its first member.
 \end{definition}
 
 The following congruences are elementary but shape everything below.
@@ -215,8 +234,11 @@ $M=p+4$, so that its members are $M-4,\,M-2,\,M+2,\,M+4$. Then
   D\equiv\;&0,\;22,\;24,\;28,\;30,\;82,\;84,\;88,\;90,\;112,\\
            &114,\;118,\;120,\;172,\;174,\;178,\;180,\;202,\;204,\;208
   \end{aligned}
-  \quad\pmod{210},
+  \quad\pmod{210}.
   \]
+  Since only the first member is searched for, the gaps that actually
+  occur are those of $t=q_k^{(1)}$: $D\equiv22\pmod{30}$, in one of the
+  five classes $22, 82, 112, 172, 202 \pmod{210}$,
   the five classes $22,\,82,\,112,\,172,\,202$ being those of a first
   member;
 \item every gap is even while every pool member is odd, so a representation
@@ -290,40 +312,39 @@ because they bound the number of terms.
 
 \begin{conjecture}[Ladhe's Quad Conjecture, existence form]
 \label{conj:A}
-Every member of every prime quadruplet $\Q_k$ with $k\ge2$ has an additive
-representation over the chain: $t=m_k+\sum_i s_i+r$ with distinct
-$s_i\in\Pool_k$ and $r\in\R\cup\{0\}$.
+The first member $p_k$ of every prime quadruplet $\Q_k$ with $k\ge2$ has an
+additive representation over the chain: $p_k=m_k+\sum_i s_i+r$ with
+distinct $s_i\in\Pool_k$ and $r\in\R\cup\{0\}$; the other three members
+then follow as $p_k+2$, $p_k+(2\times3)$ and $(p_k+6)+2$.
 \end{conjecture}
 
 \begin{conjecture}[bounded pure form]
 \label{conj:B}
 There is an absolute constant $K$ such that, apart from finitely many gaps,
-every gap $D=t-m_k$ ($k\ge2$) is a sum of at most $K$ distinct members of
-$\Pool_k$. The data support $K=8$, with exactly ten exceptional gaps:
+every gap $D=p_k-m_k$ ($k\ge2$) is a sum of at most $K$ distinct members of
+$\Pool_k$. The data support $K=8$, with exactly four exceptional gaps:
 \[
-D\in\{22,\;82,\;84,\;88,\;90,\;172,\;174,\;178,\;180,\;382\},
+D\in\{22,\;82,\;172,\;382\},
 \]
 each of which needs a royal value. No \emph{new} exceptional gap occurs
 beyond $\Q_{435}$ (first member $3{,}512{,}231$) up to $10^9$, and the list
 is in fact complete in a stronger sense than observation: by
-Lemma~\ref{lem:residues} every gap lies in one of twenty classes modulo
-$210$, and among all $38{,}092$ even numbers in those classes up to
+Lemma~\ref{lem:residues} every gap lies in one of five classes modulo
+$210$, and among all $9{,}523$ even numbers in those classes up to
 $400{,}000$---a range that covers every gap below $10^9$, the largest being
-$395{,}520$---exactly these ten are not sums of at most eight distinct
-chain members below themselves. Ten further small values, $52$, $54$, $58$, $262$, $472$, $474$,
-$478$, $772$, $774$ and $778$, are equally unreachable but can never occur
-as gaps, their classes being excluded by the lemma. The last occurrence of
-an exceptional gap below $10^9$ is at $\Q_{28063}$ (first member
-$985{,}124{,}051$). In all, $254$ of the $113{,}544$ members meet an
-exceptional gap, spread over $98$ quadruplets.
+$395{,}512$---exactly these four are not sums of at most eight distinct
+chain members below themselves. Four further small values, $52$, $262$,
+$472$ and $772$, are equally unreachable but can never occur as gaps, their
+classes being excluded by the lemma. The last occurrence of an exceptional
+gap below $10^9$ is at $\Q_{28063}$ (first member $985{,}124{,}051$). In
+all, $98$ of the $28{,}386$ gaps are exceptional.
 \end{conjecture}
 
 \begin{conjecture}[bounded form with one flat royal value]
 \label{conj:C}
-Every gap $D=t-m_k$ ($k\ge2$) is a sum of at most five distinct members of
-$\Pool_k$ plus at most one element of $\Rflat$; that is, every member has
-an additive representation of length at most six whose royal part, if any,
-is flat.
+Every gap $D=p_k-m_k$ ($k\ge2$) is a sum of at most five distinct members
+of $\Pool_k$ plus at most one element of $\R$; that is, every first member
+has an additive representation of length at most six.
 \end{conjecture}
 
 \begin{remark}[Why the existence form alone is weak]
@@ -343,37 +364,50 @@ consecutive quadruplets.
 \end{remark}
 
 \begin{remark}[The exceptional gaps]
-All ten exceptions are small and appear early. The four gaps $82,84,88,90$
-belong to $\Q_2$ (and reappear whenever two consecutive quadruplets are
-$90$ apart, as at $\Q_3$, $\Q_{14}$, $\Q_{437}$, \dots); at that point the
-pool is $\Q_1$ alone, whose subset sums cannot reach $82$. The gaps $22$,
-$172$--$180$ and $382$ are coverage holes of $\Q_1\cup\Q_2$: for instance
-$382=1871-1489$ needs all of $109,107,103,19,17,13,11$ plus $3$. With the
-$11$ royal addition values allowed, only $82,84,88,90$ remain exceptional;
-with $\Rflat$ allowed there is no exception. In the light of
-Lemma~\ref{lem:residues} the ten are exactly the coverage holes that
-survive the congruence filter: of the twenty values below $400{,}000$ that
-no sum of at most eight distinct members reaches, ten lie in classes no gap
-can occupy. Within the admissible classes the pressure relaxes quickly:
-below $400{,}000$ six terms suffice for every value above $1560$, and four
-for every value above $53{,}370$. Appendix~\ref{app:exc} lists
-the ten gaps with their forced representations.
+All four exceptions are small and appear early. The gap $82$ belongs to
+$\Q_2$ (and reappears whenever two consecutive quadruplets are $90$ apart,
+as at $\Q_3$, $\Q_{14}$, $\Q_{437}$, \dots); at that point the pool is
+$\Q_1$ alone, whose subset sums cannot reach $82$. The gaps $22$, $172$ and
+$382$ are coverage holes of $\Q_1\cup\Q_2$: for instance $382=1871-1489$
+needs all of $109,107,103,19,17,13,11$ plus $3$. With the $11$ royal
+addition values allowed, only $82$ remains exceptional; with all of $\R$
+allowed there is no exception. In the light of Lemma~\ref{lem:residues}
+the four are exactly the coverage holes that survive the congruence filter:
+of the eight values below $400{,}000$ that no sum of at most eight distinct
+members reaches, four lie in classes no gap can occupy. Within the
+admissible classes the pressure relaxes quickly: below $400{,}000$ six
+terms suffice for every value above $1552$, and four for every value above
+$53{,}362$. Appendix~\ref{app:exc} lists the four gaps with their forced
+representations.
 \end{remark}
 
 \section{Coverage: every integer below the next quadruplet}
 \label{sec:cover}
 
 The chain also serves as an additive basis for \emph{all} integers, not
-only for the quadruplets, once subtraction is allowed inside the royal
-part. This section proves that statement from two computed base cases.
+only for the quadruplets, once subtraction, and products of any shape, are
+allowed inside the royal part. The two settings should not be confused:
+the conjecture writes each quadruplet with $+$ and $\times$ only, at most
+two royal members to a product; the derivation of an arbitrary integer
+below also uses $-$, and its royal part may be nested. This section proves
+the second statement from two computed base cases.
 
 \begin{definition}[Signed royal values]
 $\R^{\pm}$ is the set of non-negative values of expressions built from
 the members $2,3,5,7$ of $\Q_0$, each used at most once, with $+$, $-$ and
-$\times$ placed anywhere. It has $83$ elements between $0$ and $210$,
+$\times$ placed anywhere; unlike $\R$, there is no restriction to
+two-factor products. It has $83$ elements between $0$ and $210$,
 contains every integer from $0$ to $38$, and its first gaps are
 $39, 43, 53, 59, 61, 62$. Examples: $0=5-(3+2)$, $1=3-2$, $4=7-3$,
-$33=(5\times7)-2$, $55=5\times((2\times7)-3)$.
+$33=(5\times7)-2$, $67=(2\times5\times7)-3$. The utility reaches for
+$\R$ first and for the signed values only when no choice of primes allows
+a closing in $\R$ ($928=823+103+2$ rather than
+$829+19+13+(2\times5\times7)-3$); the values with three-factor or
+nested products are the last resort of all. Below $300{,}000$ that resort
+is taken for exactly one integer: $99=19+13+67$ has no derivation with
+two-factor products, since every remainder $99-s$ over subsets $s$ of
+$\{11,13,17,19\}$ misses the two-factor values. A nested product (a sum
+inside a product, such as $5\times((2\times7)-3)$) is never used.
 \end{definition}
 
 \begin{definition}[Derivation]
@@ -447,22 +481,27 @@ of this looser kind.
 
 The utility prints a derivation of any integer with \code{-d}, taking the
 largest quad prime below the remainder first, each prime once, and closing
-with a flat royal expression (no product containing a sum) whenever the
-choice of primes allows it, ranked by fewest multiplications, then fewest
-minus signs; a range \code{-d 53 83} prints one line per integer:
+in the vocabulary of the chain equations whenever the choice of primes
+allows it: royal members added if that suffices, else one product of two
+members, else two, the primes being re-chosen between those passes. Only
+when no choice of primes closes with $+$ and $\times$ does a minus enter,
+and only when even that fails a product of three. A range \code{-d 53 83}
+prints one line per integer:
 \begin{small}\begin{verbatim}
   python3 lc.py -d 16      16 = 13 + 3
-  python3 lc.py -d 53      53 = 19 + 17 + 13 + 7 - 3
-  python3 lc.py -d 55      55 = 19 + 17 + 13 + 5 + 3 - 2
-  python3 lc.py -d 76      76 = 19 + 17 + 13 + 11 + (3*7) - 5
+  python3 lc.py -d 53      53 = 19 + 17 + 7 + 5 + 3 + 2
+  python3 lc.py -d 55      55 = 19 + 17 + 11 + 5 + 3
+  python3 lc.py -d 76      76 = 19 + 17 + (5*7) + 3 + 2
   python3 lc.py -d 99      99 = 19 + 13 + (2*5*7) - 3
   python3 lc.py -d 101     101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
   python3 lc.py -d 999986171
-                           999986171 = 999900529 + 82729 + 2089 + 823 + 3 - 2
+                           999986171 = 999900529 + 82729 + 2089 + 821 + 3
 \end{verbatim}\end{small}
-The greedy choice is not the only derivation; $53=19+11+(7\times5)-2$ and
-$55=19+11+(7\times5)$ are equally valid. Up to $20{,}000$ every integer
-receives a flat closing.
+The greedy choice is not the only derivation; $53=19+17+13+7-3$ and
+$55=19+11+(7\times5)$ are equally valid. Below $300{,}000$ exactly nine
+integers need a minus at all --- $0$, $1$, $4$, $92$, $93$, $94$, $96$,
+$99$ and $102$, each with only $\Q_1$ or $\Q_1\cup\{101\}$ to draw on ---
+and one, $99$, a product of three royal members.
 
 \section{Worked examples}
 \label{sec:examples}
@@ -505,7 +544,7 @@ royal $35=5\times7$, one product where $\Q_2$ needed two. The utility
 stores one equation per distinct gap, searched over every member below the
 gap; a member whose base lies \emph{below} its own gap, as at $\Q_2$ and
 $\Q_4$, cannot use that base as a term and keeps its own equation instead.
-Below $10^9$ only eight members do.
+Below $10^9$ only two first members do, $101$ and $821$.
 \begin{small}\begin{verbatim}
   A:  191 = 109 + 19 + 17 + 11 + (5*7)
   M:  191 = 109 + (19*3) + (7*2) + 11
@@ -529,11 +568,11 @@ $19^2$, E2 also, but then prefers $3^5=243$ over $5^3=125$.
 \end{verbatim}\end{small}
 
 \paragraph{$\Q_6=(1871,\dots)$: a long gap early in the chain.}
-Gap $1871-1489=382$ is one of the ten exceptions: no subset of
+Gap $1871-1489=382$ is one of the four exceptions: no subset of
 $\Q_1\cup\Q_2$ sums to $382$, so a royal value is needed. The shortest
 representation with a royal \emph{addition} value has seven terms
-($199+109+19+17+13+11+14$, with $14=7+5+2$); with one flat royal value
-four terms suffice, $382=191+101+17+73$ with $73=(2\times5\times7)+3$.
+($199+109+19+17+13+11+14$, with $14=7+5+2$); with one royal product five
+terms suffice, $382=199+109+19+17+38$ with $38=(5\times7)+3$.
 The utility's addition-first rule prefers the eight-term form below, whose
 royal part is the single member $3$. The multiplicative way is one product.
 \begin{small}\begin{verbatim}
@@ -587,57 +626,61 @@ $628641701 = 628246189 + 392261 + 3251$.
 \paragraph{The utility.}
 \code{lc.py} is a single Python~3 file with no dependencies. It finds
 quadruplets with a segmented sieve (only $p\equiv11 \pmod{30}$ is tested),
-then searches a representation of every member's gap by iterative
+then searches a representation of every first member's gap by iterative
 deepening over the number of terms, with the preferences listed in
 Section~\ref{sec:defs}, and stores one set of A/M/E1/E2 equations per
-distinct gap, plus the base-free M1 and E3 equations of every member, in a
-JSON cache that later runs reuse. The additive search is
+distinct gap, plus the base-free M1 and E3 equations of every first
+member, in a JSON cache that later runs reuse; the other three members of
+a quadruplet are recorded in their fixed form only. The additive search is
 capped at $16$ terms and $300{,}000$ nodes per call, the M/E searches at
 $50{,}000$ nodes, the base-free M1 search, whose pool is the whole chain,
 at $1{,}000{,}000$ nodes, and the additive remainder of E3 at $300{,}000$
 nodes; a fallback path exists for the case that a search gives up, and
-it was never taken in the data reported here (zero fallback flags). Building the chain to $10^9$ took $165$~s on a 2019 Intel laptop
-under Python~3.13.5, of which the A/M/E1/E2 equations take $85$~s; the
-base-free M1 and E3 equations, computed once per member over the whole
-chain, account for the rest.
+it was never taken in the data reported here (zero fallback flags).
+Building the chain to $10^9$ took $43$~s on a 2019 Intel laptop under
+Python~3.13.5; the base-free M1 and E3 equations, computed once per first
+member over the whole chain, account for most of it.
 
 \paragraph{The checker.}
 \code{check.py} re-reads the JSON and, independently of the search code,
 verifies every stored equation: the arithmetic, that all members are
-distinct, that the base is never reused as a term, and that every term is
-smaller than the target. On the $10^9$ dataset it checked $681{,}288$
-equations ($6$ per member for all $113{,}548$ members, $\Q_1$ included) and
-found $0$ errors.
+distinct, that the base is never reused as a term, that every term is
+smaller than the target, that every royal expression uses each of
+$2,3,5,7$ at most once and multiplies at most two of them, and that the
+second, third and fourth member of every quadruplet are stored in their
+fixed form. On the $10^9$ dataset it checked $170{,}340$ equations ($6$ per
+first member, the four members of $\Q_1$ included), $3{,}421$ royal
+expressions and $85{,}158$ fixed forms, and found $0$ errors.
 
 \paragraph{Minimal lengths.}
 \code{stats.py} recomputes, for every distinct gap and independently of the
 preferences of the utility, the minimal length $K$ of a representation
 under three vocabularies: pool members only (\emph{pure}); pool members
 plus at most one value of $\Radd$; pool members plus at most one value of
-$\Rflat$. The minimum is taken when the gap is first met, using only the
+$\R$. The minimum is taken when the gap is first met, using only the
 quadruplets available at that moment. Table~\ref{tab:K} gives the result.
 
 \begin{table}[ht]
 \centering
 \caption{Minimal length $K$ of a representation of the gap, over the
-$13{,}636$ distinct gaps met below $10^9$ (all four members).}
+$3{,}409$ distinct first-member gaps met below $10^9$.}
 \label{tab:K}
 \small
 \begin{tabular}{lrrrrrrrrrr}
 \toprule
 vocabulary & $K{=}1$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ & $8$ & none & mean \\
 \midrule
-pure members            & --   & 2817 & --   & 10375 & --  & 410 & --  & 24 & 10 & 3.65 \\
-$+$ one value of $\Radd$  & --   & 2818 & 429  & 9946  & 365 & 53  & 20  & 1  & 4  & 3.59 \\
-$+$ one value of $\Rflat$ & 5    & 2927 & 3333 & 7295  & 68  & 8   & --  & -- & 0  & 3.33 \\
+pure members            & --   & 687  & --   & 2608  & --  & 104 & --  & 6  & 4  & 3.66 \\
+$+$ one value of $\Radd$  & --   & 688  & 429  & 2179  & 101 & 5   & 6   & -- & 1  & 3.51 \\
+$+$ one value of $\R$     & 1    & 705  & 425  & 2249  & 27  & 2   & --  & -- & 0  & 3.47 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The pure column has only even lengths, as it must. The ten gaps without a
+The pure column has only even lengths, as it must. The four gaps without a
 pure representation are those of Conjecture~\ref{conj:B}; with $\Radd$
-only $82,84,88,90$ remain; with $\Rflat$ nothing remains and six terms
-always suffice, which is Conjecture~\ref{conj:C}. The mean minimal length
+only $82$ remains; with $\R$ nothing remains and six terms always suffice,
+which is Conjecture~\ref{conj:C}. The mean minimal length
 does not grow along the chain: in eight consecutive blocks of about
 $3{,}550$ quadruplets the mean pure $K$ of the first member's gap is
 $3.80, 3.75, 3.73, 3.71, 3.71, 3.67, 3.73, 3.71$ and the share of two-term
@@ -646,14 +689,13 @@ gaps stays between $22\%$ and $24\%$.
 \paragraph{What the utility actually stores.}
 Table~\ref{tab:A} summarises the additive representations chosen by the
 utility. Because addition is exhausted before any royal product is used,
-these are often longer than the minimum: only $120$ of the $113{,}544$
-member equations contain a royal product (all with gap $82,84,88$ or
-$90$), $52{,}872$ end with an added royal value, and $60{,}552$ are pure
-sums of pool members. The longest stored equation has nine terms after
-the base. Of the $28{,}386$ first-member gaps, $24{,}977$ repeat a gap seen
-earlier in the chain; there are only $13{,}636$ distinct gaps among the
-$113{,}544$ member gaps, because consecutive quadruplets are often the
-same distance apart.
+these are often longer than the minimum: only $30$ of the $28{,}386$
+first-member equations contain a royal product (all with gap $82$),
+$13{,}580$ end with an added royal value, and $14{,}776$ are pure sums of
+pool members. The longest stored equation has eight terms after the base.
+Of the $28{,}386$ gaps, $24{,}977$ repeat a gap seen earlier in the chain;
+there are only $3{,}409$ distinct gaps, because consecutive quadruplets are
+often the same distance apart.
 
 \begin{table}[ht]
 \centering
@@ -668,7 +710,6 @@ Length counts the terms after the base, a royal value counting as one.}
 scope & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & none / $+$ / $\times$ \\
 \midrule
 first member of each quad & 6493 & -- & 19501 & 1 & 2173 & 119 & 99 & -- & 14776 / 13580 / 30 \\
-all four members          & 26875 & 31 & 77280 & 2 & 8323 & 256 & 755 & 22 & 60552 / 52872 / 120 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -682,12 +723,12 @@ uses $63{,}213$ powers, $34{,}739$ products and $78{,}861$ plain terms (at
 most $12$). E1 and E2 coincide for $9{,}117$ of the $28{,}386$ gaps. These
 representations are released for further study; we make no claim about
 them beyond their existence within the search caps. The base-free M1 and
-powers-first E3 representations were likewise found for every one of the
-$113{,}548$ members (only $11$, $17$ and $19$, which are written from the
-royal quad alone, admit no power chain and fall back to the power-first
-search) and are stored and verified. The E3 chain has one power for
-$16{,}926$ members, two for $35{,}775$, three for $46{,}553$ and four for
-$14{,}291$; we do not analyse these representations further here.
+powers-first E3 representations were likewise found for every first member
+and for the four members of $\Q_1$ (only $11$, $17$ and $19$, which are
+written from the royal quad alone, admit no power chain and fall back to
+the power-first search) and are stored and verified. Of these $28{,}390$
+E3 chains, $4{,}231$ have one power, $8{,}950$ two, $11{,}636$ three and
+$3{,}570$ four; we do not analyse these representations further here.
 
 \section{Is this a property of primes, or of density?}
 \label{sec:density}
@@ -740,30 +781,31 @@ not of primality.
 \toprule
 chain & worst gap & exceptional gaps & occurrences & largest \\
 \midrule
-real prime quadruplets & 8 & \textbf{10} & 254 & \textbf{382} \\
-control, jitter (seed 1) & 12 & 665 & 2334 & 1700 \\
-control, jitter (seed 2) & 11 & 194 & 535 & 1193 \\
-control, uniform (seed 1) & 10 & 613 & 17790 & 2416 \\
-control, uniform (seed 2) & 11 & 152 & 12728 & 1334 \\
-control, shift & 8 & 101 & 3057 & 3390 \\
+real prime quadruplets & 8 & \textbf{4} & 98 & \textbf{382} \\
+control, jitter (seed 1) & 12 & 390 & 590 & 1700 \\
+control, jitter (seed 2) & 11 & 103 & 141 & 1186 \\
+control, uniform (seed 1) & 9 & 246 & 4455 & 2416 \\
+control, uniform (seed 2) & 11 & 65 & 4221 & 1328 \\
+control, shift & 8 & 26 & 733 & 3052 \\
 \bottomrule
 \end{tabular}
-\caption{All $28{,}387$ quadruplets of each chain below $10^9$, $113{,}544$
-members, under the base rule of Section~\ref{sec:defs}. ``Exceptional
-gaps'' counts distinct values of $D$ admitting no purely additive
-representation.}
+\caption{All $28{,}387$ quadruplets of each chain below $10^9$, $28{,}386$
+first-member gaps, under the base rule of Section~\ref{sec:defs}.
+``Exceptional gaps'' counts distinct values of $D$ admitting no purely
+additive representation; ``occurrences'' counts the first members that
+meet one.}
 \label{tab:controls}
 \end{table}
 
-The exceptions are a different matter. The real chain has ten, the best
-control has $101$ --- an order of magnitude more --- and every control
+The exceptions are a different matter. The real chain has four, the best
+control has $26$ --- more than six times as many --- and every control
 admits exceptions several times larger than the real chain's maximum of
 $382$. The contrast survives every control family we tried, including the
 one that reproduces the bound and the parity exactly.
 
 Density and residue structure together predict that exceptions should be
-\emph{rare}. They do not predict that there should be only ten, that all
-ten should be small, or that the set should close: no new exceptional gap
+\emph{rare}. They do not predict that there should be only four, that all
+four should be small, or that the set should close: no new exceptional gap
 appears after $\Q_{435}$, while $28{,}000$ further quadruplets add none.
 That is the part of Conjecture~\ref{conj:B} we regard as genuinely
 arithmetic, and the part we would most like to see explained.
@@ -826,7 +868,7 @@ classes the lemma allows for gaps are exactly the twenty that survive.
 \end{question}
 
 \begin{question}
-Is a royal value ever needed again beyond the ten exceptional gaps, i.e.\
+Is a royal value ever needed again beyond the four exceptional gaps, i.e.\
 is Conjecture~\ref{conj:B} true with exactly these exceptions and $K=8$,
 or even $K=6$ beyond some point?
 \end{question}
@@ -851,26 +893,27 @@ folder \code{LC} of the repository
 \begin{center}\url{https://github.com/SPAlgorithm/LE}\end{center}
 The commands below rebuild everything reported here from scratch.
 \begin{small}\begin{verbatim}
-  python3 lc.py --upto 999999999 --cache paper/qarray_1e9.json   # 85 s
+  python3 lc.py --upto 999999999 --cache paper/qarray_1e9.json   # 43 s
   python3 paper/check.py paper/qarray_1e9.json                   # 0 bad
   python3 paper/stats.py paper/qarray_1e9.json                   # all figures
   python3 lc.py 25 -AME --cache paper/qarray_1e9.json            # the examples
   python3 paper/residues.py paper/quads_1e9.csv      # Lemma 1, 4 s
-  python3 paper/density.py 28387                     # Section 7, ~20 min
+  python3 paper/density.py 28387                     # Section 7, ~5 min
 \end{verbatim}\end{small}
-The dataset \code{qarray\_1e9.json} ($48{,}075{,}713$ bytes) has SHA-256
-\begin{center}\footnotesize\code{75589aa7dd663b0f5eafd72c00c76ed15907882802495e9acbfcab6e76da42f4}\end{center}
-and \code{quads\_1e9.csv} lists, for each of the $113{,}548$ members
-(including $\Q_1$), the base, the gap, the four A/M/E1/E2 equations (the base-free M1/E3
-equations are in the JSON only) and the three
-minimal lengths. The control chains of Section~\ref{sec:density} are generated inside
+The dataset \code{qarray\_1e9.json} ($23{,}085{,}594$ bytes) has SHA-256
+\begin{center}\footnotesize\code{2d574932d1cbf0ff2692bfcb8b2eab065d2ae35079255598bd0b3c89ecc0e5ee}\end{center}
+and \code{quads\_1e9.csv} has one row per member ($113{,}548$ rows,
+$\Q_1$ included): for a first member the base, the gap, the four A/M/E1/E2
+equations (the base-free M1/E3 equations are in the JSON only) and the
+three minimal lengths; for the other three members of a quadruplet only
+their fixed form. The control chains of Section~\ref{sec:density} are generated inside
 \code{density.py} from a fixed seed, so its table is reproducible without
 any further data. Interactive use: \code{python3 lc.py} asks for a number of
 quadruplets; \code{-M}, \code{-E}, \code{-AME} select the ways;
-\code{--all} shows all four members; \code{-v} shows which quadruplet each
-term comes from; \code{-d N} prints a derivation of any integer $N$ as in
-Section~\ref{sec:cover}, extending the chain first if $N$ lies beyond the
-cache.
+\code{--all} lists all four members in each heading; \code{-v} shows which
+quadruplet each term comes from; \code{-d N} prints a derivation of any
+integer $N$ as in Section~\ref{sec:cover}, extending the chain first if $N$
+lies beyond the cache.
 
 \paragraph{Videos.}
 Two narrated explanations accompany this note: \emph{Ladhe's Quad
@@ -881,8 +924,11 @@ Quadruplets} (11~min, \url{https://youtu.be/JNWvt3hS540}), which walks
 through the coverage proposition of Section~\ref{sec:cover} by hand.
 
 \paragraph{App.}
-An interactive companion to this note is being added to the authors' free
-iOS app \emph{LE-Games}: \url{https://apps.apple.com/app/id6767880385}.
+The authors' free iOS app \emph{LE-Games} contains an interactive companion
+to this note: the chain itself with every way of writing each first member,
+a matching game (\emph{QuadQuest}) whose every board is an equation of the
+chain, and a printable practice sheet:
+\url{https://apps.apple.com/app/id6767880385}.
 
 \paragraph{Conflict of interest.}
 The authors declare no competing interests related to this note.
@@ -945,7 +991,9 @@ For each member: the quad index $k$, the member $t$, the base $m_k$, the gap
 $D$, the additive equation stored by the utility (base first), its length
 including the base, the minimal pure length $K$ of the gap (``--'' for the
 exceptional gaps), and, when the gap was met before, the quad where its
-equation was first found. $\Q_1$ is written from royal members only.
+equation was first found. $\Q_1$ is written from royal members only; the
+second, third and fourth member of every later quadruplet appear in their
+fixed form $p+2$, $p+(2\times3)$, $(p+6)+2$, which has no $K$ and no source.
 
 \begin{footnotesize}
 \begin{longtable}{rrrrlrrr}
@@ -963,7 +1011,7 @@ $k$ & $t$ & $m_k$ & $D$ & additive equation & len & $K$ & from \\
 \end{longtable}
 \end{footnotesize}
 
-\section{The ten exceptional gaps}
+\section{The four exceptional gaps}
 \label{app:exc}
 
 Gaps that are not a sum of distinct pool members at the moment they are
@@ -978,13 +1026,7 @@ $D$ & $k$ & $t$ & A & M & E1 \\
 \midrule
 22  & 169 & 1006331 & \code{19 + 3} & \code{(11*2)} & \code{(3\^{}2) + 13} \\
 82  & 2   & 101     & \code{17 + 13 + 11 + (5*7) + (2*3)} & \code{(17*3) + (13*2) + 5} & \code{(7\^{}2) + (11*3)} \\
-84  & 2   & 103     & \code{11 + (2*5*7) + 3} & \code{(17*3) + (13*2) + 7} & \code{(7\^{}2) + 17 + 13 + 5} \\
-88  & 2   & 107     & \code{17 + 13 + 11 + (2*3*7) + 5} & \code{(17*5) + 3} & \code{(7\^{}2) + (13*3)} \\
-90  & 2   & 109     & \code{17 + (2*5*7) + 3} & \code{(17*5) + 3 + 2} & \code{(7\^{}2) + 17 + 13 + 11} \\
 172 & 435 & 3512231 & \code{109 + 19 + 17 + 13 + 11 + 3} & \code{(19*7) + (17*2) + 5} & \code{(13\^{}2) + 3} \\
-174 & 435 & 3512233 & \code{109 + 19 + 17 + 13 + 11 + 5} & \code{(19*7) + (13*3) + 2} & \code{(13\^{}2) + 5} \\
-178 & 435 & 3512237 & \code{109 + 19 + 17 + 13 + 11 + 7 + 2} & \code{(19*7) + (17*2) + 11} & \code{(11\^{}2) + (19*3)} \\
-180 & 435 & 3512239 & \code{103 + 19 + 17 + 13 + 11 + 7 + 5 + 3 + 2} & \code{(19*7) + (17*2) + 13} & \code{(13\^{}2) + 11} \\
 382 & 6   & 1871    & \code{109 + 107 + 103 + 19 + 17 + 13 + 11 + 3} & \code{(191*2)} & \code{(19\^{}2) + (7*3)} \\
 \bottomrule
 \end{tabular}
@@ -999,9 +1041,9 @@ $\Q_0$ & the royal quad $(2,3,5,7)$ \\
 $\Q_k$, $k\ge1$ & the $k$-th prime quadruplet $(p,p+2,p+6,p+8)$, $p\ge11$ \\
 $q_k^{(d)}$ & the member of $\Q_k$ ending in digit $d\in\{1,3,7,9\}$ \\
 $m_k=q_{k-1}^{(9)}$ & the base of $\Q_k$ \\
-$D=t-m_k$ & the gap of a member $t$ of $\Q_k$ \\
+$D=p_k-m_k$ & the gap of the first member of $\Q_k$ \\
 $\Pool_k=\Q_1\cup\dots\cup\Q_{k-1}$ & the pool available to $\Q_k$ \\
-$\R$, $\Rflat$, $\Radd$ & royal values: all ($68$), flat ($38$), additive ($11$) \\
+$\R$, $\Radd$ & royal values: all ($30$, every one flat), additive ($11$) \\
 $\R^{\pm}$ & non-negative royal values with $+,-,\times$ ($83$) \\
 $K$ & minimal length of a representation of a gap \\
 $C_k$, $T_k$ & integers with a derivation over $\Q_0..\Q_k$; largest $T$ with $[0,T]\subseteq C_k$ \\
