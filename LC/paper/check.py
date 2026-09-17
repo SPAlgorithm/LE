@@ -10,9 +10,9 @@ below it): arithmetic, distinct members, base never used as a term, every
 term below the target.  Every royal expression must use each of 2, 3, 5, 7
 at most once, with + and *, and multiply at most two of them.  Every
 stored additive equation is also re-derived here by the largest-first rule
-(from the remainder take the largest unused earlier prime not above it;
-stop when the remainder is 0, an unused prime, or a royal value; back up
-when a choice leads nowhere) with a search of its own, and must agree.
+(from the remainder take the largest unused earlier prime not above it,
+again and again; a royal value only for a remainder no prime fits into;
+back up when a choice leads nowhere) with a search of its own, and must agree.
 For the other three primes of a quad it checks the fixed forms
 
     p+2 = p + 2        p+6 = p + (2*3)        p+8 = (p+6) + 2
@@ -61,16 +61,11 @@ def largest_first(diff, pool, excluded):
     equations by.  pool: ascending earlier primes; excluded: the base when
     it may not be a term.  Returns the terms, or None."""
     pool = [p for p in pool if p <= diff]
-    pset = set(pool)
     used = {excluded} if excluded is not None else set()
     budget = [2_000_000]
 
     def go(rem, hi):
         if rem == 0:
-            return []
-        if hi and rem <= pool[hi - 1] and rem in pset and rem not in used:
-            return [rem]
-        if rem in ROYAL_VALUES:
             return []
         i = hi - 1
         while i >= 0 and pool[i] > rem:
@@ -87,7 +82,7 @@ def largest_first(diff, pool, excluded):
                 if rest is not None:
                     return [p] + rest
             i -= 1
-        return None
+        return [] if rem in ROYAL_VALUES else None   # royal only when no prime fits
 
     return go(diff, len(pool))
 

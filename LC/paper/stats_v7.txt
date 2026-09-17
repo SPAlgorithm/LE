@@ -7,10 +7,10 @@ later primes in their fixed form p + 2, p + (2*3), (p+6) + 2: 85,158
 gaps between consecutive quads: min 30, max 395,520, mean 35,228; all multiples of 30: True
 
 additive way, first prime per quad: 28,386 equations, 24,977 reuse an earlier difference
-  terms per equation: {2: 683, 4: 4394, 5: 6396, 6: 8360, 7: 2623, 8: 2858, 9: 1765, 10: 464, 11: 663, 12: 13, 13: 167}
-  royal part: {'product': 12751, 'addition': 12398, 'none': 3237}
-  max terms: 13
-  first primes written as a literal sum (no product), quad 1 included: 15,635 of 28,387
+  terms per equation: {2: 683, 4: 6961, 5: 3828, 6: 6295, 7: 3021, 8: 3512, 9: 3060, 10: 652, 11: 323, 12: 13, 13: 26, 15: 12}
+  royal part: {'product': 10255, 'addition': 14709, 'none': 3422}
+  max terms: 15
+  first primes written as a literal sum (no product), quad 1 included: 18,131 of 28,387
 
 minimal K, vocabulary 'pure': distribution {2: 687, 4: 2608, 6: 104, 8: 6}
   max K 8, mean K 3.66, no representation within 12 terms: 4

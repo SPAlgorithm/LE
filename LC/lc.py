@@ -21,10 +21,9 @@ Rules
   A royal expression uses each of 2, 3, 5, 7 at most once, and a product
   may multiply only TWO of them: (5*7) + (2*3) is allowed, (2*5*7) and
   5*(7 + (2*3)) are not.  The terms are chosen largest first: from the
-  remainder take the largest unused earlier prime not above it; stop as
-  soon as the remainder is 0, an unused prime (then the last term), or a
-  royal value (which closes the equation); back up when a choice leads
-  nowhere.
+  remainder take the largest unused earlier prime not above it, again and
+  again; a royal value closes the equation only for what no prime can
+  cover; back up when a choice leads nowhere.
       2081  = 1879 + 199 + 3                         199, then the royal 3
       13001 = 9439 + 3467 + 19 + 17 + 13 + 11 + (5*7)
                                                      3467 first, not 3461 + 101
@@ -121,7 +120,7 @@ import sys
 import time
 
 ROYAL = (2, 3, 5, 7)
-FORMAT = 16          # 16: largest earlier prime first, stop at the first royal remainder
+FORMAT = 16          # 16: largest earlier prime first; a royal value only for what no prime covers
 # Folder that holds the cache: next to the script, or next to the binary
 # when packaged with PyInstaller.
 if getattr(sys, "frozen", False):
@@ -599,11 +598,11 @@ class Deriver:
         """The representation the chain stores: largest earlier prime first.
 
         From the remainder take the largest unused prime not above it, and
-        stop as soon as the remainder is 0, is itself an unused prime (which
-        then is the last term), or is a royal value (which closes the
-        equation).  When a choice leads nowhere, back up to the next smaller
-        prime.  `solve` below is the older fewest-terms search, kept for the
-        minimal-length statistics (stats.py, density.py).
+        repeat until the remainder is 0.  A royal value closes the equation
+        only for a remainder that no unused prime fits into (or that no
+        choice of primes can finish); when a choice leads nowhere, back up to
+        the next smaller prime.  `solve` below is the older fewest-terms
+        search, kept for the minimal-length statistics (stats.py, density.py).
 
         avail: ascending primes of all earlier quads; base: never a term
         unless exclude_base is False (the shared equation of a difference).
@@ -611,7 +610,6 @@ class Deriver:
         if diff <= 0:
             return None
         pool = avail[:bisect.bisect_right(avail, diff)]
-        pset = set(pool)
         used = {base} if (exclude_base and base is not None) else set()
         if self.one_per_quad and base is not None:
             used_quads = {quad_of[base]}
@@ -622,12 +620,6 @@ class Deriver:
         def go(rem, hi):
             # hi: candidates are pool[:hi], all below the last term taken
             if rem == 0:
-                return []
-            top = pool[hi - 1] if hi else 0
-            if rem <= top and rem in pset and rem not in used and (
-                    used_quads is None or quad_of[rem] not in used_quads):
-                return [rem]
-            if rem in ROYAL_BEST:
                 return []
             i = bisect.bisect_right(pool, rem, 0, hi) - 1
             while i >= 0:
@@ -647,7 +639,8 @@ class Deriver:
                     if rest is not None:
                         return [p] + rest
                 i -= 1
-            return None
+            # no prime fits (or none can be finished): a royal value, if it is one
+            return [] if rem in ROYAL_BEST else None
 
         terms = go(diff, len(pool))
         if terms is None:

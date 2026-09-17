@@ -2,7 +2,7 @@
 
 > **Ladhe's Quad Conjecture: every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.**
 >
-> (Every first member's gap is written by one rule: after the base, always the largest earlier prime that still leaves a solvable remainder, closed by a royal value as soon as the remainder is one. That is a plain sum for 15,635 of the 28,387 first members below 10^9; the rest close with one product of two royal members, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
+> (Every first member's gap is written by one rule: after the base, always the largest earlier prime that still leaves a solvable remainder, again and again, a royal value covering only what no prime can. That is a plain sum for 18,131 of the 28,387 first members below 10^9; the rest close with one product of two royal members, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
 
 `lc.py` grows a q-array of prime "quads" from the royal quad and shows how
 the first prime of every quad is derived from earlier ones.
@@ -123,16 +123,15 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
 
    1. from the remainder take the largest unused prime of an earlier quad
       that does not exceed it, and go on with what is left;
-   2. stop as soon as the remainder is 0, is itself an unused prime (which
-      is then the last term), or is a royal value (which closes the
-      equation);
+   2. keep going while some unused prime fits; when none does, the
+      remainder must be 0 or a royal value, which closes the equation;
    3. when a choice leads to a remainder that cannot be finished, back up
       and try the next smaller prime.
 
    ```
    2081  = 1879 + 199 + 3                          199, then the royal 3
    13001 = 9439 + 3467 + 19 + 17 + 13 + 11 + (5*7) 3467 is the largest prime below 3562
-   1871  = 1489 + 199 + 109 + 19 + 17 + (5*7) + 3
+   1871  = 1489 + 199 + 109 + 19 + 17 + 13 + 11 + 7 + 5 + 2
    101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)       products, because no sum
                                                    of primes reaches 82
    ```
@@ -202,7 +201,7 @@ the quad at or below each one together with the quad above it:
 ```
 $ ./lc 1210872 -o --near
 Quad 205: 1210871
-  1210871 = 1182289 + 25309 + 3259 + 7 + 5 + 2
+  1210871 = 1182289 + 25309 + 3259 + 11 + 3
 Quad 206: 1228391
   1228391 = 1210879 + 16069 + 829 + 199 + 197 + 193 + 19 + (2*3)
 ```
@@ -355,7 +354,7 @@ several, labeled `A:`, `M:`, `M1:`, `E1:`, `E2:`, `E3:`.
   no such form and fall back to the power-first search).
 
   ```
-  A:  854921 = 845989 + 5659 + 3259 + 7 + 5 + 2
+  A:  854921 = 845989 + 5659 + 3259 + 11 + 3
   M:  854921 = 845989 + (3469*2) + (199*7) + (193*3) + 17 + 5
   M1: 854921 = (427249*2) + (109*3) + (17*5) + 11
   E1: 854921 = 845989 + (19^3) + (17^2) + (199*5) + (11*7) + 197 + 191 + 107 + 103 + 101 + 13
