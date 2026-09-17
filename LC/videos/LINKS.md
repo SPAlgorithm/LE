@@ -1,9 +1,9 @@
 # Ladhe's Quad Conjecture videos (built 2026-09-02 with Higgsfield)
 
-Zenodo record (paper, tool, dataset), latest version v6, published 2026-09-14: https://zenodo.org/records/22756407
+Zenodo record (paper, tool, dataset), latest version v7, published 2026-09-17: https://zenodo.org/records/22804234
 (cite the concept DOI https://doi.org/10.5281/zenodo.22286846 -- it always resolves to the latest version;
 version DOIs: v1 https://doi.org/10.5281/zenodo.22286847 (2026-09-03), v2 https://doi.org/10.5281/zenodo.22652319 (2026-09-08),
-v3 https://doi.org/10.5281/zenodo.22692530 (2026-09-10), v4 https://doi.org/10.5281/zenodo.22724855 (2026-09-12), v5 https://doi.org/10.5281/zenodo.22753458 (2026-09-14), v6 https://doi.org/10.5281/zenodo.22756407 (2026-09-14))
+v3 https://doi.org/10.5281/zenodo.22692530 (2026-09-10), v4 https://doi.org/10.5281/zenodo.22724855 (2026-09-12), v5 https://doi.org/10.5281/zenodo.22753458 (2026-09-14), v6 https://doi.org/10.5281/zenodo.22756407 (2026-09-14), v7 https://doi.org/10.5281/zenodo.22804234 (2026-09-17))
 
 YouTube (uploaded 2026-09-03; the links stay the same when the videos go public):
 - Video 1, "Ladhe's Quad Conjecture: A New Pattern in Prime Quadruplets": https://youtu.be/_XSOJ0Yj77Q
