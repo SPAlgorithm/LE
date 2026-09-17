@@ -8,8 +8,12 @@ primes + royal expression), the multiplicative way and both exponential
 ways, and the two base-free ways M1 and E3 (the whole prime from members
 below it): arithmetic, distinct members, base never used as a term, every
 term below the target.  Every royal expression must use each of 2, 3, 5, 7
-at most once, with + and *, and multiply at most two of them.  For the
-other three primes of a quad it checks the fixed forms
+at most once, with + and *, and multiply at most two of them.  Every
+stored additive equation is also re-derived here by the largest-first rule
+(from the remainder take the largest unused earlier prime not above it;
+stop when the remainder is 0, an unused prime, or a royal value; back up
+when a choice leads nowhere) with a search of its own, and must agree.
+For the other three primes of a quad it checks the fixed forms
 
     p+2 = p + 2        p+6 = p + (2*3)        p+8 = (p+6) + 2
 
@@ -49,11 +53,51 @@ def royal_ok(text):
     return all(m in ROYAL for m in members) and len(set(members)) == len(members)
 
 
+ROYAL_VALUES = set(lc.ROYAL_BEST)      # the 30 values of + and * expressions
+
+
+def largest_first(diff, pool, excluded):
+    """Independent re-derivation of the rule the chain stores its additive
+    equations by.  pool: ascending earlier primes; excluded: the base when
+    it may not be a term.  Returns the terms, or None."""
+    pool = [p for p in pool if p <= diff]
+    pset = set(pool)
+    used = {excluded} if excluded is not None else set()
+    budget = [2_000_000]
+
+    def go(rem, hi):
+        if rem == 0:
+            return []
+        if hi and rem <= pool[hi - 1] and rem in pset and rem not in used:
+            return [rem]
+        if rem in ROYAL_VALUES:
+            return []
+        i = hi - 1
+        while i >= 0 and pool[i] > rem:
+            i -= 1
+        while i >= 0:
+            p = pool[i]
+            if p not in used:
+                budget[0] -= 1
+                if budget[0] < 0:
+                    return None
+                used.add(p)
+                rest = go(rem - p, i)
+                used.discard(p)
+                if rest is not None:
+                    return [p] + rest
+            i -= 1
+        return None
+
+    return go(diff, len(pool))
+
+
 def main(path):
     with open(path) as fh:
         data = json.load(fh)
     quads, diffs = data["quads"], data["diffs"]
     checked = bad = fallbacks = skipped = closings = canonical = 0
+    rederived = 0
     problems = []
 
     def report(msg):
@@ -156,6 +200,29 @@ def main(path):
                     report(f"{target}: {way} members not distinct")
                 if any(m >= target for m in members if m not in ROYAL):
                     report(f"{target}: {way} member not below target")
+    # Every stored additive equation, re-derived by the largest-first rule.
+    all_primes = [p for q in quads for p in q["primes"]]
+    for key, entry in diffs.items():
+        n, target = entry["first"]
+        if n == 2 and target in (103, 107):
+            continue                              # the fixed forms
+        pool = all_primes[:4 * (n - 1)]           # quads 1 .. n-1
+        rederived += 1
+        want = largest_first(int(key), pool, None)   # shared: base allowed
+        if want is None or want != entry["terms"] or int(key) - sum(want) != entry["royal_value"]:
+            report(f"difference {key}: stored {entry['terms']} + {entry['royal_value']}, "
+                   f"largest-first rule gives {want}")
+    for q in quads:
+        der = q["derivations"][0]
+        if "own" not in der:
+            continue
+        pool = all_primes[:4 * (q["n"] - 1)]
+        rederived += 1
+        want = largest_first(der["diff"], pool, der["base"])
+        own = der["own"]
+        if want is None or want != own["terms"] or der["diff"] - sum(want) != own["royal_value"]:
+            report(f"{der['target']} own: stored {own['terms']} + {own['royal_value']}, "
+                   f"largest-first rule gives {want}")
     for d, first_target in ((2, 103), (6, 107)):
         entry = diffs.get(str(d))
         if entry is None or entry.get("first") != [2, first_target]:
@@ -172,6 +239,8 @@ def main(path):
           "(+ and * over distinct members of 2, 3, 5, 7; products of two)")
     print(f"by rule   : {canonical:,} later primes checked against "
           "p + 2, p + (2*3), (p+6) + 2")
+    print(f"canonical : {rederived:,} additive equations re-derived by the "
+          "largest-first rule")
     for p in problems:
         print("  problem:", p)
     return 1 if bad else 0

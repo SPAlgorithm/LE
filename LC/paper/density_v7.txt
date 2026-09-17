@@ -1,0 +1,23 @@
+=== chains of 28387 quadruplets, lc.py's own Deriver, pure additive only ===
+
+REAL prime quadruplets
+    first members 28386   worst pure-additive gap 8 terms   exceptional gaps 4 unique / 98 first members   max 382
+    terms: 2:6475  4:19472  6:2065  8:276    [44s]
+    exceptions: [22, 82, 172, 382]
+
+CONTROL jitter seed 1 (not prime)
+    first members 28386   worst pure-additive gap 12 terms   exceptional gaps 390 unique / 590 first members   max 1700
+    terms: 1:52  2:1324  3:9361  4:13343  5:3130  6:368  7:117  8:41  9:26  10:27  11:6  12:1    [37s]
+CONTROL jitter seed 2 (not prime)
+    first members 28386   worst pure-additive gap 11 terms   exceptional gaps 103 unique / 141 first members   max 1186
+    terms: 1:77  2:1348  3:9814  4:13207  5:2990  6:455  7:193  8:99  9:46  10:10  11:6    [34s]
+CONTROL uniform seed 1 (not prime)
+    first members 28386   worst pure-additive gap 9 terms   exceptional gaps 246 unique / 4455 first members   max 2416
+    terms: 1:37  2:983  3:7182  4:11956  5:3032  6:581  7:111  8:41  9:8    [56s]
+CONTROL uniform seed 2 (not prime)
+    first members 28386   worst pure-additive gap 11 terms   exceptional gaps 65 unique / 4221 first members   max 1328
+    terms: 1:47  2:1101  3:7438  4:11777  5:3164  6:483  7:95  8:31  9:20  10:8  11:1    [61s]
+CONTROL shift seed 1 (not prime)
+    first members 28386   worst pure-additive gap 8 terms   exceptional gaps 26 unique / 733 first members   max 3052
+    terms: 2:3994  4:20379  6:3046  8:234    [98s]
+DENSITY EXIT 0

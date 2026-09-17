@@ -2,7 +2,7 @@
 
 > **Ladhe's Quad Conjecture: every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.**
 >
-> (A plain sum for 28,356 of the 28,387 first members below 10^9; the other 31 need one product of two royal members, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
+> (Every first member's gap is written by one rule: after the base, always the largest earlier prime that still leaves a solvable remainder, closed by a royal value as soon as the remainder is one. That is a plain sum for 15,635 of the 28,387 first members below 10^9; the rest close with one product of two royal members, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
 
 `lc.py` grows a q-array of prime "quads" from the royal quad and shows how
 the first prime of every quad is derived from earlier ones.
@@ -116,27 +116,31 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    p+2 = p + 2          p+6 = p + (2*3)          p+8 = (p+6) + 2
    ```
 
-   Quad members are exhausted with addition before any multiplication
-   among royal members is used. A royal expression uses each of 2, 3, 5, 7
-   at most once, and a product may multiply only **two** of them:
-   `(5*7) + (2*3)` is allowed, `(2*5*7)` and `5*(7 + (2*3))` are not.
-   Candidates are ranked by:
+   A royal expression uses each of 2, 3, 5, 7 at most once, and a product
+   may multiply only **two** of them: `(5*7) + (2*3)` is allowed, `(2*5*7)`
+   and `5*(7 + (2*3))` are not. The terms are chosen by one rule, largest
+   first:
 
-   1. fewer multiplications in the royal part: addition takes precedence,
-      multiply only when addition is not possible;
-   2. fewer terms, but no matter how long, an addition-only equation beats
-      one with a product;
-   3. larger primes first, compared term by term, so a quad's 9-member is
-      used before its 7, 3 and 1 members.
+   1. from the remainder take the largest unused prime of an earlier quad
+      that does not exceed it, and go on with what is left;
+   2. stop as soon as the remainder is 0, is itself an unused prime (which
+      is then the last term), or is a royal value (which closes the
+      equation);
+   3. when a choice leads to a remainder that cannot be finished, back up
+      and try the next smaller prime.
 
    ```
-   13001 = 9439 + 3461 + 101                       plain addition, 2 terms
-   3461  = 3259 + 199 + 3                          9-member first (not 191 + 11)
-   1871  = 1489 + 109 + 107 + 103 + 19 + 17 + 13 + 11 + 3
-                                                   addition only, 8 terms
-   101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)       products only because
-                                                   addition cannot reach 82
+   2081  = 1879 + 199 + 3                          199, then the royal 3
+   13001 = 9439 + 3467 + 19 + 17 + 13 + 11 + (5*7) 3467 is the largest prime below 3562
+   1871  = 1489 + 199 + 109 + 19 + 17 + (5*7) + 3
+   101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)       products, because no sum
+                                                   of primes reaches 82
    ```
+
+   The shortest equation is not the aim: 3562 = 3461 + 101 is a two-term
+   sum, but the rule takes 3467 first. (`paper/stats.py` computes the
+   shortest lengths separately; `paper/check.py` re-derives every stored
+   equation by this rule.)
 
 5. Storage in `qarray.json` beside the script: each quad records, per
    prime, only the base and the difference, e.g. `191 = 109 + 82` is
@@ -153,8 +157,8 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    own difference. A member whose base is *below* its difference cannot use
    the base as a term, so it keeps its own equation in the derivation record
    instead: quad 2 writes `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)` while
-   quad 3, reusing the same difference 82 with the base 109, writes the
-   shorter `191 = 109 + 19 + 17 + 11 + (5*7)`. Below 10^9 exactly two
+   quad 3, reusing the same difference 82 with the base 109, writes
+   `191 = 109 + 19 + 17 + 13 + 11 + (3*5) + 7`. Below 10^9 exactly two
    members need their own equation, 101 (quad 2) and 821 (quad 4).
 6. The display shows one line per quad, the prime ending in 1 with its full
    equation (base first, then the difference written out):
@@ -186,7 +190,7 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
 
    ```
    Quad 2000: 31252931
-     31252931 = 31210849 + 34849 + 5651 + 1481 + 101
+     31252931 = 31210849 + 34849 + 5659 + 1489 + 19 + 17 + 11 + (5*7) + 3
    ```
 
 ## Where does a number sit?
@@ -198,9 +202,9 @@ the quad at or below each one together with the quad above it:
 ```
 $ ./lc 1210872 -o --near
 Quad 205: 1210871
-  1210871 = 1182289 + 25309 + 3259 + 11 + 3
+  1210871 = 1182289 + 25309 + 3259 + 7 + 5 + 2
 Quad 206: 1228391
-  1228391 = 1210879 + 15641 + 1871
+  1228391 = 1210879 + 16069 + 829 + 199 + 197 + 193 + 19 + (2*3)
 ```
 
 The value needs no relation to the chain: it can be even, composite, or land
@@ -228,11 +232,10 @@ so you can see one step further back without running the tool again:
 ```
 $ ./lc 2000 -o --chain
 Quad 2000: 31252931
-  31252931 = 31210849 + 34849 + 5651 + 1481 + 101
-      -> Q23: 34849 = 31729 + 2089 + 829 + 199 + 3
-      -> Q10: 5651 = 3469 + 2081 + 101
-      -> Q5: 1481 = 829 + 199 + 197 + 193 + 19 + 17 + 13 + 11 + 3
-      -> Q2: 101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
+  31252931 = 31210849 + 34849 + 5659 + 1489 + 19 + 17 + 11 + (5*7) + 3
+      -> Q23: 34849 = 34847 + 2
+      -> Q10: 5659 = 5657 + 2
+      -> Q5: 1489 = 1487 + 2
 ```
 
 Four rules. It hangs off the **A line only**, so `-aem` still prints M, M1, E1,
@@ -251,8 +254,8 @@ the lookups go through the whole cache rather than the rows on screen.
 counting the base and each top-level piece of the royal expression:
 
 ```
-15731 = 15649 + 19 + 17 + 11 + (5*7)     5 columns
-        ^base   ^1   ^2   ^3   ^4
+15731 = 15649 + 19 + 17 + 13 + 11 + (3*5) + 7     7 columns
+        ^base   ^1   ^2   ^3   ^4   ^5      ^6
 ```
 
 `-c N M` keeps a range, so `-c 3 8` is three to eight columns. The footer says
@@ -319,8 +322,8 @@ and an exponential equation that do not use the base at all. `-A` (default),
 `-M` and `-E` pick which to print; combine them (`-AME`, `-ME`) to see
 several, labeled `A:`, `M:`, `M1:`, `E1:`, `E2:`, `E3:`.
 
-- **A, additive**: the rules above; quad primes are added, royal members
-  only when addition cannot reach the difference.
+- **A, additive**: the rules above; the largest earlier prime first, a royal
+  value only for the remainder.
 - **M, multiplicative**: any members, quad primes and royal members alike,
   may be multiplied in pairs, and multiplication is preferred over addition.
   Greedy: take the largest unused member, multiply it by the largest member
@@ -352,7 +355,7 @@ several, labeled `A:`, `M:`, `M1:`, `E1:`, `E2:`, `E3:`.
   no such form and fall back to the power-first search).
 
   ```
-  A:  854921 = 845989 + 5659 + 3259 + 11 + 3
+  A:  854921 = 845989 + 5659 + 3259 + 7 + 5 + 2
   M:  854921 = 845989 + (3469*2) + (199*7) + (193*3) + 17 + 5
   M1: 854921 = (427249*2) + (109*3) + (17*5) + 11
   E1: 854921 = 845989 + (19^3) + (17^2) + (199*5) + (11*7) + 197 + 191 + 107 + 103 + 101 + 13

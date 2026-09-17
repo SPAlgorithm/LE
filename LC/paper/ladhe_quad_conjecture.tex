@@ -39,7 +39,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 6, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 7, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -59,9 +59,12 @@ $\Q_3=(191,193,197,199)$, \dots, seeded by the \emph{royal quad}
 $\Q_0=(2,3,5,7)$, and observe that the first member of every quadruplet can
 be written as the largest member of the previous quadruplet plus a sum of
 distinct members of earlier quadruplets, for example
-$13001 = 9439 + 3461 + 101$ and
-$35545421 = 35524459 + 18049 + 2089 + 821 + 3$; the other three members
-then follow without any search, as $p+2$, $p+(2\times3)$ and $(p+6)+2$.
+$2081 = 1879 + 199 + 3$ and
+$35551421 = 35545429 + 5659 + 199 + 109 + 19 + (2\times3)$; the other three
+members then follow without any search, as $p+2$, $p+(2\times3)$ and
+$(p+6)+2$. The representation we record is fixed by one rule: after the
+base, always the largest earlier member that still leaves a solvable
+remainder, closed by a royal value the moment the remainder is one.
 The precise form of the observation is that the gap $D$ between a
 first member and its base is a sum of at most $8$ distinct earlier
 members, with exactly four exceptional gaps, $22$, $82$, $172$ and $382$,
@@ -128,10 +131,14 @@ $2\times3+2$. In one line:
 \begin{center}
 \emph{Every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.}
 \end{center}
-The word ``sum'' is literal for $28{,}356$ of the $28{,}387$ first members
-below $10^9$; the other $31$, namely $11$ and the $30$ first members whose
-gap is $82$, need one product of royal members, as in
-$101=19+17+13+11+(5\times7)+(2\times3)$.
+Some representation by a plain sum of earlier members, with at most one
+added royal value, exists for every first member below $10^9$ except $11$
+and the $30$ first members whose gap is $82$, which need one product of
+royal members, as in $101=19+17+13+11+(5\times7)+(2\times3)$
+(Section~\ref{sec:evidence}). The representation the utility stores,
+chosen by the largest-first rule of Definition~\ref{def:canon}, is a plain
+sum for $15{,}635$ of the $28{,}387$ first members and closes with one
+such product for the rest.
 Section~\ref{sec:conj} states this
 precisely in three forms of increasing strength, Section~\ref{sec:cover}
 proves a companion statement, that with subtraction allowed among the
@@ -204,6 +211,25 @@ p+2 \;=\; p+2, \qquad p+6 \;=\; p+(2\times3), \qquad p+8 \;=\; (p+6)+2,
 which is all the quadruplet pattern requires of them; they are neither
 searched for nor listed. From here on ``the gap'' of $\Q_k$ means the gap
 $D=p_k-m_k$ of its first member.
+\end{definition}
+
+\begin{definition}[Canonical representation]
+\label{def:canon}
+Among the additive representations of a first member the utility stores
+the one given by the following rule. Start with $r=D$. While $r>0$: if $r$
+is itself an unused member of $\Pool_k$, take it and stop; if $r\in\R$,
+close with that royal value and stop; otherwise take the largest unused
+member of $\Pool_k$ not exceeding $r$ and continue with the remainder.
+When a choice leads to a remainder that cannot be finished, the next
+smaller member is tried instead (the search backs up). The terms
+$s_1>s_2>\dots$ are thus chosen greedily, largest first, and the royal
+value, if any, is the first remainder that is one. For the shared equation
+of a gap the base is among the candidates (any quadruplet reusing the gap
+has its base above it); a first member whose base lies below its own gap,
+which happens for $101$ and $821$ only, keeps an equation of its own with
+the base excluded. The bounds of Section~\ref{sec:conj} concern the
+\emph{shortest} representations, which a separate search computes
+(Section~\ref{sec:evidence}); the canonical form is usually longer.
 \end{definition}
 
 The following congruences are elementary but shape everything below.
@@ -369,7 +395,8 @@ $\Q_2$ (and reappears whenever two consecutive quadruplets are $90$ apart,
 as at $\Q_3$, $\Q_{14}$, $\Q_{437}$, \dots); at that point the pool is
 $\Q_1$ alone, whose subset sums cannot reach $82$. The gaps $22$, $172$ and
 $382$ are coverage holes of $\Q_1\cup\Q_2$: for instance $382=1871-1489$
-needs all of $109,107,103,19,17,13,11$ plus $3$. With the $11$ royal
+is reached by no subset of the members below it, and its stored form
+$199+109+19+17+(5\times7)+3$ needs a royal product. With the $11$ royal
 addition values allowed, only $82$ remains exceptional; with all of $\R$
 allowed there is no exception. In the light of Lemma~\ref{lem:residues}
 the four are exactly the coverage holes that survive the congruence filter:
@@ -539,27 +566,29 @@ flat, $(5\times7)+(2\times3)$.
 
 \paragraph{$\Q_3=(191,193,197,199)$: the same gap with a larger pool.}
 $191-109=82$ is the gap of $\Q_2$ again, but the base is now $109$ and
-$19$ is free, which shortens the equation: $82=19+17+11+35$ with the flat
-royal $35=5\times7$, one product where $\Q_2$ needed two. The utility
+$19$ is free, so the rule takes it first: $82=19+17+13+11+22$ with the
+flat royal $22=(3\times5)+7$, one product where $\Q_2$ needed two. The utility
 stores one equation per distinct gap, searched over every member below the
 gap; a member whose base lies \emph{below} its own gap, as at $\Q_2$ and
 $\Q_4$, cannot use that base as a term and keeps its own equation instead.
 Below $10^9$ only two first members do, $101$ and $821$.
 \begin{small}\begin{verbatim}
-  A:  191 = 109 + 19 + 17 + 11 + (5*7)
+  A:  191 = 109 + 19 + 17 + 13 + 11 + (3*5) + 7
   M:  191 = 109 + (19*3) + (7*2) + 11
   M1: 191 = (19*7) + (17*3) + 5 + 2
   E1: 191 = 109 + (7^2) + (11*3)
   E3: 191 = (13^2) + (5*3) + 7
 \end{verbatim}\end{small}
 
-\paragraph{$\Q_4=(821,823,827,829)$: pure addition.}
-Gap $821-199=622=197+193+191+19+17+5$; the three remaining members of
-$\Q_3$ are used together with two members of $\Q_1$ and the royal $5$. The
+\paragraph{$\Q_4=(821,823,827,829)$: the largest members first.}
+Gap $821-199=622=197+193+191+41$; the three remaining members of $\Q_3$
+are taken in turn and the remainder $41=(5\times7)+(2\times3)$ is royal
+(it could also be written $19+17+5$, but the rule closes the moment the
+remainder is a royal value). The
 two exponential variants differ here: E1 starts from the largest base
 $19^2$, E2 also, but then prefers $3^5=243$ over $5^3=125$.
 \begin{small}\begin{verbatim}
-  A:  821 = 199 + 197 + 193 + 191 + 19 + 17 + 5
+  A:  821 = 199 + 197 + 193 + 191 + (5*7) + (2*3)
   M:  821 = 199 + (197*3) + (13*2) + 5
   M1: 821 = (199*3) + (103*2) + 13 + 5
   E1: 821 = 199 + (19^2) + (5^3) + 101 + 17 + 11 + 7
@@ -573,22 +602,24 @@ $\Q_1\cup\Q_2$ sums to $382$, so a royal value is needed. The shortest
 representation with a royal \emph{addition} value has seven terms
 ($199+109+19+17+13+11+14$, with $14=7+5+2$); with one royal product five
 terms suffice, $382=199+109+19+17+38$ with $38=(5\times7)+3$.
-The utility's addition-first rule prefers the eight-term form below, whose
-royal part is the single member $3$. The multiplicative way is one product.
+The largest-first rule gives exactly this five-term form. The
+multiplicative way is one product.
 \begin{small}\begin{verbatim}
-  A:  1871 = 1489 + 109 + 107 + 103 + 19 + 17 + 13 + 11 + 3
+  A:  1871 = 1489 + 199 + 109 + 19 + 17 + (5*7) + 3
   M:  1871 = 1489 + (191*2)
   M1: 1871 = (829*2) + (19*7) + (17*3) + 13 + 11 + 5
   E1: 1871 = 1489 + (19^2) + (7*3)
   E3: 1871 = (11^3) + 199 + 197 + 109 + 17 + 13 + 5
 \end{verbatim}\end{small}
 
-\paragraph{$\Q_{12}=(13001,\dots)$: the typical two-term gap.}
+\paragraph{$\Q_{12}=(13001,\dots)$: a two-term gap, and what the rule makes of it.}
 Gap $13001-9439=3562=3461+101$, one member of $\Q_9$ and one of $\Q_2$,
 both first members as the congruence $22\equiv 11+11 \pmod{30}$ requires.
-About one gap in four has such a two-term representation.
+About one gap in four has such a two-term representation. The stored
+equation is longer: the rule takes $3467$, the largest member below
+$3562$, and the remainder $95$ then needs $19+17+13+11$ and $(5\times7)$.
 \begin{small}\begin{verbatim}
-  A:  13001 = 9439 + 3461 + 101
+  A:  13001 = 9439 + 3467 + 19 + 17 + 13 + 11 + (5*7)
   M:  13001 = 9439 + (1489*2) + (193*3) + 5
   M1: 13001 = (5659*2) + (199*7) + (19*13) + (5*3) + 17 + 11
   E1: 13001 = 9439 + (19^2) + (13^3) + (109*7) + 107 + 101 + 17 + 11 + 5
@@ -598,16 +629,16 @@ About one gap in four has such a two-term representation.
 
 \paragraph{Two consecutive quadruplets near $3.5\times10^7$.}
 $\Q_{2208}$ and $\Q_{2209}$ are $6{,}000$ apart; the gap of the first,
-$35545421-35524459=20962$, is $18049+2089+821+3$, and the gap of the second,
-$35551421-35545429=5992$, is $5659+199+109+17+5+3$.
+$35545421-35524459=20962$, is $19429+1489+19+17+5+3$, and the gap of the
+second, $35551421-35545429=5992$, is $5659+199+109+19+(2\times3)$.
 \begin{small}\begin{verbatim}
-  A:  35545421 = 35524459 + 18049 + 2089 + 821 + 3
+  A:  35545421 = 35524459 + 19429 + 1489 + 19 + 17 + 5 + 3
   M:  35545421 = 35524459 + (9439*2) + (199*7) + (193*3) + (19*5) + 17
   M1: 35545421 = (17771269*2) + (829*3) + (19*13) + (7*5) + 103 + 11
   E1: 35545421 = 35524459 + (109^2) + (19^3) + (199*7) + (107*5) + 193 + 101
   E3: 35545421 = (5659^2) + (19^5) + (101^3) + 13009 + 1489 + 109 + 103 + 17 + 13
 
-  A:  35551421 = 35545429 + 5659 + 199 + 109 + 17 + 5 + 3
+  A:  35551421 = 35545429 + 5659 + 199 + 109 + 19 + (2*3)
   M:  35551421 = 35545429 + (2089*2) + (199*7) + (103*3) + (19*5) + 17
   M1: 35551421 = (17773369*2) + (1489*3) + (19*11) + 7
   E1: 35551421 = 35545429 + (19^2) + (17^3) + (103*5) + (13*7) + 101 + 11
@@ -617,8 +648,9 @@ $35551421-35545429=5992$, is $5659+199+109+17+5+3$.
 The last quadruplet below $10^9$ is $\Q_{28387}=(999986171,\dots)$ with
 $999986171 = 999900529 + 82729 + 2089 + 821 + 3$, and the largest gap
 between consecutive quadruplets in that range, $395{,}520$ at
-$\Q_{19558}$, is still a two-term sum:
-$628641701 = 628246189 + 392261 + 3251$.
+$\Q_{19558}$, still has a two-term representation, $395512=392261+3251$;
+the stored equation is
+$628641701 = 628246189 + 394819 + 199 + 197 + 193 + 101 + 3$.
 
 \section{Computational evidence}
 \label{sec:evidence}
@@ -626,9 +658,10 @@ $628641701 = 628246189 + 392261 + 3251$.
 \paragraph{The utility.}
 \code{lc.py} is a single Python~3 file with no dependencies. It finds
 quadruplets with a segmented sieve (only $p\equiv11 \pmod{30}$ is tested),
-then searches a representation of every first member's gap by iterative
-deepening over the number of terms, with the preferences listed in
-Section~\ref{sec:defs}, and stores one set of A/M/E1/E2 equations per
+then writes every first member's gap by the largest-first rule of
+Definition~\ref{def:canon}, backing up when a choice leads nowhere (the
+minimal lengths reported below come from a separate iterative-deepening
+search), and stores one set of A/M/E1/E2 equations per
 distinct gap, plus the base-free M1 and E3 equations of every first
 member, in a JSON cache that later runs reuse; the other three members of
 a quadruplet are recorded in their fixed form only. The additive search is
@@ -648,9 +681,12 @@ distinct, that the base is never reused as a term, that every term is
 smaller than the target, that every royal expression uses each of
 $2,3,5,7$ at most once and multiplies at most two of them, and that the
 second, third and fourth member of every quadruplet are stored in their
-fixed form. On the $10^9$ dataset it checked $170{,}340$ equations ($6$ per
-first member, the four members of $\Q_1$ included), $3{,}421$ royal
-expressions and $85{,}158$ fixed forms, and found $0$ errors.
+fixed form, and that every stored additive equation is the one the
+largest-first rule of Definition~\ref{def:canon} produces, re-deriving it
+with a search of its own. On the $10^9$ dataset it checked $170{,}340$
+equations ($6$ per first member, the four members of $\Q_1$ included),
+$3{,}421$ royal expressions, $85{,}158$ fixed forms and $3{,}411$
+re-derived additive equations, and found $0$ errors.
 
 \paragraph{Minimal lengths.}
 \code{stats.py} recomputes, for every distinct gap and independently of the
@@ -688,11 +724,12 @@ gaps stays between $22\%$ and $24\%$.
 
 \paragraph{What the utility actually stores.}
 Table~\ref{tab:A} summarises the additive representations chosen by the
-utility. Because addition is exhausted before any royal product is used,
-these are often longer than the minimum: only $30$ of the $28{,}386$
-first-member equations contain a royal product (all with gap $82$),
-$13{,}580$ end with an added royal value, and $14{,}776$ are pure sums of
-pool members. The longest stored equation has eight terms after the base.
+utility. Because the rule always takes the largest member first and closes
+at the first royal remainder, these are usually longer than the minimum:
+$12{,}751$ of the $28{,}386$ first-member equations close with a royal
+product, $12{,}398$ with an added royal value, and $3{,}237$ are pure sums
+of pool members. The longest stored equation has thirteen terms after the
+base, the mean $6.1$.
 Of the $28{,}386$ gaps, $24{,}977$ repeat a gap seen earlier in the chain;
 there are only $3{,}409$ distinct gaps, because consecutive quadruplets are
 often the same distance apart.
@@ -702,14 +739,15 @@ often the same distance apart.
 \caption{Additive representations stored by the utility, $10^9$ dataset.
 Length counts the terms after the base, a royal value counting as one.}
 \label{tab:A}
-\small
-\begin{tabular}{lrrrrrrrrr}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrrrrrrrr}
 \toprule
- & \multicolumn{8}{c}{length} & royal part \\
-\cmidrule(lr){2-9}
-scope & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & none / $+$ / $\times$ \\
+ & \multicolumn{11}{c}{length} & royal part \\
+\cmidrule(lr){2-12}
+scope & 2 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & none / $+$ / $\times$ \\
 \midrule
-first member of each quad & 6493 & -- & 19501 & 1 & 2173 & 119 & 99 & -- & 14776 / 13580 / 30 \\
+first members & 683 & 4394 & 6396 & 8360 & 2623 & 2858 & 1765 & 464 & 663 & 13 & 167 & 3237 / 12398 / 12751 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1024,10 +1062,10 @@ representations of the gap stored by the utility.
 \toprule
 $D$ & $k$ & $t$ & A & M & E1 \\
 \midrule
-22  & 169 & 1006331 & \code{19 + 3} & \code{(11*2)} & \code{(3\^{}2) + 13} \\
+22  & 169 & 1006331 & \code{(3*5) + 7} & \code{(11*2)} & \code{(3\^{}2) + 13} \\
 82  & 2   & 101     & \code{17 + 13 + 11 + (5*7) + (2*3)} & \code{(17*3) + (13*2) + 5} & \code{(7\^{}2) + (11*3)} \\
-172 & 435 & 3512231 & \code{109 + 19 + 17 + 13 + 11 + 3} & \code{(19*7) + (17*2) + 5} & \code{(13\^{}2) + 3} \\
-382 & 6   & 1871    & \code{109 + 107 + 103 + 19 + 17 + 13 + 11 + 3} & \code{(191*2)} & \code{(19\^{}2) + (7*3)} \\
+172 & 435 & 3512231 & \code{109 + 19 + 17 + 13 + 7 + 5 + 2} & \code{(19*7) + (17*2) + 5} & \code{(13\^{}2) + 3} \\
+382 & 6   & 1871    & \code{199 + 109 + 19 + 17 + (5*7) + 3} & \code{(191*2)} & \code{(19\^{}2) + (7*3)} \\
 \bottomrule
 \end{tabular}
 \end{scriptsize}

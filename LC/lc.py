@@ -18,16 +18,18 @@ Rules
   The other three primes of the quad need no search: they follow from the
   first one, and are stored in exactly this form
         p+2 = p + 2          p+6 = p + (2*3)          p+8 = (p+6) + 2
-  Quad members are exhausted with addition before any multiplication among
-  royal members is used.  A royal expression uses each of 2, 3, 5, 7 at
-  most once, and a product may multiply only TWO of them: (5*7) + (2*3) is
-  allowed, (2*5*7) and 5*(7 + (2*3)) are not.  Candidates are ranked by
-  (number of multiplications, number of terms, larger primes first):
-      13001 = 9439 + 3461 + 101                      plain addition, 2 terms
-      1871  = 1489 + 109 + 107 + 103 + 19 + 17 + 13 + 11 + 3
-                                                     addition only, any length
-      101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)      products, only when
-                                                     addition cannot reach it
+  A royal expression uses each of 2, 3, 5, 7 at most once, and a product
+  may multiply only TWO of them: (5*7) + (2*3) is allowed, (2*5*7) and
+  5*(7 + (2*3)) are not.  The terms are chosen largest first: from the
+  remainder take the largest unused earlier prime not above it; stop as
+  soon as the remainder is 0, an unused prime (then the last term), or a
+  royal value (which closes the equation); back up when a choice leads
+  nowhere.
+      2081  = 1879 + 199 + 3                         199, then the royal 3
+      13001 = 9439 + 3467 + 19 + 17 + 13 + 11 + (5*7)
+                                                     3467 first, not 3461 + 101
+      101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)      products, because no sum
+                                                     of primes reaches 82
 
 Three ways
 ----------
@@ -119,7 +121,7 @@ import sys
 import time
 
 ROYAL = (2, 3, 5, 7)
-FORMAT = 15          # 15: only the first prime is searched; products of two royal members
+FORMAT = 16          # 16: largest earlier prime first, stop at the first royal remainder
 # Folder that holds the cache: next to the script, or next to the binary
 # when packaged with PyInstaller.
 if getattr(sys, "frozen", False):
@@ -568,7 +570,9 @@ def quadruplets_from(start, segment=1 << 20):
 # Difference search:  diff = (quad primes) + (royal expression)
 # --------------------------------------------------------------------------
 class Deriver:
-    """Ranks candidate equations for a difference by
+    """`canonical` writes a difference the way the chain stores it: largest
+    earlier prime first (see its docstring).  `solve` is the fewest-terms
+    search the statistics use, ranking candidate equations by
 
         1. depth of the royal part: 0 = none or plain addition of royal
            members, 1 = products of two royal members such as (5*7) + 3
@@ -590,6 +594,66 @@ class Deriver:
     def __init__(self, one_per_quad=False, node_limit=300_000):
         self.one_per_quad = one_per_quad
         self.node_limit = node_limit
+
+    def canonical(self, diff, avail, base, quad_of, exclude_base=True):
+        """The representation the chain stores: largest earlier prime first.
+
+        From the remainder take the largest unused prime not above it, and
+        stop as soon as the remainder is 0, is itself an unused prime (which
+        then is the last term), or is a royal value (which closes the
+        equation).  When a choice leads nowhere, back up to the next smaller
+        prime.  `solve` below is the older fewest-terms search, kept for the
+        minimal-length statistics (stats.py, density.py).
+
+        avail: ascending primes of all earlier quads; base: never a term
+        unless exclude_base is False (the shared equation of a difference).
+        Returns (terms, royal_value, royal_text) or None."""
+        if diff <= 0:
+            return None
+        pool = avail[:bisect.bisect_right(avail, diff)]
+        pset = set(pool)
+        used = {base} if (exclude_base and base is not None) else set()
+        if self.one_per_quad and base is not None:
+            used_quads = {quad_of[base]}
+        else:
+            used_quads = None
+        budget = [self.node_limit]
+
+        def go(rem, hi):
+            # hi: candidates are pool[:hi], all below the last term taken
+            if rem == 0:
+                return []
+            top = pool[hi - 1] if hi else 0
+            if rem <= top and rem in pset and rem not in used and (
+                    used_quads is None or quad_of[rem] not in used_quads):
+                return [rem]
+            if rem in ROYAL_BEST:
+                return []
+            i = bisect.bisect_right(pool, rem, 0, hi) - 1
+            while i >= 0:
+                p = pool[i]
+                if p not in used and (used_quads is None
+                                      or quad_of[p] not in used_quads):
+                    budget[0] -= 1
+                    if budget[0] < 0:
+                        return None
+                    used.add(p)
+                    if used_quads is not None:
+                        used_quads.add(quad_of[p])
+                    rest = go(rem - p, i)
+                    used.discard(p)
+                    if used_quads is not None:
+                        used_quads.discard(quad_of[p])
+                    if rest is not None:
+                        return [p] + rest
+                i -= 1
+            return None
+
+        terms = go(diff, len(pool))
+        if terms is None:
+            return None
+        rv = diff - sum(terms)
+        return terms, rv, (ROYAL_BEST[rv] if rv else None)
 
     def solve(self, diff, avail, base, quad_of, exclude_base=True):
         """avail: ascending list of primes of all earlier quads (incl. last).
@@ -1385,8 +1449,8 @@ def extend_chain(data, want_count=None, upto=None, one_per_quad=False,
                 # every member below it, the base included: the quads
                 # that reuse it have a base above the difference, which
                 # no term of it can equal
-                res = deriver.solve(diff, avail, base, quad_of,
-                                    exclude_base=False)
+                res = deriver.canonical(diff, avail, base, quad_of,
+                                        exclude_base=False)
                 if res is None:
                     continue
                 terms, rv, text = res
@@ -1404,7 +1468,7 @@ def extend_chain(data, want_count=None, upto=None, one_per_quad=False,
             if base in entry_members(entry):
                 # this member's base is below its own difference, so the
                 # shared equation would use it as a term; it gets its own
-                own = deriver.solve(diff, avail, base, quad_of)
+                own = deriver.canonical(diff, avail, base, quad_of)
                 if own is None:
                     record = None
                     continue
