@@ -21,6 +21,8 @@
 \newtheorem{observation}{Observation}
 \newtheorem{remark}{Remark}
 \newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}
+\newtheorem{hypothesis}{Hypothesis}
 
 \newcommand{\Q}{\mathcal{Q}}
 \newcommand{\Pool}{\mathcal{P}}
@@ -40,7 +42,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 7, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 8, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -76,7 +78,10 @@ them in a product. A congruence lemma modulo $210$ shows that these four
 are the only exceptions in the entire admissible range below $10^9$, not
 merely the ones we met. Allowing
 one such expression in every gap brings the bound down to six terms with no
-exception at all. We call this \emph{Ladhe's Quad Conjecture} and verify it
+exception at all. Under a uniform form of the Hardy--Littlewood conjecture
+for eight linear forms we prove that every sufficiently large integer in the
+five residue classes modulo $210$ that a gap can occupy is a sum of two
+first members, so that two terms eventually suffice. We call this \emph{Ladhe's Quad Conjecture} and verify it
 for all $28{,}387$ prime quadruplets below $10^9$ with an independent
 checker. Two further
 representations of each gap, one that prefers multiplication and one that
@@ -140,6 +145,19 @@ royal members, as in $101=19+17+13+11+(5\times7)+(2\times3)$
 chosen by the largest-first rule of Definition~\ref{def:canon}, is a plain
 sum for $18{,}131$ of the $28{,}387$ first members and closes with one
 such product for the rest.
+
+Seen from additive number theory, the set of first members is an explicit
+and natural thin set of primes, of counting function about
+$C_4\,x/(\log x)^4$, and the conjecture says that it is an additive basis
+of bounded order for the residue classes it can occupy, with the basis
+property witnessed by a canonical certificate for every element. Wirsing
+\cite{Wirsing1986} showed that the primes contain thin sub-bases of every
+order $h\ge3$, but by an existence argument; we know of no explicit natural
+set of comparable sparsity for which a basis property of order two has been
+formulated and tested at this scale. Section~\ref{sec:next} proves that
+property under a uniform form of the Hardy--Littlewood conjecture
+(Theorem~\ref{thm:two}).
+
 Section~\ref{sec:conj} states this
 precisely in three forms of increasing strength, Section~\ref{sec:cover}
 proves a companion statement, that with subtraction allowed among the
@@ -147,7 +165,8 @@ royal members every integer below the next quadruplet is such a sum,
 Section~\ref{sec:examples} walks through examples that can be checked by
 hand, Section~\ref{sec:evidence} reports the computation up to $10^9$, and
 Section~\ref{sec:next} discusses, with some care, what the statement means
-for finding the next quadruplet.
+for finding the next quadruplet and proves, under the Hardy--Littlewood
+conjecture, that two terms eventually suffice.
 
 The observation grew out of the authors' earlier work on additive
 decompositions of primes, \emph{Ladhe's Conjecture} \cite{LadheConj}, which
@@ -891,20 +910,98 @@ of $j$-element subsets of pool members below $D$ grows like
 \]
 while their sums range over $O(D)$ even numbers, so for $j\ge2$ the
 expected number of $j$-term representations of a given gap grows without
-bound as $D$ grows, and grows faster the larger $j$ is. This is the reason the mean minimal length stays flat, and it
-suggests the answer to the following question is yes.
+bound as $D$ grows, and grows faster the larger $j$ is. This is the reason the mean minimal length stays flat.
+
+\paragraph{Two terms suffice, conditionally.}
+The heuristic can be made precise for two terms. Call an even integer $n$
+\emph{admissible} if $n\equiv 22,\,82,\,112,\,172$ or $202 \pmod{210}$, the
+five classes of Lemma~\ref{lem:residues}(iv); every gap is admissible. Write
+$r(n)$ for the number of first members $p<n$ such that $n-p$ is also a first
+member, that is, the number of $p$ for which the eight numbers
+\[
+p,\; p+2,\; p+6,\; p+8,\qquad n-p,\; n-p+2,\; n-p+6,\; n-p+8
+\]
+are all prime. For a fixed $n$ this is a prime-tuple problem for eight
+linear forms in $p$, of exactly the kind Hardy and Littlewood considered for
+Goldbach's problem \cite{HardyLittlewood1923}, where the forms are $p$ and
+$n-p$, and the Bateman--Horn heuristic \cite{BatemanHorn1962} predicts
+\[
+r(n)\;\sim\;\mathfrak S(n)\,\frac{n}{(\log n)^8},\qquad
+\mathfrak S(n)=\prod_{\ell}\frac{1-\nu_n(\ell)/\ell}{(1-1/\ell)^8},
+\]
+where $\nu_n(\ell)$ is the number of residues $p \bmod \ell$ at which one of
+the eight forms vanishes. The forms vary with $n$, so this is a uniform
+version of the conjecture, as in Goldbach's problem; it is unproved, and we
+assume it in the following weak form.
+
+\begin{hypothesis}
+\label{hyp:H}
+There are constants $c>0$ and $n_0$ such that
+$r(n)\ge c\,\mathfrak S(n)\,n/(\log n)^8$ for every admissible $n\ge n_0$.
+\end{hypothesis}
+
+\begin{lemma}
+\label{lem:sing}
+$\mathfrak S(n)>0$ if and only if $n$ is admissible, and there is a
+constant $c_0>0$ with $\mathfrak S(n)\ge c_0$ for every admissible $n$.
+\end{lemma}
+\begin{proof}
+Modulo $2$ the four forms $p+\delta$ share the parity of $p$ and the four
+forms $n-p+\delta$ that of $n-p$, so $\nu_n(2)<2$ forces $n$ even. Modulo
+$3$ and $5$ the first four forms force $p\equiv 2 \pmod 3$ and
+$p\equiv 1 \pmod 5$, as in the proof of Lemma~\ref{lem:residues}(i), and
+the last four force the same of $n-p$; hence $n\equiv 22 \pmod{30}$.
+Modulo $7$ the first four force $p\equiv 2,3,4$ and the last four
+$n-p\equiv 2,3,4$ (Lemma~\ref{lem:residues}(ii)), hence
+$n\equiv 4,5,6,0,1 \pmod 7$, which together with $n\equiv 22 \pmod{30}$
+gives exactly the five admissible classes; in the two other classes over
+$22 \pmod{30}$, $n\equiv 52,142 \pmod{210}$, some prime $\ell\le7$ has
+$\nu_n(\ell)=\ell$ and $\mathfrak S(n)=0$. For $\ell\ge 11$ at most eight
+residues are excluded, so $\nu_n(\ell)\le 8<\ell$ and the local factor is
+at least $(1-8/\ell)/(1-1/\ell)^8 = 1 - 28\,\ell^{-2} + O(\ell^{-3})$,
+whose product over $\ell\ge11$ converges to a positive number $c_1$. On
+admissible $n$ the factors at $2,3,5,7$ take finitely many values, all
+positive, with minimum $c_2>0$; so $\mathfrak S(n)\ge c_1c_2=:c_0$.
+\end{proof}
+
+\begin{theorem}
+\label{thm:two}
+Assume Hypothesis~\ref{hyp:H}. Then every sufficiently large admissible
+$n$ is a sum of two distinct first members of prime quadruplets. In
+particular, every sufficiently large gap $D=p_k-m_k$ is a sum of two first
+members of earlier quadruplets, and Conjecture~\ref{conj:B} holds with
+$K=2$ beyond some point.
+\end{theorem}
+\begin{proof}
+By the hypothesis and Lemma~\ref{lem:sing},
+$r(n)\ge c\,c_0\,n/(\log n)^8\to\infty$, so $r(n)\ge2$ for all large
+admissible $n$. Among the $r(n)$ representations $n=p+(n-p)$ at most one
+has $p=n-p$, so one has distinct summands. For a gap $D=p_k-m_k$ both
+summands are below $D<p_k$, hence are first members of quadruplets earlier
+than $\Q_k$, that is, members of $\Pool_k$, and the representation is one
+that Conjecture~\ref{conj:B} allows.
+\end{proof}
+
+\begin{remark}
+The theorem is a limiting statement. The crude size $n/(\log n)^8$ stays
+below $1$ until $n$ is of the order of $10^{10}$; at the gap sizes met
+below $10^9$, typically a few tens of thousands, the count of first members
+is far above its asymptotic value, and the two-term share of about $23\%$
+reported in Section~\ref{sec:evidence} belongs to that pre-asymptotic
+range, where the heuristic above, not the theorem, is the relevant
+estimate. The theorem cannot be made unconditional: it would imply that
+there are infinitely many prime quadruplets.
+\end{remark}
 
 \begin{question}
 Is every sufficiently large gap a sum of \emph{two} distinct earlier
-members? Equivalently, do the lengths $4,6,8$ in Table~\ref{tab:K}
-eventually disappear? Lemma~\ref{lem:residues} leaves room for a yes: of
-the twenty-eight even classes modulo $210$ lying over the four gap classes
-modulo $30$, eight contain no sum of two members at all. A two-term sum is
-$(p+\delta)+(p'+\delta')$ with $p,p'\equiv 2,3,4 \pmod 7$ by
-Lemma~\ref{lem:residues}(ii), so $p+p'$ reaches only
-$\equiv 4,5,6,0,1 \pmod 7$, and $\delta+\delta'$ is fixed by the class
-modulo $30$; two classes modulo $7$ are missed in each case. The twenty
-classes the lemma allows for gaps are exactly the twenty that survive.
+members unconditionally, that is, do the lengths $4,6,8$ in
+Table~\ref{tab:K} eventually disappear? Theorem~\ref{thm:two} says yes
+under Hypothesis~\ref{hyp:H}, and Lemma~\ref{lem:sing} shows that there is
+no local obstruction: of the seven classes modulo $210$ that lie over
+$22 \pmod{30}$, the two that contain no sum of two first members, $52$ and
+$142$, are exactly the two that Lemma~\ref{lem:residues}(iv) excludes for
+gaps.
 \end{question}
 
 \begin{question}
@@ -1008,6 +1105,11 @@ Annals of Mathematics 181 (2015), no.~1, 383--413.
 T.~Forbes,
 \emph{Prime clusters and Cunningham chains},
 Mathematics of Computation 68 (1999), no.~228, 1739--1747.
+
+\bibitem{Wirsing1986}
+E.~Wirsing,
+\emph{Thin subbases},
+Analysis 6 (1986), 285--306.
 
 \bibitem{LadheConj}
 S.~Ladhe and P.~Ladhe,
