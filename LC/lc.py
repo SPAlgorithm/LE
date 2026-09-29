@@ -100,6 +100,9 @@ Usage
     python3 lc.py 2000 -o --chain # under the A line, the equation of every term
     python3 lc.py 1 200 -c 5      # of quads 1 to 200, only the 5-column equations
     python3 lc.py 1 200 -c 3 8    # ... anything from three to eight columns
+    python3 lc.py -g 20 200       # every quad with the gap 22 or 202: a value that
+                                  #   is no gap moves up to the next one (-g 20,200 too)
+    python3 lc.py 1 500 -g 82     # of quads 1 to 500, only those with the gap 82
     python3 lc.py 25 --all        # list all four primes in each heading (the
                                   #   equations are always the first prime's)
     python3 lc.py 25 -v           # also show which quad each term came from
@@ -1079,11 +1082,13 @@ def cache_covers(data, want_count, upto):
     return True
 
 
-def richer_cache(data, mode, want_count, upto, write_path):
+def richer_cache(data, mode, want_count, upto, write_path, whole=False):
     """When the default cache is too short for what was asked, read the bigger
     dataset that ships beside it instead of rebuilding what already exists.
-    That file is never modified; anything new is written to write_path."""
-    if cache_covers(data, want_count, upto):
+    That file is never modified; anything new is written to write_path.
+    whole asks for the longest chain on disk whatever the default cache
+    covers: -g with no quad numbers searches everything there is."""
+    if not whole and cache_covers(data, want_count, upto):
         return data
     for cand in EXTRA_CACHES:
         if not os.path.exists(cand) or os.path.abspath(cand) == os.path.abspath(write_path):
@@ -1524,13 +1529,46 @@ WAY_LINES = {"A": [("A", None)], "M": [("M", "mul"), ("M1", "mul_nb")],
 NOBASE_KEYS = {"mul_nb", "exp_nb"}
 
 
+def gap_of(q):
+    """The gap of a quad: its first prime minus the base, the largest member
+    of the quad before it.  None for quad 1, which has no base, and for a
+    member with no derivation at all."""
+    d = q["derivations"][0]
+    if d.get("failed") or d.get("base") is None:
+        return None
+    return d["diff"]
+
+
+def gap_picks(quads, values):
+    """The -g values turned into gaps that occur among these quads: each value
+    moves up to the next valid gap, the smallest one at or above it.  Returns
+    (rows, largest): a row is (value, gap, how many quads have it), with gap
+    None when no gap is that large; largest is the largest gap there is."""
+    count = {}
+    for q in quads:
+        g = gap_of(q)
+        if g is not None:
+            count[g] = count.get(g, 0) + 1
+    valid = sorted(count)
+    rows = []
+    for v in values:
+        i = bisect.bisect_left(valid, v)
+        if i == len(valid):
+            rows.append((v, None, 0))
+        else:
+            rows.append((v, valid[i], count[valid[i]]))
+    return rows, (valid[-1] if valid else None)
+
+
 def show(data, start=None, end=None, upto=None, picks=None, cols=None,
          chain=False, verbose=False, all_members=False, ways="A", only=False,
-         out=sys.stdout):
+         gaps=None, out=sys.stdout):
     """start / end are quad numbers (1-based, inclusive); either may be None.
     One number N from the command line means end=N, the first N quads.
     picks is the -o list: show exactly those quads, in that order.
     cols is the -c filter: (low, high) terms in the additive equation.
+    gaps is the -g filter: values, each standing for the next valid gap among
+    the quads in scope.  Returns False when -g found no gap at all.
     chain adds, under every A line, the equation of each term at or above
     CHAIN_MIN."""
     quads, diffs = data["quads"], data["diffs"]
@@ -1547,6 +1585,21 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
         quads = quads[-1:]
     w = out.write
     w("Royal quad (0): " + ", ".join(map(str, ROYAL)) + "\n\n")
+    scanned = len(quads)
+    keep = None
+    if gaps is not None:                # each value -> the next valid gap
+        gap_rows, largest = gap_picks(quads, gaps)
+        keep = {g for _, g, _ in gap_rows if g is not None}
+        for v, g, n in gap_rows:
+            if g is None:
+                w(f"Gap {v}: no gap at or above it in these quads"
+                  + (f" (largest is {largest})" if largest is not None else "")
+                  + "\n")
+                continue
+            head = f"Gap {v}" if g == v else f"Gap {v} -> next valid gap {g}"
+            w(f"{head}: {n} quad{'s' if n != 1 else ''}\n")
+        w("\n")
+        quads = [q for q in quads if gap_of(q) in keep]
     quad_of = {p: q["n"] for q in data["quads"] for p in q["primes"]}
     der_of = ({d["target"]: (q["n"], d) for q in data["quads"]
                for d in q["derivations"]} if chain else {})
@@ -1575,7 +1628,6 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
             src.append("search gave up, simpler way copied")
         return "      [" + "; ".join(src) + "]\n"
 
-    scanned = len(quads)
     tally = {}
     rows = []
     for q in quads:                     # decide what survives before printing
@@ -1596,7 +1648,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
 
     for q, shown in rows:
         primes = q["primes"] if all_members else [d["target"] for d in shown]
-        w(f"Quad {q['n']}: " + ", ".join(map(str, primes)) + "\n")
+        gap = f"   (gap {gap_of(q)})" if gaps is not None else ""
+        w(f"Quad {q['n']}: " + ", ".join(map(str, primes)) + gap + "\n")
         for d in shown:
             first = q["n"] == 1
             entry = None
@@ -1677,7 +1730,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                                   e.get("fallback", False)))
         w("\n")
     held = len(data["quads"])
-    tail = f" (of {scanned} scanned)" if cols is not None else ""
+    filtered = cols is not None or gaps is not None
+    tail = f" (of {scanned} scanned)" if filtered else ""
     w(f"{len(quads)} quad{'s' if len(quads) != 1 else ''} shown{tail}, "
       f"{held} quad{'s' if held != 1 else ''} in the cache ({cache_name(data)})\n")
     if verbose and tally:
@@ -1686,6 +1740,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     if verbose:
         w(f"(differences shown: {new} new, {reused} reused; "
           f"{len(diffs)} unique differences stored)\n")
+    return gaps is None or bool(keep)
 
 
 # --------------------------------------------------------------------------
@@ -1801,8 +1856,8 @@ def ask_number(only=False):
 def main(argv=None):
     ap = argparse.ArgumentParser(
         usage="lc [-h] [--upto VALUE] [-d N [M]] [-v] [-A] [-M] [-E] [-o] [-s] "
-              "[-c N [M]] [-n] [--chain] [--all] [--one-per-quad] [--recompute] "
-              "[--cache FILE] [N [M]]",
+              "[-c N [M]] [-g G [G ...]] [-n] [--chain] [--all] [--one-per-quad] "
+              "[--recompute] [--cache FILE] [N [M]]",
         description="Quad chain builder (royal quad 2,3,5,7).")
     ap.add_argument("count", nargs="*", type=int, metavar="N",
                     help="N: the first N quads after the royal quad.  "
@@ -1834,6 +1889,13 @@ def main(argv=None):
                     help="keep only quads whose additive equation has N terms on "
                          "the right, counting the base; -c N M keeps a range, so "
                          "-c 3 8 is three to eight columns")
+    ap.add_argument("-g", "-gap", "--gap", dest="gap", nargs="+", metavar="G",
+                    help="keep only quads with the gap G (the first prime minus "
+                         "the largest member of the quad before it); a value "
+                         "that is no gap moves up to the next valid one, so "
+                         "-g 20 200 shows the gaps 22 and 202 (-g 20,200 works "
+                         "too); with no quad numbers the whole chain on disk is "
+                         "searched")
     ap.add_argument("-s", "-sort", "--sorted", dest="sort", action="store_true",
                     help="with -o, list the quads in ascending order instead of "
                          "the order you typed them")
@@ -1862,6 +1924,18 @@ def main(argv=None):
     data = empty_cache(mode) if args.recompute else load_cache(path, mode)
     data["_path"] = path
     data["_source"] = path
+
+    gaps = None
+    if args.gap is not None:            # -g 20 200 and -g 20,200 are the same
+        if args.derive is not None:
+            ap.error("-g filters quads, so it cannot be combined with -d")
+        try:
+            gaps = [int(t) for tok in args.gap for t in tok.split(",") if t.strip()]
+        except ValueError:
+            ap.error("-g needs whole numbers, for example -g 20 200 or -g 20,200")
+        if not gaps or any(g < 1 for g in gaps):
+            ap.error("-g needs whole numbers >= 1")
+        gaps = list(dict.fromkeys(gaps))        # de-duplicate, keep the order typed
 
     if args.derive is not None:
         if len(args.derive) > 2:
@@ -1894,7 +1968,9 @@ def main(argv=None):
     if args.near and not args.only:
         ap.error("--near needs -o, so it shows the quads around the values you name")
     vals, upto = args.count, args.upto
-    if not vals and upto is None:
+    # -g with no quad numbers searches the whole chain on disk, nothing to ask
+    whole = gaps is not None and not vals and upto is None
+    if not vals and upto is None and not whole:
         vals, upto = ask_number(args.only)
 
     picks = start = end = near_upto = None
@@ -1916,23 +1992,33 @@ def main(argv=None):
 
     if not args.cache and not args.recompute:
         data = richer_cache(data, mode, end,
-                            upto if upto is not None else near_upto, path)
+                            upto if upto is not None else near_upto, path,
+                            whole=whole)
     if args.near:
         picks = near_picks(data, vals, ap.error)
         if args.sort:
             picks.sort()
         end = max(picks)                        # already built, so nothing to do
     cached = len(data["quads"])
-    added = extend_chain(data, want_count=end, upto=upto,
-                         one_per_quad=args.one_per_quad)
+    if whole:                           # search what is there, build nothing
+        if not data["quads"]:
+            ap.error("-g has no chain to search yet; give quad numbers or "
+                     "--upto so one is built, for example  lc 500 -g 20")
+        added = 0
+    else:
+        added = extend_chain(data, want_count=end, upto=upto,
+                             one_per_quad=args.one_per_quad)
     ways = "".join(w for w, on in (("A", args.A), ("M", args.M), ("E", args.E)) if on)
-    show(data, start=start, end=end, upto=upto, picks=picks, cols=cols,
-         chain=args.chain, verbose=args.verbose,
-         all_members=args.all, ways=ways or "A", only=args.only)
+    # -o with no numbers means the last quad; under a whole-chain -g it only
+    # unlocks --chain, the gaps decide which quads are shown
+    found = show(data, start=start, end=end, upto=upto, picks=picks, cols=cols,
+                 chain=args.chain, verbose=args.verbose,
+                 all_members=args.all, ways=ways or "A",
+                 only=args.only and not whole, gaps=gaps)
     if args.verbose:
         print(f"({cached} quads came from {cache_name(data)}, "
               f"{added} computed now)")
-    return 0
+    return 0 if found else 1
 
 
 if __name__ == "__main__":

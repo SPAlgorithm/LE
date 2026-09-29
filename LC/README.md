@@ -28,6 +28,8 @@ python3 lc.py 1210872 -o --near     # the two quads either side of any value
 python3 lc.py 2000 -o --chain  # under the A line, the equation of every term
 python3 lc.py 1 200 -c 5       # of quads 1 to 200, only the 5-column equations
 python3 lc.py 1 200 -c 3 8     # ... three to eight columns (-cols, --columns too)
+python3 lc.py -g 20 200        # every quad with the gap 22 or 202 (-g 20,200 too)
+python3 lc.py 1 500 -g 82      # of quads 1 to 500, only those with the gap 82
 python3 lc.py 25 --all         # list all four primes in each heading (equations are the first prime's)
 python3 lc.py -d 53            # derive any integer from the quad members below it
 python3 lc.py -d 53 83         # every integer from 53 to 83, one line each
@@ -79,6 +81,7 @@ Ctrl-D or Ctrl-C leaves without building anything.
 | `-n`, `-near`, `--near` | the numbers are values: show the quad either side of each |
 | `--chain` | under each A line, the equation of every term it uses |
 | `-c N`, `-cols`, `--columns` | keep only equations with N columns; `-c N M` for a range |
+| `-g G`, `-gap`, `--gap` | keep only quads with the gap G, or the next valid gap above it; list several as `-g 20 200` or `-g 20,200` |
 | `-A`, `-M`, `-E` | which ways to print; lower case works too, combine as `-AME` or `-aem` |
 | `--all` | list all four primes of a quad in its heading (the equations are always the first prime's) |
 | `-v`, `--verbose` | where each term came from, plus the column distribution |
@@ -278,6 +281,59 @@ five columns.
 
 The filter looks at the first prime's equation; `--all` only widens the
 heading.
+
+## Filtering by gap
+
+The gap of a quad is its first prime minus the base, the largest member of the
+quad before it: `191 = 109 + 82` has the gap 82. It is the number stored as
+the difference. `-g G` keeps only the quads with that gap.
+
+Not every number is a gap: the smallest are 22, 82, 112, 172, 202, 232. A
+value that is not a gap moves up to the next valid one, so you do not need to
+know them:
+
+```
+$ python3 lc.py -g 20 200
+Royal quad (0): 2, 3, 5, 7
+
+Gap 20 -> next valid gap 22: 18 quads
+Gap 200 -> next valid gap 202: 40 quads
+
+Quad 7: 2081   (gap 202)
+  2081 = 1879 + 199 + 3
+
+Quad 9: 3461   (gap 202)
+  3461 = 3259 + 199 + 3
+...
+58 quads shown (of 28387 scanned), 28387 quads in the cache (paper/qarray_1e9.json)
+```
+
+The numbers are separate values, not a range, and any number of them may be
+listed. `-g 20,200` is the same as `-g 20 200`; for this switch a comma
+separates two values, while everywhere else it is ignored (`1,000` is 1000).
+The quads come in chain order, each heading naming its gap.
+
+With no quad numbers `-g` searches the whole chain on disk and builds nothing:
+the 28,387 quads below 10^9 when `paper/qarray_1e9.json` is there (in the
+repository it ships as `qarray_1e9.json.gz`, so run `gunzip` on it first),
+otherwise the quads of `qarray.json`. Quad numbers or `--upto` narrow the
+search, and "valid" then means a gap that occurs among those quads:
+
+```
+$ python3 lc.py 1 500 -g 20 200 | tail -1
+10 quads shown (of 500 scanned), 2500 quads in the cache (qarray.json)
+```
+
+A value above every gap in the search is reported, with the largest gap there
+is, and the exit code is 1 when no value found a gap:
+
+```
+$ python3 lc.py -g 99999999
+Gap 99999999: no gap at or above it in these quads (largest is 395512)
+```
+
+`-g` combines with the other switches (`-c`, `-aem`, `-v`, `--all`, `-o`,
+`--chain`), but not with `-d`, which derives numbers rather than listing quads.
 
 ## Putting it together
 
