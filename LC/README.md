@@ -2,7 +2,7 @@
 
 > **Ladhe's Quad Conjecture: every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.**
 >
-> (Every first member's gap is written by one rule: after the base, always the largest earlier prime that still leaves a solvable remainder, again and again, a royal value covering only what no prime can. That is a plain sum for 18,131 of the 28,387 first members below 10^9; the rest close with one product of two royal members, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
+> (Every first member's gap is written by one rule: the shortest sum of distinct earlier primes, larger primes preferred when several sums are equally short. That is a plain sum for all but 98 of the 28,386 gaps below 10^9; the 98 are the occurrences of the four gaps 22, 82, 172 and 382, which have no such sum and keep the largest-first form closed by a royal value, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
 
 `lc.py` grows a q-array of prime "quads" from the royal quad and shows how
 the first prime of every quad is derived from earlier ones.
@@ -121,53 +121,60 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
 
    A royal expression uses each of 2, 3, 5, 7 at most once, and a product
    may multiply only **two** of them: `(5*7) + (2*3)` is allowed, `(2*5*7)`
-   and `5*(7 + (2*3))` are not. The terms are chosen by one rule, largest
+   and `5*(7 + (2*3))` are not. The terms are chosen by one rule, shortest
    first:
 
-   1. from the remainder take the largest unused prime of an earlier quad
-      that does not exceed it, and go on with what is left;
-   2. keep going while some unused prime fits; when none does, the
-      remainder must be 0 or a royal value, which closes the equation;
-   3. when a choice leads to a remainder that cannot be finished, back up
-      and try the next smaller prime.
+   1. take the shortest sum of distinct primes of earlier quads that equals
+      the difference (the base is left out), trying 2, 4, 6 and 8 primes in
+      turn - the difference is even and the primes odd, so the count is even;
+   2. among equally short sums prefer the larger primes, compared term by
+      term;
+   3. only when no sum of at most eight primes exists - the differences 22,
+      82, 172 and 382 - take the primes largest first, backing up when a
+      choice leads to a remainder that cannot be finished, and close with a
+      royal value.
 
    ```
-   2081  = 1879 + 199 + 3                          199, then the royal 3
-   13001 = 9439 + 3467 + 19 + 17 + 13 + 11 + (5*7) 3467 is the largest prime below 3562
+   2081  = 1879 + 191 + 11                         two primes suffice
+   13001 = 9439 + 3461 + 101                       two primes, not
+                                                   3467 + 19 + 17 + 13 + 11 + (5*7)
    1871  = 1489 + 199 + 109 + 19 + 17 + 13 + 11 + 7 + 5 + 2
+                                                   no sum of primes reaches 382
    101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)       products, because no sum
                                                    of primes reaches 82
    ```
 
-   The shortest equation is not the aim: 3562 = 3461 + 101 is a two-term
-   sum, but the rule takes 3467 first. (`paper/stats.py` computes the
-   shortest lengths separately; `paper/check.py` re-derives every stored
-   equation by this rule.)
+   The stored equation is a shortest one, so its length is the minimal
+   length K that `paper/stats.py` computes; `paper/check.py` re-derives
+   every stored equation by this rule with a search of its own.
 
 5. Storage in `qarray.json` beside the script: each quad records, per
    prime, only the base and the difference, e.g. `191 = 109 + 82` is
    stored as base 109, diff 82, and `193 = 191 + 2` as base 191, diff 2.
    A separate `diffs` table holds one equation per unique difference
-   (`82 = 19 + 17 + 11 + (5*7)`; the entries `2` and `6` are the fixed
+   (`82 = 19 + 17 + 13 + 11 + (3*5) + 7`; the entries `2` and `6` are the fixed
    forms shared by every quad's later primes). When a later quad produces
    a difference already in the table, its equation is reused and the output
    says so; only a new difference triggers a new search. The next run loads
    the file and computes only quads that are not there yet.
 
-   That shared equation is searched over every member below the difference,
-   the base included, because any quad reusing it has a base larger than its
-   own difference. A member whose base is *below* its difference cannot use
-   the base as a term, so it keeps its own equation in the derivation record
-   instead: quad 2 writes `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)` while
-   quad 3, reusing the same difference 82 with the base 109, writes
+   The shortest-sum search leaves the base out, so the stored length is the
+   minimal length K. The largest-first fallback of the four exceptional
+   differences is searched over every member below the difference, the base
+   included, because any quad reusing it has a base larger than its own
+   difference. A member whose base is *below* its difference cannot use the
+   base in any of its ways, so it keeps its own equations in the derivation
+   record instead: quad 2 writes `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`
+   while quad 3, reusing the same difference 82 with the base 109, writes
    `191 = 109 + 19 + 17 + 13 + 11 + (3*5) + 7`. Below 10^9 exactly two
-   members need their own equation, 101 (quad 2) and 821 (quad 4).
+   members need their own equations, 101 (quad 2, base among the terms of
+   82) and 821 (quad 4, base in the M way of 622).
 6. The display shows one line per quad, the prime ending in 1 with its full
    equation (base first, then the difference written out):
 
    ```
    Quad 7: 2081
-     2081 = 1879 + 199 + 3
+     2081 = 1879 + 191 + 11
    ```
 
    Pass `--all` to list all four primes in the heading (`Quad 7: 2081, 2083,
@@ -192,7 +199,7 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
 
    ```
    Quad 2000: 31252931
-     31252931 = 31210849 + 34849 + 5659 + 1489 + 19 + 17 + 11 + (5*7) + 3
+     31252931 = 31210849 + 34849 + 5651 + 1481 + 101
    ```
 
 ## Where does a number sit?
@@ -204,9 +211,9 @@ the quad at or below each one together with the quad above it:
 ```
 $ ./lc 1210872 -o --near
 Quad 205: 1210871
-  1210871 = 1182289 + 25309 + 3259 + 11 + 3
+  1210871 = 1182289 + 25307 + 3251 + 13 + 11
 Quad 206: 1228391
-  1228391 = 1210879 + 16069 + 829 + 199 + 197 + 193 + 19 + (2*3)
+  1228391 = 1210879 + 15641 + 1871
 ```
 
 The value needs no relation to the chain: it can be even, composite, or land
@@ -234,10 +241,11 @@ so you can see one step further back without running the tool again:
 ```
 $ ./lc 2000 -o --chain
 Quad 2000: 31252931
-  31252931 = 31210849 + 34849 + 5659 + 1489 + 19 + 17 + 11 + (5*7) + 3
+  31252931 = 31210849 + 34849 + 5651 + 1481 + 101
       -> Q23: 34849 = 34847 + 2
-      -> Q10: 5659 = 5657 + 2
-      -> Q5: 1489 = 1487 + 2
+      -> Q10: 5651 = 3469 + 2081 + 101
+      -> Q5: 1481 = 829 + 197 + 191 + 103 + 101 + 19 + 17 + 13 + 11
+      -> Q2: 101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
 ```
 
 Four rules. It hangs off the **A line only**, so `-aem` still prints M, M1, E1,
@@ -266,18 +274,20 @@ distribution:
 
 ```
 $ python3 lc.py 1 200 -c 5 -v | tail -2
-117 quads shown (of 200 scanned), 2500 quads in the cache (qarray.json)
-(columns in the additive equation -> how many members: 2: 1, 3: 44, 5: 117, 6: 1, 7: 31, 8: 2, 9: 4)
+115 quads shown (of 200 scanned), 2500 quads in the cache (qarray.json)
+(columns in the additive equation -> how many members: 2: 1, 3: 44, 5: 115, 6: 1, 7: 31, 9: 6, 10: 2)
 ```
 
-Two things are worth noticing in that distribution. There is no 4, and there
-never can be: the gap is even and every quadruplet member is odd, so the base
-plus an even number of members lands on an odd column count unless the royal
-part contributes a second piece. And the single 6-column equation among the
-first 200 quads is quad 2 itself, `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`:
-it is the only quad there whose base lies below its own difference, so it
-cannot use 19 as a term, while every later quad with the gap 82 can and needs
-five columns.
+Two things are worth noticing in that distribution. There is no 4 and no 8,
+and there never can be: the gap is even and every quadruplet member is odd,
+so a pure sum has an even number of primes and, with the base, an odd column
+count (3, 5, 7 or 9 for the shortest sums); an even count needs a royal part
+of two pieces, which only the exceptional gaps have - the single 6-column
+equation among the first 200 quads is quad 2 itself,
+`101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`, the only quad there whose base
+lies below its own difference (every later quad with the gap 82 can use 19
+and shows seven columns), and the two 10-column equations are the gap 382,
+which closes with `7 + 5 + 2`.
 
 The filter looks at the first prime's equation; `--all` only widens the
 heading.
@@ -300,10 +310,10 @@ Gap 20 -> next valid gap 22: 18 quads
 Gap 200 -> next valid gap 202: 40 quads
 
 Quad 7: 2081   (gap 202)
-  2081 = 1879 + 199 + 3
+  2081 = 1879 + 191 + 11
 
 Quad 9: 3461   (gap 202)
-  3461 = 3259 + 199 + 3
+  3461 = 3259 + 191 + 11
 ...
 58 quads shown (of 28387 scanned), 28387 quads in the cache (paper/qarray_1e9.json)
 ```
@@ -377,8 +387,8 @@ and an exponential equation that do not use the base at all. `-A` (default),
 `-M` and `-E` pick which to print; combine them (`-AME`, `-ME`) to see
 several, labeled `A:`, `M:`, `M1:`, `E1:`, `E2:`, `E3:`.
 
-- **A, additive**: the rules above; the largest earlier prime first, a royal
-  value only for the remainder.
+- **A, additive**: the rules above; the shortest sum of earlier primes, a
+  royal value only for the four exceptional differences.
 - **M, multiplicative**: any members, quad primes and royal members alike,
   may be multiplied in pairs, and multiplication is preferred over addition.
   Greedy: take the largest unused member, multiply it by the largest member
@@ -410,7 +420,7 @@ several, labeled `A:`, `M:`, `M1:`, `E1:`, `E2:`, `E3:`.
   no such form and fall back to the power-first search).
 
   ```
-  A:  854921 = 845989 + 5659 + 3259 + 11 + 3
+  A:  854921 = 845989 + 5657 + 3251 + 13 + 11
   M:  854921 = 845989 + (3469*2) + (199*7) + (193*3) + 17 + 5
   M1: 854921 = (427249*2) + (109*3) + (17*5) + 11
   E1: 854921 = 845989 + (19^3) + (17^2) + (199*5) + (11*7) + 197 + 191 + 107 + 103 + 101 + 13
@@ -504,7 +514,7 @@ Building the chain from nothing, measured on this Mac (Intel, Python 3.13):
 
 | upper bound | digits | quads | time to build | cache size |
 | --- | --- | --- | --- | --- |
-| 1,000,000,000 | 10 | 28,387 | 43 s | 23 MB |
+| 1,000,000,000 | 10 | 28,387 | 35 s | 23 MB |
 | 10,000,000,000 | 11 | ~180,000 | ~6 min (est.) | ~160 MB |
 
 (Since only the first prime of each quad is searched for, a full build is
@@ -538,7 +548,7 @@ figures:
 | `ladhe_quad_conjecture.tex`, `.pdf` | the paper (`pdflatex ladhe_quad_conjecture.tex`, run twice) |
 | `qarray_1e9.json` | the chain up to 10^9 (28,387 quads, 23 MB), built with `python3 lc.py --upto 999999999 --cache paper/qarray_1e9.json`; in the repository it is shipped as `qarray_1e9.json.gz`, run `gunzip` before using it |
 | `quads_1e9.csv` | one row per quad member: for a first prime the base, gap, the A/M/E1/E2 equations and minimal lengths (M1/E3 are in the JSON); for the other three primes only their fixed form |
-| `check.py` | independent re-verification of every stored equation, prints the dataset SHA-256 |
+| `check.py` | independent re-verification of every stored equation (a shortest pure sum, or the largest-first form for the four exceptional gaps), prints the dataset SHA-256 |
 | `stats.py` | every number quoted in the paper, plus `appendix_rows.tex` and the CSV |
 
 ## Executable

@@ -9,10 +9,13 @@ ways, and the two base-free ways M1 and E3 (the whole prime from members
 below it): arithmetic, distinct members, base never used as a term, every
 term below the target.  Every royal expression must use each of 2, 3, 5, 7
 at most once, with + and *, and multiply at most two of them.  Every
-stored additive equation is also re-derived here by the largest-first rule
-(from the remainder take the largest unused earlier prime not above it,
-again and again; a royal value only for a remainder no prime fits into;
-back up when a choice leads nowhere) with a search of its own, and must agree.
+stored additive equation is also re-derived here with a search of its own,
+and must agree: a pure equation (no royal part) must be a shortest sum of
+distinct earlier primes, the base excluded, with the larger primes preferred
+among equally short sums; a royal closing is allowed only when no pure sum
+of at most eight primes exists, and its primes must then follow the
+largest-first rule (from the remainder take the largest unused earlier
+prime not above it, again and again; back up when a choice leads nowhere).
 For the other three primes of a quad it checks the fixed forms
 
     p+2 = p + 2        p+6 = p + (2*3)        p+8 = (p+6) + 2
@@ -85,6 +88,43 @@ def largest_first(diff, pool, excluded):
         return [] if rem in ROYAL_VALUES else None   # royal only when no prime fits
 
     return go(diff, len(pool))
+
+
+def shortest_pure(diff, pool, excluded):
+    """Independent shortest-sum search: the fewest distinct earlier primes
+    (2, 4, 6 or 8 of them) that add up to diff exactly, tried in descending
+    order so that the first solution found is the one with the larger
+    primes.  pool: ascending earlier primes; excluded: the base.  Returns
+    the terms, or None when no pure sum of at most eight primes exists."""
+    cand = [p for p in pool if p <= diff and p != excluded]
+    cand.reverse()                                   # descending
+    suffix = [0] * (len(cand) + 1)                   # suffix[i] = sum(cand[i:])
+    for i in range(len(cand) - 1, -1, -1):
+        suffix[i] = suffix[i + 1] + cand[i]
+    budget = [2_000_000]
+
+    def go(rem, i, count):
+        if count == 0:
+            return [] if rem == 0 else None
+        while i < len(cand) and cand[i] > rem:
+            i += 1
+        for j in range(i, len(cand) - count + 1):
+            budget[0] -= 1
+            if budget[0] < 0:
+                return None
+            p = cand[j]
+            if p * count < rem and suffix[j] < rem:
+                return None                          # too small from here on
+            rest = go(rem - p, j + 1, count - 1)
+            if rest is not None:
+                return [p] + rest
+        return None
+
+    for count in (2, 4, 6, 8):
+        terms = go(diff, 0, count)
+        if terms is not None:
+            return terms
+    return None
 
 
 def main(path):
@@ -195,29 +235,48 @@ def main(path):
                     report(f"{target}: {way} members not distinct")
                 if any(m >= target for m in members if m not in ROYAL):
                     report(f"{target}: {way} member not below target")
-    # Every stored additive equation, re-derived by the largest-first rule.
+    # Every stored additive equation, re-derived by the stored-form rule:
+    # a shortest pure sum (base excluded) when one exists, otherwise the
+    # largest-first form with a royal value.
     all_primes = [p for q in quads for p in q["primes"]]
+    n_pure = n_royal = 0
+
+    def verify(label, diff, pool, base, terms, rv, royal, fallback_excluded):
+        nonlocal n_pure, n_royal
+        pure = shortest_pure(diff, pool, base)
+        if not royal:
+            if pure is None or pure != terms or rv != 0:
+                report(f"{label}: stored {terms} + {rv}, shortest pure sum is {pure}")
+            else:
+                n_pure += 1
+            return
+        if pure is not None:
+            report(f"{label}: stored royal closing {terms} + {rv}, but the pure sum {pure} exists")
+            return
+        want = largest_first(diff, pool, fallback_excluded)
+        if want is None or want != terms or diff - sum(want) != rv:
+            report(f"{label}: stored {terms} + {rv}, largest-first rule gives {want}")
+        else:
+            n_royal += 1
+
     for key, entry in diffs.items():
         n, target = entry["first"]
         if n == 2 and target in (103, 107):
             continue                              # the fixed forms
         pool = all_primes[:4 * (n - 1)]           # quads 1 .. n-1
         rederived += 1
-        want = largest_first(int(key), pool, None)   # shared: base allowed
-        if want is None or want != entry["terms"] or int(key) - sum(want) != entry["royal_value"]:
-            report(f"difference {key}: stored {entry['terms']} + {entry['royal_value']}, "
-                   f"largest-first rule gives {want}")
+        diff = int(key)
+        verify(f"difference {key}", diff, pool, target - diff, entry["terms"],
+               entry["royal_value"], entry.get("royal"), None)   # fallback: base allowed
     for q in quads:
         der = q["derivations"][0]
         if "own" not in der:
             continue
         pool = all_primes[:4 * (q["n"] - 1)]
         rederived += 1
-        want = largest_first(der["diff"], pool, der["base"])
         own = der["own"]
-        if want is None or want != own["terms"] or der["diff"] - sum(want) != own["royal_value"]:
-            report(f"{der['target']} own: stored {own['terms']} + {own['royal_value']}, "
-                   f"largest-first rule gives {want}")
+        verify(f"{der['target']} own", der["diff"], pool, der["base"], own["terms"],
+               own["royal_value"], own.get("royal"), der["base"])
     for d, first_target in ((2, 103), (6, 107)):
         entry = diffs.get(str(d))
         if entry is None or entry.get("first") != [2, first_target]:
@@ -234,8 +293,9 @@ def main(path):
           "(+ and * over distinct members of 2, 3, 5, 7; products of two)")
     print(f"by rule   : {canonical:,} later primes checked against "
           "p + 2, p + (2*3), (p+6) + 2")
-    print(f"canonical : {rederived:,} additive equations re-derived by the "
-          "largest-first rule")
+    print(f"stored    : {rederived:,} additive equations re-derived "
+          f"({n_pure:,} shortest pure sums, {n_royal:,} royal closings by the "
+          "largest-first rule with no pure sum of at most eight primes)")
     for p in problems:
         print("  problem:", p)
     return 1 if bad else 0

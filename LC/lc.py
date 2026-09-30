@@ -20,13 +20,15 @@ Rules
         p+2 = p + 2          p+6 = p + (2*3)          p+8 = (p+6) + 2
   A royal expression uses each of 2, 3, 5, 7 at most once, and a product
   may multiply only TWO of them: (5*7) + (2*3) is allowed, (2*5*7) and
-  5*(7 + (2*3)) are not.  The terms are chosen largest first: from the
-  remainder take the largest unused earlier prime not above it, again and
-  again; a royal value closes the equation only for what no prime can
-  cover; back up when a choice leads nowhere.
-      2081  = 1879 + 199 + 3                         199, then the royal 3
-      13001 = 9439 + 3467 + 19 + 17 + 13 + 11 + (5*7)
-                                                     3467 first, not 3461 + 101
+  5*(7 + (2*3)) are not.  The terms are the shortest sum of distinct
+  earlier primes that equals the difference, larger primes preferred when
+  several sums are equally short; only when no such sum of at most eight
+  primes exists (the differences 22, 82, 172 and 382) are the primes taken
+  largest first, backing up when a choice leads nowhere, and a royal value
+  closes what no prime covers.
+      2081  = 1879 + 191 + 11                        two primes suffice
+      13001 = 9439 + 3461 + 101                      two primes, not
+                                                     3467 + 19 + 17 + 13 + 11 + (5*7)
       101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)      products, because no sum
                                                      of primes reaches 82
 
@@ -69,16 +71,19 @@ Storage (qarray.json next to this script)
   second, third and fourth primes are stored with their own first prime (or
   third, for p+8) as the base and a difference of 2 or 6 - nothing else.
 * "diffs": one entry per UNIQUE difference with the equations that build
-  the difference (82 -> terms 19 + 17 + 11 + (5*7);  "mul", "exp"
+  the difference (82 -> terms 19 + 17 + 13 + 11 + (3*5) + 7;  "mul", "exp"
   and "expv" hold the M, E1 and E2 term lists).  When a later quad produces
   a difference that is already in the table its equations are reused; only
   a new difference triggers a new search.  The entries "2" and "6" are the
-  fixed forms shared by every quad's later primes.  The search runs over
-  every member below the difference, the base included, because a quad that
-  reuses the entry has a base above its difference.  A member whose base is
-  below its own difference (the base may then not be a term) keeps its own
-  equations in "own" of its derivation record; below 10^9 that is two
-  members, 101 (quad 2) and 821 (quad 4).
+  fixed forms shared by every quad's later primes.  The shortest-sum
+  search leaves the base out, so that the stored length is the minimal
+  length K of paper/stats.py; the largest-first fallback of the four
+  exceptional differences runs over every member below the difference, the
+  base included, because a quad that reuses the entry has a base above its
+  difference.  A member whose base is below its own difference (the base
+  may then not be a term of any way) keeps its own equations in "own" of
+  its derivation record; below 10^9 that is two members, 101 (quad 2, base
+  among the terms of 82) and 821 (quad 4, base in the M way of 622).
 * M1 and E3 depend on the prime itself, not on the difference, so they are
   stored with the member ("mul_nb", "exp_nb" in the derivation record) -
   for the first prime of each quad only.
@@ -123,7 +128,7 @@ import sys
 import time
 
 ROYAL = (2, 3, 5, 7)
-FORMAT = 16          # 16: largest earlier prime first; a royal value only for what no prime covers
+FORMAT = 17          # 17: shortest pure form when one exists; largest-first with a royal value otherwise
 # Folder that holds the cache: next to the script, or next to the binary
 # when packaged with PyInstaller.
 if getattr(sys, "frozen", False):
@@ -572,9 +577,12 @@ def quadruplets_from(start, segment=1 << 20):
 # Difference search:  diff = (quad primes) + (royal expression)
 # --------------------------------------------------------------------------
 class Deriver:
-    """`canonical` writes a difference the way the chain stores it: largest
-    earlier prime first (see its docstring).  `solve` is the fewest-terms
-    search the statistics use, ranking candidate equations by
+    """`stored` writes a difference the way the chain stores it: the
+    shortest sum of distinct earlier primes (`shortest_pure`, built on
+    `_fixed`), or, for a difference that has no such sum of at most eight
+    primes, the largest-first form closed by a royal value (`canonical`).
+    `solve` is the older fewest-terms search; nothing calls it any more, it
+    is kept for reference.  It ranked candidate equations by
 
         1. depth of the royal part: 0 = none or plain addition of royal
            members, 1 = products of two royal members such as (5*7) + 3
@@ -598,14 +606,13 @@ class Deriver:
         self.node_limit = node_limit
 
     def canonical(self, diff, avail, base, quad_of, exclude_base=True):
-        """The representation the chain stores: largest earlier prime first.
-
-        From the remainder take the largest unused prime not above it, and
-        repeat until the remainder is 0.  A royal value closes the equation
-        only for a remainder that no unused prime fits into (or that no
-        choice of primes can finish); when a choice leads nowhere, back up to
-        the next smaller prime.  `solve` below is the older fewest-terms
-        search, kept for the minimal-length statistics (stats.py, density.py).
+        """The largest-first form, stored for the four exceptional
+        differences (22, 82, 172, 382) that have no pure sum: from the
+        remainder take the largest unused prime not above it, and repeat
+        until the remainder is 0.  A royal value closes the equation only
+        for a remainder that no unused prime fits into (or that no choice of
+        primes can finish); when a choice leads nowhere, back up to the next
+        smaller prime.
 
         avail: ascending primes of all earlier quads; base: never a term
         unless exclude_base is False (the shared equation of a difference).
@@ -650,6 +657,40 @@ class Deriver:
             return None
         rv = diff - sum(terms)
         return terms, rv, (ROYAL_BEST[rv] if rv else None)
+
+    PURE = {0}
+    PURE_LENGTHS = (2, 4, 6, 8)   # differences are even, members odd: a pure sum has even length
+
+    def shortest_pure(self, diff, avail, base, quad_of):
+        """The shortest sum of distinct earlier primes equal to diff, with
+        no royal part; among equally short sums the larger primes first,
+        compared term by term (the order _fixed tries them in).  The base is
+        never a candidate, so the length equals the minimal pure length K
+        that paper/stats.py computes.  Returns the terms, or None when no
+        pure sum of at most eight primes exists (the four exceptional
+        differences) or the search budget runs out."""
+        if diff <= 0:
+            return None
+        cand = [p for p in avail[:bisect.bisect_right(avail, diff)] if p != base]
+        prefix = [0]
+        for p in cand:
+            prefix.append(prefix[-1] + p)
+        for count in self.PURE_LENGTHS:
+            terms = self._fixed(diff, count, self.PURE, cand, prefix,
+                                quad_of, quad_of[base])
+            if terms is not None:
+                return terms
+        return None
+
+    def stored(self, diff, avail, base, quad_of, exclude_base=True):
+        """The representation the chain stores: the shortest pure sum when
+        there is one (base excluded), otherwise the largest-first form
+        closed by a royal value (`canonical`, with exclude_base as given).
+        Returns (terms, royal_value, royal_text) or None."""
+        terms = self.shortest_pure(diff, avail, base, quad_of)
+        if terms is not None:
+            return terms, 0, None
+        return self.canonical(diff, avail, base, quad_of, exclude_base)
 
     def solve(self, diff, avail, base, quad_of, exclude_base=True):
         """avail: ascending list of primes of all earlier quads (incl. last).
@@ -1443,12 +1484,15 @@ def extend_chain(data, want_count=None, upto=None, one_per_quad=False,
             key = str(diff)
             entry = diffs.get(key)
             if entry is None:
-                # the shared equation of a difference is searched over
-                # every member below it, the base included: the quads
-                # that reuse it have a base above the difference, which
-                # no term of it can equal
-                res = deriver.canonical(diff, avail, base, quad_of,
-                                        exclude_base=False)
+                # the stored form: the shortest pure sum, the base left
+                # out so that its length is the minimal length K; only the
+                # four exceptional differences fall back to the
+                # largest-first form with a royal value, searched over
+                # every member below the difference, the base included
+                # (the quads that reuse it have a base above the
+                # difference, which no term of it can equal)
+                res = deriver.stored(diff, avail, base, quad_of,
+                                     exclude_base=False)
                 if res is None:
                     continue
                 terms, rv, text = res
@@ -1466,7 +1510,7 @@ def extend_chain(data, want_count=None, upto=None, one_per_quad=False,
             if base in entry_members(entry):
                 # this member's base is below its own difference, so the
                 # shared equation would use it as a term; it gets its own
-                own = deriver.canonical(diff, avail, base, quad_of)
+                own = deriver.stored(diff, avail, base, quad_of)
                 if own is None:
                     record = None
                     continue
