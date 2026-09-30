@@ -10,13 +10,12 @@ below it): arithmetic, distinct members, base never used as a term, every
 term below the target.  Every royal expression must use each of 2, 3, 5, 7
 at most once, with + and *, and multiply at most two of them.  Every
 stored additive equation is also re-derived here with a search of its own,
-and must agree: the largest-first form (from the remainder take the largest
-unused earlier prime not above it, again and again; back up when a choice
-leads nowhere; a royal value only for a remainder no prime fits into) when
-its royal closing is empty or a plain sum of royal members; when that
-closing would need a product, the shortest sum of distinct earlier primes
-(base excluded, larger primes preferred among equally short sums) if one
-exists, and the product form only if none does.
+and must agree: largest first (from the remainder take the largest unused
+earlier prime not above it, again and again; back up when a choice leads
+nowhere; a royal value only for a remainder no prime fits into), the
+closing tried in three passes: 0 or a plain sum of royal members first,
+then one product of two royal members, then two products.  The stored
+equation must be the result of the first pass that succeeds.
 For the other three primes of a quad it checks the fixed forms
 
     p+2 = p + 2        p+6 = p + (2*3)        p+8 = (p+6) + 2
@@ -60,10 +59,16 @@ def royal_ok(text):
 ROYAL_VALUES = set(lc.ROYAL_BEST)      # the 30 values of + and * expressions
 
 
-def largest_first(diff, pool, excluded):
+PASSES = [frozenset(p) | {0} for p in lc.ROYAL_PASSES[:3]]   # + only; one product; two
+
+
+def largest_first(diff, pool, excluded, allowed=None):
     """Independent re-derivation of the rule the chain stores its additive
     equations by.  pool: ascending earlier primes; excluded: the base when
-    it may not be a term.  Returns the terms, or None."""
+    it may not be a term; allowed: the closings accepted in this pass
+    (default: every royal value).  Returns the terms, or None."""
+    if allowed is None:
+        allowed = ROYAL_VALUES | {0}
     pool = [p for p in pool if p <= diff]
     used = {excluded} if excluded is not None else set()
     budget = [2_000_000]
@@ -86,7 +91,7 @@ def largest_first(diff, pool, excluded):
                 if rest is not None:
                     return [p] + rest
             i -= 1
-        return [] if rem in ROYAL_VALUES else None   # royal only when no prime fits
+        return [] if rem in allowed else None   # royal only when no prime fits
 
     return go(diff, len(pool))
 
@@ -244,27 +249,20 @@ def main(path):
 
     def verify(label, diff, pool, base, terms, rv, royal, lf_excluded):
         nonlocal n_pure, n_royal
-        lf = largest_first(diff, pool, lf_excluded)
-        lf_rv = diff - sum(lf) if lf is not None else None
-        if lf is not None and (lf_rv == 0 or '*' not in lc.ROYAL_BEST[lf_rv]):
-            # case 1: largest-first closes without a product -> it is stored
-            if terms != lf or rv != lf_rv:
-                report(f"{label}: stored {terms} + {rv}, largest-first rule gives {lf} + {lf_rv}")
-            else:
-                n_royal += 1
-            return
-        # largest-first would need a product: the shortest pure sum wins if one exists
-        pure = shortest_pure(diff, pool, base)
-        if pure is not None:
-            if terms != pure or rv != 0:
-                report(f"{label}: stored {terms} + {rv}, shortest pure sum is {pure}")
-            else:
-                n_pure += 1
-            return
-        if lf is None or terms != lf or rv != lf_rv:
-            report(f"{label}: stored {terms} + {rv}, largest-first rule gives {lf} + {lf_rv}")
+        for k, allowed in enumerate(PASSES):
+            want = largest_first(diff, pool, lf_excluded, allowed)
+            if want is not None:
+                break
         else:
-            n_royal += 1
+            report(f"{label}: no largest-first derivation found"); return
+        want_rv = diff - sum(want)
+        if terms != want or rv != want_rv:
+            report(f"{label}: stored {terms} + {rv}, largest-first (pass {k + 1}) gives {want} + {want_rv}")
+            return
+        if k == 0:
+            n_pure += 1          # closed by 0 or a plain royal sum
+        else:
+            n_royal += 1         # needed a product (pass 2) or two (pass 3)
 
     for key, entry in diffs.items():
         n, target = entry["first"]
@@ -300,9 +298,8 @@ def main(path):
           "(+ and * over distinct members of 2, 3, 5, 7; products of two)")
     print(f"by rule   : {canonical:,} later primes checked against "
           "p + 2, p + (2*3), (p+6) + 2")
-    print(f"stored    : {rederived:,} additive equations re-derived "
-          f"({n_royal:,} largest-first, {n_pure:,} shortest pure sums in place "
-          "of a product closing)")
+    print(f"stored    : {rederived:,} additive equations re-derived largest-first "
+          f"({n_pure:,} closed by 0 or a plain royal sum, {n_royal:,} needing a product)")
     for p in problems:
         print("  problem:", p)
     return 1 if bad else 0

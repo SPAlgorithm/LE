@@ -22,17 +22,19 @@ Rules
   may multiply only TWO of them: (5*7) + (2*3) is allowed, (2*5*7) and
   5*(7 + (2*3)) are not.  The terms are chosen largest first: from the
   remainder take the largest unused earlier prime not above it, again and
-  again, backing up when a choice leads nowhere, and a royal value closes
-  what no prime covers.  When that closing would need a PRODUCT of royal
-  members, the shortest sum of distinct earlier primes (2, 4, 6 or 8 of
-  them, larger primes preferred among equally short sums) is stored
-  instead; only when no such sum exists either (the difference 82) does
-  the product stay.
+  again, and when no prime fits the remainder must be 0 or a royal value,
+  which closes the equation; when it is not, back up and try the next
+  smaller prime.  The closing is tried in three passes, exactly as the -d
+  switch does it: first 0 or a plain SUM of royal members (3, 5 + 3, ...);
+  only if no choice of primes ends that way, one product ((5*7) + 3); only
+  if that fails too, two products.  A product therefore appears only where
+  every largest-first path needs one (below 10^9: the difference 82).
       2081  = 1879 + 199 + 3                         largest first, royal 3
-      388691 = 375259 + 13009 + 199 + 197 + 19 + 5 + 3
-                                                     largest first, royal 5 + 3
-      13001 = 9439 + 3461 + 101                      largest first would need
-                                                     3467 + ... + (5*7): shortest sum instead
+      31721 = 25309 + 5659 + 199 + 197 + 193 + 109 + 19 + 17 + 11 + 5 + 3
+                                                     13 would leave 6 = (2*3):
+                                                     backed up to 11, royal 5 + 3
+      13001 = 9439 + 3461 + 101                      3467 and 3463 leave no
+                                                     plain closing; 3461 + 101 does
       101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)      products, because no sum
                                                      of primes reaches 82
 
@@ -79,11 +81,9 @@ Storage (qarray.json next to this script)
   and "expv" hold the M, E1 and E2 term lists).  When a later quad produces
   a difference that is already in the table its equations are reused; only
   a new difference triggers a new search.  The entries "2" and "6" are the
-  fixed forms shared by every quad's later primes.  The largest-first
-  search runs over every member below the difference, the base included,
-  because a quad that reuses the entry has a base above its difference; the
-  shortest-sum search that replaces a product closing leaves the base out,
-  so that its length is the minimal length K of paper/stats.py.  A member whose base is below its own difference (the base
+  fixed forms shared by every quad's later primes.  The search runs over
+  every member below the difference, the base included, because a quad that
+  reuses the entry has a base above its difference.  A member whose base is below its own difference (the base
   may then not be a term of any way) keeps its own equations in "own" of
   its derivation record; below 10^9 that is two members, 101 (quad 2, base
   among the terms of 82) and 821 (quad 4, base in the M way of 622).
@@ -131,7 +131,7 @@ import sys
 import time
 
 ROYAL = (2, 3, 5, 7)
-FORMAT = 18          # 18: largest-first unless it needs a royal product; then the shortest pure sum
+FORMAT = 19          # 19: largest first, closing by + first, then one product, then two (the -d passes)
 # Folder that holds the cache: next to the script, or next to the binary
 # when packaged with PyInstaller.
 if getattr(sys, "frozen", False):
@@ -580,11 +580,12 @@ def quadruplets_from(start, segment=1 << 20):
 # Difference search:  diff = (quad primes) + (royal expression)
 # --------------------------------------------------------------------------
 class Deriver:
-    """`stored` writes a difference the way the chain stores it: the
-    largest-first form (`canonical`) when its royal closing is empty or a
-    plain sum of royal members; when that closing would need a product, the
-    shortest sum of distinct earlier primes (`shortest_pure`, built on
-    `_fixed`); and the product form only when no such sum exists (82).
+    """`stored` writes a difference the way the chain stores it: largest
+    first with backtracking (`_search`, the engine of the -d switch), the
+    closing tried in three passes, a plain royal sum or 0 first, then one
+    product, then two.  `canonical` is the older single-pass form (any
+    royal closing accepted) and `shortest_pure` the minimal-length search
+    of the statistics; neither is stored any more.
     `solve` is the older fewest-terms search; nothing calls it any more, it
     is kept for reference.  It ranked candidate equations by
 
@@ -685,20 +686,27 @@ class Deriver:
                 return terms
         return None
 
+    CHAIN_PASSES = ROYAL_PASSES[:3]   # + only; + one product; + two products (no minus)
+
     def stored(self, diff, avail, base, quad_of, exclude_base=True):
-        """The representation the chain stores.  First the largest-first
-        form (`canonical`, with exclude_base as given); if its royal closing
-        is empty or a plain sum of royal members, that is the answer.  If it
-        would need a product, the shortest pure sum (base excluded) replaces
-        it when one exists; otherwise the product form stays.
+        """The representation the chain stores: largest earlier prime first,
+        backing up when a choice leads nowhere, the closing tried in three
+        passes as the -d switch does: 0 or a plain sum of royal members
+        first, then one product of two royal members, then two products.
+        avail: ascending primes of all earlier quads; base: never a term
+        unless exclude_base is False (the shared equation of a difference).
         Returns (terms, royal_value, royal_text) or None."""
-        res = self.canonical(diff, avail, base, quad_of, exclude_base)
-        if res is not None and (not res[2] or '*' not in res[2]):
-            return res
-        terms = self.shortest_pure(diff, avail, base, quad_of)
-        if terms is not None:
-            return terms, 0, None
-        return res
+        if diff <= 0:
+            return None
+        pool = avail[:bisect.bisect_right(avail, diff)]
+        excl = base if (exclude_base or self.one_per_quad) else None
+        for allowed in self.CHAIN_PASSES:
+            terms = self._search(diff, pool, excl, quad_of, False,
+                                 allowed=allowed | {0}, min_allowed=0)
+            if terms is not None:
+                rv = diff - sum(terms)
+                return terms, rv, (ROYAL_BEST[rv] if rv else None)
+        return None
 
     def solve(self, diff, avail, base, quad_of, exclude_base=True):
         """avail: ascending list of primes of all earlier quads (incl. last).
@@ -1492,12 +1500,10 @@ def extend_chain(data, want_count=None, upto=None, one_per_quad=False,
             key = str(diff)
             entry = diffs.get(key)
             if entry is None:
-                # the stored form: largest first, searched over every
-                # member below the difference, the base included (the quads
-                # that reuse it have a base above the difference, which no
-                # term of it can equal); when that closing would need a
-                # royal product, the shortest pure sum with the base left
-                # out replaces it, so that its length is the minimal length K
+                # the stored form: largest first, closing by a plain royal
+                # sum before any product, searched over every member below
+                # the difference, the base included (the quads that reuse it
+                # have a base above the difference, which no term can equal)
                 res = deriver.stored(diff, avail, base, quad_of,
                                      exclude_base=False)
                 if res is None:

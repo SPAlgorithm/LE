@@ -2,7 +2,7 @@
 
 > **Ladhe's Quad Conjecture: every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.**
 >
-> (Every first member's gap is written by one rule: after the base, always the largest earlier prime that still leaves a solvable remainder, again and again, a royal value covering only what no prime can; where that closing would need a product of royal members, the shortest sum of distinct earlier primes is written instead. That is a literal sum for all but 30 of the 28,386 gaps below 10^9; the 30 with the gap 82 close with one product, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
+> (Every first member's gap is written by one rule: after the base, always the largest earlier prime that still leaves a solvable remainder, again and again, a royal value covering only what no prime can, and a plain sum of royal members preferred over a product wherever any choice of primes allows it. That is a literal sum for all but 30 of the 28,386 gaps below 10^9; the 30 with the gap 82 close with one product, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
 
 `lc.py` grows a q-array of prime "quads" from the royal quad and shows how
 the first prime of every quad is derived from earlier ones.
@@ -130,25 +130,28 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
       remainder must be 0 or a royal value, which closes the equation;
       when a choice leads to a remainder that cannot be finished, back up
       and try the next smaller prime;
-   3. if that closing would be a PRODUCT of royal members, write instead the
-      shortest sum of distinct earlier primes that equals the difference
-      (2, 4, 6 or 8 of them, the base left out, larger primes preferred
-      among equally short sums); only when no such sum exists either, which
-      happens for the difference 82 alone, does the product stay.
+   3. the closings allowed are widened in three passes, exactly as `-d`
+      does it: first 0 or a plain SUM of royal members (3, 5 + 3, 7 + 5 + 2,
+      ...); only if no choice of primes ends that way, one product of two
+      royal members ((3*5) + 7); only if that fails too, two products. The
+      first pass that succeeds is stored, so a product appears only where
+      every largest-first path needs one: below 10^9, the difference 82.
 
    ```
-   2081   = 1879 + 199 + 3                          199, then the royal 3
-   388691 = 375259 + 13009 + 199 + 197 + 19 + 5 + 3 largest first, royal 5 + 3
-   13001  = 9439 + 3461 + 101                       largest first would give
-                                                    3467 + 19 + 17 + 13 + 11 + (5*7)
-   1871   = 1489 + 199 + 109 + 19 + 17 + 13 + 11 + 7 + 5 + 2
-   101    = 19 + 17 + 13 + 11 + (5*7) + (2*3)       products, because no sum
+   2081  = 1879 + 199 + 3                           199, then the royal 3
+   31721 = 25309 + 5659 + 199 + 197 + 193 + 109 + 19 + 17 + 11 + 5 + 3
+                                                    13 would leave 6 = (2*3), so
+                                                    back up to 11 and close 5 + 3
+   13001 = 9439 + 3461 + 101                        3467 and 3463 leave no plain
+                                                    closing; 3461 leaves 101
+   101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)        products, because no sum
                                                     of primes reaches 82
    ```
 
-   Where the shortest sum is used its length is the minimal length K that
-   `paper/stats.py` computes; `paper/check.py` re-derives every stored
-   equation by this rule with a search of its own.
+   The shortest equation is not the aim: 3562 = 3461 + 101 is found because
+   the larger members lead nowhere, not because it is short. `paper/stats.py`
+   computes the shortest lengths separately; `paper/check.py` re-derives
+   every stored equation by this rule with a search of its own.
 
 5. Storage in `qarray.json` beside the script: each quad records, per
    prime, only the base and the difference, e.g. `191 = 109 + 82` is
@@ -160,10 +163,9 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    says so; only a new difference triggers a new search. The next run loads
    the file and computes only quads that are not there yet.
 
-   The largest-first search runs over every member below the difference,
+   That shared equation is searched over every member below the difference,
    the base included, because any quad reusing it has a base larger than its
-   own difference; the shortest-sum search that replaces a product closing
-   leaves the base out, so that its length is the minimal length K. A member whose base is *below* its difference cannot use the
+   own difference. A member whose base is *below* its difference cannot use the
    base in any of its ways, so it keeps its own equations in the derivation
    record instead: quad 2 writes `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`
    while quad 3, reusing the same difference 82 with the base 109, writes
@@ -200,7 +202,7 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
 
    ```
    Quad 2000: 31252931
-     31252931 = 31210849 + 34849 + 5651 + 1481 + 101
+     31252931 = 31210849 + 34849 + 5659 + 829 + 199 + 197 + 193 + 109 + 19 + 17 + 11
    ```
 
 ## Where does a number sit?
@@ -214,7 +216,7 @@ $ ./lc 1210872 -o --near
 Quad 205: 1210871
   1210871 = 1182289 + 25309 + 3259 + 11 + 3
 Quad 206: 1228391
-  1228391 = 1210879 + 15641 + 1871
+  1228391 = 1210879 + 16069 + 829 + 199 + 197 + 193 + 17 + 5 + 3
 ```
 
 The value needs no relation to the chain: it can be even, composite, or land
@@ -242,11 +244,14 @@ so you can see one step further back without running the tool again:
 ```
 $ ./lc 2000 -o --chain
 Quad 2000: 31252931
-  31252931 = 31210849 + 34849 + 5651 + 1481 + 101
+  31252931 = 31210849 + 34849 + 5659 + 829 + 199 + 197 + 193 + 109 + 19 + 17 + 11
       -> Q23: 34849 = 34847 + 2
-      -> Q10: 5651 = 3469 + 2081 + 101
-      -> Q5: 1481 = 829 + 199 + 197 + 193 + 19 + 17 + 13 + 11 + 3
-      -> Q2: 101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
+      -> Q10: 5659 = 5657 + 2
+      -> Q4: 829 = 827 + 2
+      -> Q3: 199 = 197 + 2
+      -> Q3: 197 = 191 + (2*3)
+      -> Q3: 193 = 191 + 2
+      -> Q2: 109 = 107 + 2
 ```
 
 Four rules. It hangs off the **A line only**, so `-aem` still prints M, M1, E1,
@@ -275,8 +280,8 @@ distribution:
 
 ```
 $ python3 lc.py 1 200 -c 5 -v | tail -2
-78 quads shown (of 200 scanned), 2500 quads in the cache (qarray.json)
-(columns in the additive equation -> how many members: 2: 1, 3: 26, 5: 78, 6: 1, 7: 55, 8: 7, 9: 11, 10: 20, 12: 1)
+60 quads shown (of 200 scanned), 2500 quads in the cache (qarray.json)
+(columns in the additive equation -> how many members: 2: 1, 3: 23, 5: 60, 6: 1, 7: 63, 8: 7, 9: 14, 10: 20, 11: 8, 12: 3)
 ```
 
 Two things are worth noticing in that distribution. There is no 4, and there
@@ -386,8 +391,8 @@ and an exponential equation that do not use the base at all. `-A` (default),
 `-M` and `-E` pick which to print; combine them (`-AME`, `-ME`) to see
 several, labeled `A:`, `M:`, `M1:`, `E1:`, `E2:`, `E3:`.
 
-- **A, additive**: the rules above; the largest earlier prime first, the
-  shortest sum of primes where the closing would need a royal product.
+- **A, additive**: the rules above; the largest earlier prime first, a
+  plain royal closing before any product.
 - **M, multiplicative**: any members, quad primes and royal members alike,
   may be multiplied in pairs, and multiplication is preferred over addition.
   Greedy: take the largest unused member, multiply it by the largest member
@@ -547,7 +552,7 @@ figures:
 | `ladhe_quad_conjecture.tex`, `.pdf` | the paper (`pdflatex ladhe_quad_conjecture.tex`, run twice) |
 | `qarray_1e9.json` | the chain up to 10^9 (28,387 quads, 23 MB), built with `python3 lc.py --upto 999999999 --cache paper/qarray_1e9.json`; in the repository it is shipped as `qarray_1e9.json.gz`, run `gunzip` before using it |
 | `quads_1e9.csv` | one row per quad member: for a first prime the base, gap, the A/M/E1/E2 equations and minimal lengths (M1/E3 are in the JSON); for the other three primes only their fixed form |
-| `check.py` | independent re-verification of every stored equation (largest-first, or the shortest pure sum where largest-first would need a royal product), prints the dataset SHA-256 |
+| `check.py` | independent re-verification of every stored equation (largest-first, closing passes in the -d order), prints the dataset SHA-256 |
 | `stats.py` | every number quoted in the paper, plus `appendix_rows.tex` and the CSV |
 
 ## Executable
