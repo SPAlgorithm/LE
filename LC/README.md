@@ -31,6 +31,7 @@ python3 lc.py 1 200 -c 3 8     # ... three to eight columns (-cols, --columns to
 python3 lc.py -g 20 200        # every quad with the gap 22 or 202 (-g 20,200 too)
 python3 lc.py 1 500 -g 82      # of quads 1 to 500, only those with the gap 82
 python3 lc.py 25 --all         # list all four primes in each heading (equations are the first prime's)
+python3 lc.py 25 --compact     # show a fully used quad as its top prime and --, e.g. 19-- for 19 + 17 + 13 + 11 (display only)
 python3 lc.py -d 53            # derive any integer from the quad members below it
 python3 lc.py -d 53 83         # every integer from 53 to 83, one line each
 python3 lc.py 25 --recompute   # ignore qarray.json and rebuild

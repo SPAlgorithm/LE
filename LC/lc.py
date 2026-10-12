@@ -1176,6 +1176,24 @@ def diff_text(entry):
     return " + ".join(parts)
 
 
+def compact_rhs(rhs, owner, members):
+    """Display only (--compact): a quad whose four primes are all plain columns
+    is shown once as its top prime and '--', so 19 + 17 + 13 + 11 reads 19--.
+    The equation and its column count are unchanged."""
+    cols = rhs.split(" + ")
+    present = {int(c) for c in cols if c.isdigit()}
+    out, done = [], set()
+    for c in cols:
+        n = owner.get(int(c)) if c.isdigit() else None
+        if n is None or not all(p in present for p in members[n]):
+            out.append(c)
+            continue
+        if n not in done:
+            done.add(n)
+            out.append(f"{max(members[n])}--")
+    return " + ".join(out)
+
+
 def a_line(qn, der, diffs):
     """The right-hand side of one member's additive equation."""
     if qn == 1:
@@ -1619,7 +1637,7 @@ def gap_picks(quads, values):
 
 def show(data, start=None, end=None, upto=None, picks=None, cols=None,
          chain=False, verbose=False, all_members=False, ways="A", only=False,
-         gaps=None, out=sys.stdout):
+         gaps=None, compact=False, out=sys.stdout):
     """start / end are quad numbers (1-based, inclusive); either may be None.
     One number N from the command line means end=N, the first N quads.
     picks is the -o list: show exactly those quads, in that order.
@@ -1627,8 +1645,18 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     gaps is the -g filter: values, each standing for the next valid gap among
     the quads in scope.  Returns False when -g found no gap at all.
     chain adds, under every A line, the equation of each term at or above
-    CHAIN_MIN."""
+    CHAIN_MIN.  compact folds whole quads to 'top--' in the A lines (display
+    only)."""
     quads, diffs = data["quads"], data["diffs"]
+    owner, members = {}, {}
+    if compact:
+        for q in data["quads"]:
+            members[q["n"]] = q["primes"]
+            for p in q["primes"]:
+                owner[p] = q["n"]
+
+    def fold(rhs):
+        return compact_rhs(rhs, owner, members) if compact else rhs
     if start is not None:
         quads = [q for q in quads if q["n"] >= start]
     if end is not None:
@@ -1755,13 +1783,14 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                                 w("      also (with -): "
                                   + "  |  ".join(d["alternatives_with_minus"]) + "\n")
                             continue
-                        w(f"  {pre}{d['target']} = {d['base']} + {diff_text(entry)}\n")
+                        w(f"  {pre}{d['target']} = "
+                          + fold(f"{d['base']} + {diff_text(entry)}") + "\n")
                         if chain:
                             for t in entry["terms"]:
                                 if t < CHAIN_MIN:
                                     continue
                                 tq, td = der_of[t]
-                                w(f"      -> Q{tq}: {t} = {a_line(tq, td, diffs)}\n")
+                                w(f"      -> Q{tq}: {t} = {fold(a_line(tq, td, diffs))}\n")
                         if verbose:
                             note = (f"royal: {entry['royal']} = {entry['royal_value']}"
                                     if entry["royal"] else "no royal part needed")
@@ -1791,6 +1820,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     tail = f" (of {scanned} scanned)" if filtered else ""
     w(f"{len(quads)} quad{'s' if len(quads) != 1 else ''} shown{tail}, "
       f"{held} quad{'s' if held != 1 else ''} in the cache ({cache_name(data)})\n")
+    if compact:
+        w("(19-- means the whole quad 19 + 17 + 13 + 11; display only)\n")
     if verbose and tally:
         spread = ", ".join(f"{n}: {tally[n]}" for n in sorted(tally))
         w(f"(columns in the additive equation -> how many members: {spread})\n")
@@ -1971,6 +2002,10 @@ def main(argv=None):
     ap.add_argument("--one-per-quad", action="store_true",
                     help="stricter rule: an equation may take at most one member "
                          "from each quad (uses its own cache file)")
+    ap.add_argument("--compact", action="store_true",
+                    help="show a quad whose four primes are all used as its top "
+                         "prime and --, e.g. 19-- for 19 + 17 + 13 + 11 (display "
+                         "only; the equation is unchanged)")
     ap.add_argument("--recompute", action="store_true",
                     help="ignore the saved equations and rebuild from scratch")
     ap.add_argument("--cache", metavar="FILE", help="cache file to use")
@@ -2071,7 +2106,7 @@ def main(argv=None):
     found = show(data, start=start, end=end, upto=upto, picks=picks, cols=cols,
                  chain=args.chain, verbose=args.verbose,
                  all_members=args.all, ways=ways or "A",
-                 only=args.only and not whole, gaps=gaps)
+                 only=args.only and not whole, gaps=gaps, compact=args.compact)
     if args.verbose:
         print(f"({cached} quads came from {cache_name(data)}, "
               f"{added} computed now)")
