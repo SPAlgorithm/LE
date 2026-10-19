@@ -20,6 +20,9 @@ For the other three primes of a quad it checks the fixed forms
 
     p+2 = p + 2        p+6 = p + (2*3)        p+8 = (p+6) + 2
 
+It also checks p = 11 (mod 30) and decimal digit sum = 2 (mod 3) for
+every first member, reporting the digit-sum range and violation count.
+
 It also counts fallback flags and prints the SHA-256 of the dataset so a
 reader can confirm the file is the published one.
 """
@@ -139,6 +142,8 @@ def main(path):
     quads, diffs = data["quads"], data["diffs"]
     checked = bad = fallbacks = skipped = closings = canonical = 0
     rederived = 0
+    digit_sums = []
+    digit_sum_bad = first_residue_bad = 0
     problems = []
 
     def report(msg):
@@ -152,6 +157,18 @@ def main(path):
         closings += 1
         if not royal_ok(text):
             report(f"{where}: royal expression {text!r} breaks the rule")
+
+    # Necessary first-member conditions; no search code is used here.
+    for q in quads:
+        p = q["primes"][0]
+        digit_sum = sum(int(d) for d in str(p))
+        digit_sums.append(digit_sum)
+        if p < 11 or p % 30 != 11:
+            first_residue_bad += 1
+            report(f"{p}: first member must be >= 11 and 11 mod 30")
+        if digit_sum < 2 or (digit_sum - 2) % 3 != 0:
+            digit_sum_bad += 1
+            report(f"{p}: decimal digit sum {digit_sum} is not 2 + 3n (n >= 0)")
 
     # Every royal expression in the file, wherever it is stored.
     for key, entry in diffs.items():
@@ -292,6 +309,10 @@ def main(path):
     print(f"file      : {os.path.basename(path)}  ({os.path.getsize(path):,} bytes)")
     print(f"sha256    : {sha}")
     print(f"quads     : {len(quads):,}  (largest first prime {quads[-1]['primes'][0]:,})")
+    if digit_sums:
+        print(f"digit sums: {len(digit_sums):,} checked, {digit_sum_bad} violations, "
+              f"range {min(digit_sums)}..{max(digit_sums)}; "
+              f"{first_residue_bad} first-member congruence violations")
     print(f"equations : {checked:,} checked, {bad} bad, {fallbacks} fallback flags"
           + (f", {skipped} members without a derivation" if skipped else ""))
     print(f"closings  : {closings:,} royal expressions checked "

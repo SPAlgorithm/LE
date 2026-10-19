@@ -1176,9 +1176,21 @@ def diff_text(entry):
     return " + ".join(parts)
 
 
+def quad_maps(data):
+    """owner: prime -> quad number (0 for the royal 2, 3, 5, 7);
+    members: quad number -> its four primes.  Used by compact_rhs."""
+    owner, members = {p: 0 for p in ROYAL}, {0: sorted(ROYAL)}
+    for q in data["quads"]:
+        members[q["n"]] = q["primes"]
+        for p in q["primes"]:
+            owner[p] = q["n"]
+    return owner, members
+
+
 def compact_rhs(rhs, owner, members):
-    """Display only (--compact): a quad whose four primes are all plain columns
-    is shown once as its top prime and '--', so 19 + 17 + 13 + 11 reads 19--.
+    """Display only (the default; --full turns it off): a quad whose four
+    primes are all plain columns is shown once as its top prime and '--', so
+    19 + 17 + 13 + 11 reads 19-- and the royal 7 + 5 + 3 + 2 reads 7--.
     The equation and its column count are unchanged."""
     cols = rhs.split(" + ")
     present = {int(c) for c in cols if c.isdigit()}
@@ -1637,7 +1649,7 @@ def gap_picks(quads, values):
 
 def show(data, start=None, end=None, upto=None, picks=None, cols=None,
          chain=False, verbose=False, all_members=False, ways="A", only=False,
-         gaps=None, compact=False, out=sys.stdout):
+         gaps=None, compact=True, out=sys.stdout):
     """start / end are quad numbers (1-based, inclusive); either may be None.
     One number N from the command line means end=N, the first N quads.
     picks is the -o list: show exactly those quads, in that order.
@@ -1645,15 +1657,10 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     gaps is the -g filter: values, each standing for the next valid gap among
     the quads in scope.  Returns False when -g found no gap at all.
     chain adds, under every A line, the equation of each term at or above
-    CHAIN_MIN.  compact folds whole quads to 'top--' in the A lines (display
-    only)."""
+    CHAIN_MIN.  compact folds a fully used quad to 'top--' in every equation
+    line (display only; the stored equations are unchanged)."""
     quads, diffs = data["quads"], data["diffs"]
-    owner, members = {}, {}
-    if compact:
-        for q in data["quads"]:
-            members[q["n"]] = q["primes"]
-            for p in q["primes"]:
-                owner[p] = q["n"]
+    owner, members = quad_maps(data) if compact else ({}, {})
 
     def fold(rhs):
         return compact_rhs(rhs, owner, members) if compact else rhs
@@ -1760,7 +1767,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                             if canon in printed:
                                 continue          # repeats an earlier line
                             printed.append(canon)
-                            w(f"  {pre}{d['target']} = {e}\n")
+                            w(f"  {pre}{d['target']} = {fold(e)}\n")
                             if verbose and not first:
                                 by_quad = {}
                                 for m in ops_members(ops_parse(e)):
@@ -1775,7 +1782,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                         continue
                     if way == "A":
                         if first:
-                            w(f"  {pre}{d['target']} = {d['royal']}\n")
+                            w(f"  {pre}{d['target']} = {fold(d['royal'])}\n")
                             if d.get("alternatives"):
                                 w("      also (+,*): "
                                   + "  |  ".join(d["alternatives"]) + "\n")
@@ -1808,9 +1815,9 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                                           + ([] if first else [("p", d["base"])])))
                     text = ops_text(e["terms"])
                     if first:
-                        w(f"  {pre}{d['target']} = {text}\n")
+                        w(f"  {pre}{d['target']} = {fold(text)}\n")
                         continue
-                    w(f"  {pre}{d['target']} = {d['base']} + {text}\n")
+                    w(f"  {pre}{d['target']} = {fold(str(d['base']) + ' + ' + text)}\n")
                     if verbose:
                         w(sources(d, entry, ops_members(e["terms"]), None,
                                   e.get("fallback", False)))
@@ -1821,7 +1828,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     w(f"{len(quads)} quad{'s' if len(quads) != 1 else ''} shown{tail}, "
       f"{held} quad{'s' if held != 1 else ''} in the cache ({cache_name(data)})\n")
     if compact:
-        w("(19-- means the whole quad 19 + 17 + 13 + 11; display only)\n")
+        w("(19-- is the whole quad 19 + 17 + 13 + 11 and 7-- the royal quad "
+          "7 + 5 + 3 + 2; display only, --full spells out every term)\n")
     if verbose and tally:
         spread = ", ".join(f"{n}: {tally[n]}" for n in sorted(tally))
         w(f"(columns in the additive equation -> how many members: {spread})\n")
@@ -1834,7 +1842,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
 # --------------------------------------------------------------------------
 # -d N : derive an arbitrary integer from the quad members below it
 # --------------------------------------------------------------------------
-def derive_numbers(data, first, last, deriver, verbose=False, out=sys.stdout):
+def derive_numbers(data, first, last, deriver, verbose=False, out=sys.stdout,
+                   compact=True):
     """Print  n = (quad primes below n, largest first) + (royal expression)
     for every n from first to last.  Quad primes are only added; minus and
     multiplication appear only in the royal expression, which may use
@@ -1842,6 +1851,7 @@ def derive_numbers(data, first, last, deriver, verbose=False, out=sys.stdout):
     extend_chain(data, upto=last, one_per_quad=deriver.one_per_quad)
     allp = sorted(p for q in data["quads"] for p in q["primes"])
     quad_of = {p: q["n"] for q in data["quads"] for p in q["primes"]}
+    owner, members = quad_maps(data) if compact else ({}, {})
     w = out.write
     ok = True
     for n in range(first, last + 1):
@@ -1855,7 +1865,8 @@ def derive_numbers(data, first, last, deriver, verbose=False, out=sys.stdout):
         parts = [str(t) for t in terms]
         if rem or not terms:
             parts.append(royal_closing(rem, terms))
-        w(f"{n} = " + " + ".join(parts) + "\n")
+        rhs = " + ".join(parts)
+        w(f"{n} = " + (compact_rhs(rhs, owner, members) if compact else rhs) + "\n")
         if verbose:
             by_quad = {}
             for t in terms:
@@ -2002,10 +2013,12 @@ def main(argv=None):
     ap.add_argument("--one-per-quad", action="store_true",
                     help="stricter rule: an equation may take at most one member "
                          "from each quad (uses its own cache file)")
-    ap.add_argument("--compact", action="store_true",
-                    help="show a quad whose four primes are all used as its top "
-                         "prime and --, e.g. 19-- for 19 + 17 + 13 + 11 (display "
-                         "only; the equation is unchanged)")
+    ap.add_argument("--full", action="store_true",
+                    help="spell out every term; by default a quad whose four "
+                         "primes are all used is shown as its top prime and --, "
+                         "e.g. 19-- for 19 + 17 + 13 + 11 and 7-- for the royal "
+                         "7 + 5 + 3 + 2 (display only; the equation is unchanged)")
+    ap.add_argument("--compact", action="store_true", help=argparse.SUPPRESS)
     ap.add_argument("--recompute", action="store_true",
                     help="ignore the saved equations and rebuild from scratch")
     ap.add_argument("--cache", metavar="FILE", help="cache file to use")
@@ -2037,7 +2050,7 @@ def main(argv=None):
             ap.error("-d needs whole numbers >= 0 with N <= M")
         ok = derive_numbers(data, first, last,
                             Deriver(one_per_quad=args.one_per_quad),
-                            verbose=args.verbose)
+                            verbose=args.verbose, compact=not args.full)
         return 0 if ok else 1
 
     if args.near:                       # the numbers are values, not quad numbers
@@ -2106,7 +2119,7 @@ def main(argv=None):
     found = show(data, start=start, end=end, upto=upto, picks=picks, cols=cols,
                  chain=args.chain, verbose=args.verbose,
                  all_members=args.all, ways=ways or "A",
-                 only=args.only and not whole, gaps=gaps, compact=args.compact)
+                 only=args.only and not whole, gaps=gaps, compact=not args.full)
     if args.verbose:
         print(f"({cached} quads came from {cache_name(data)}, "
               f"{added} computed now)")

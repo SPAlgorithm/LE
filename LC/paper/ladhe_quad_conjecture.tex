@@ -23,6 +23,7 @@
 \newtheorem{question}{Question}
 \newtheorem{theorem}{Theorem}
 \newtheorem{hypothesis}{Hypothesis}
+\newtheorem*{digitsumproposition}{Proposition (Decimal digit sum)}
 
 \newcommand{\Q}{\mathcal{Q}}
 \newcommand{\Pool}{\mathcal{P}}
@@ -42,7 +43,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 12, September 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 14, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -101,7 +102,10 @@ unlike in the conjecture itself, $-$ is allowed alongside $+$ and
 $\times$; this is unconditional below $10^9$ and rests beyond that
 only on a mild growth condition. We explain carefully what the conjecture
 does and does not say about locating the next quadruplet, give a heuristic
-for why such representations are plentiful, and state open questions. The utility that builds the chain and
+for why such representations are plentiful, and state open questions. We also make explicit the decimal digit-sum consequence of the first-member
+congruence: every first member has digit sum $2+3n$, for some nonnegative
+integer $n$, a property verified for all $28{,}387$ first members below $10^9$.
+The utility that builds the chain and
 the full dataset are available at
 \url{https://github.com/SPAlgorithm/LE}.
 \end{abstract}
@@ -177,6 +181,30 @@ concerns single primes written as sums of three primes and underlies a
 hash-based signature scheme \cite{LadheScheme}. The present note is about
 prime \emph{quadruplets} and is self-contained.
 
+
+\begin{digitsumproposition}
+Let $(p,p+2,p+6,p+8)$ be a prime quadruplet with $p\ge11$, and let
+$s_{10}(p)$ denote the sum of the decimal digits of $p$. Then
+\[
+  s_{10}(p)\equiv2\pmod3,
+  \qquad s_{10}(p)=2+3n\quad\text{for some }n\in\mathbb Z_{\ge0}.
+\]
+\end{digitsumproposition}
+\begin{proof}
+The first-member congruence $p\equiv11\pmod{30}$ gives $p\equiv2\pmod3$.
+Write $p=\sum_{j=0}^{r}a_j10^j$, where $a_j$ are its decimal digits.
+Since $10\equiv1\pmod3$, we have
+$s_{10}(p)=\sum_{j=0}^{r}a_j\equiv p\equiv2\pmod3$.
+The digit sum is positive, so it is $2+3n$ with $n\ge0$.
+\end{proof}
+For example, $s_{10}(101)=2$, $s_{10}(191)=11$, and $s_{10}(821)=11$.
+This is an unconditional consequence of the existing congruence, valid at
+any size, rather than a further conjecture limited to the computed range.
+It concerns the first member of each $\Q_k$, $k\ge1$; the royal seed and
+$(5,7,11,13)$ are excluded. The condition is necessary but not sufficient:
+$131$ ends in $1$ and has digit sum $5$, but $133=7\times19$ is composite,
+so $131$ does not begin a prime quadruplet.
+
 \section{Definitions and rules}
 \label{sec:defs}
 
@@ -225,6 +253,14 @@ quadruplet. (The stricter reading ``at most one member per quadruplet''
 already fails at $\Q_2$: $101-19=82$, and no single member of $\Q_1$ leaves
 a remainder in $\R$.) A member $t$ of $\Q_1$ is written as a royal
 expression alone, e.g.\ $11=(2\times3)+5$.
+
+When all four members of one quadruplet occur among the summands we
+abbreviate them by the largest member followed by two dashes: \code{19--}
+stands for $19+17+13+11$, \code{199--} for $199+197+193+191$, and
+\code{7--} for the whole royal quad $7+5+3+2$. This is a display convention
+only: the four members remain four distinct terms, the length of the
+representation is unchanged, and the dataset stores every term. The utility
+prints this form by default and spells every term out under \code{--full}.
 
 Only the first member $p$ of $\Q_k$ is given such a representation by
 search. Its three companions are written
@@ -553,11 +589,11 @@ and only when even that fails a product of three. A range \code{-d 53 83}
 prints one line per integer:
 \begin{small}\begin{verbatim}
   python3 lc.py -d 16      16 = 13 + 3
-  python3 lc.py -d 53      53 = 19 + 17 + 7 + 5 + 3 + 2
+  python3 lc.py -d 53      53 = 19 + 17 + 7--
   python3 lc.py -d 55      55 = 19 + 17 + 11 + 5 + 3
   python3 lc.py -d 76      76 = 19 + 17 + (5*7) + 3 + 2
   python3 lc.py -d 99      99 = 19 + 13 + (2*5*7) - 3
-  python3 lc.py -d 101     101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
+  python3 lc.py -d 101     101 = 19-- + (5*7) + (2*3)
   python3 lc.py -d 999986171
                            999986171 = 999900529 + 82729 + 2089 + 821 + 3
 \end{verbatim}\end{small}
@@ -585,7 +621,7 @@ equations of Section~\ref{sec:conj} otherwise never use.
 \begin{small}\begin{verbatim}
   11 = (2*3) + 5        also: (2*7) - 3  |  (3*7) - (2*5)  |  7 + 5 + 2 - 3
   13 = (2*5) + 3
-  17 = 7 + 5 + 3 + 2
+  17 = 7--
   19 = (2*7) + 5
 \end{verbatim}\end{small}
 
@@ -594,7 +630,7 @@ Base $m_2=19$, gap $101-19=82$. The pool is $\Q_1$, whose members other
 than the base sum to $41$, so a royal value is unavoidable; $41$ itself is
 flat, $(5\times7)+(2\times3)$.
 \begin{small}\begin{verbatim}
-  A:  101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
+  A:  101 = 19-- + (5*7) + (2*3)
   M:  101 = 19 + (17*3) + (13*2) + 5
   M1: 101 = (19*5) + (3*2)
   E1: 101 = 19 + (7^2) + (11*3)
@@ -612,7 +648,7 @@ a member whose base lies \emph{below} its own gap, as at $\Q_2$ and
 $\Q_4$, cannot use that base in any of its ways and keeps equations of its
 own instead. Below $10^9$ only two first members do, $101$ and $821$.
 \begin{small}\begin{verbatim}
-  A:  191 = 109 + 19 + 17 + 13 + 11 + (3*5) + 7
+  A:  191 = 109 + 19-- + (3*5) + 7
   M:  191 = 109 + (19*3) + (7*2) + 11
   M1: 191 = (19*7) + (17*3) + 5 + 2
   E1: 191 = 109 + (7^2) + (11*3)
@@ -630,7 +666,7 @@ fewest terms, only for a plain closing. The
 two exponential variants differ here: E1 starts from the largest base
 $19^2$, E2 also, but then prefers $3^5=243$ over $5^3=125$.
 \begin{small}\begin{verbatim}
-  A:  821 = 199 + 197 + 193 + 191 + 19 + 17 + 5
+  A:  821 = 199-- + 19 + 17 + 5
   M:  821 = 199 + (197*3) + (13*2) + 5
   M1: 821 = (199*3) + (103*2) + 13 + 5
   E1: 821 = 199 + (19^2) + (5^3) + 101 + 17 + 11 + 7
@@ -648,7 +684,7 @@ The largest-first rule gives exactly this seven-term form, and its
 closing $14=7+5+2$ is a plain sum, so pass (i) stores it. The multiplicative way is one
 product.
 \begin{small}\begin{verbatim}
-  A:  1871 = 1489 + 199 + 109 + 19 + 17 + 13 + 11 + 7 + 5 + 2
+  A:  1871 = 1489 + 199 + 109 + 19-- + 7 + 5 + 2
   M:  1871 = 1489 + (191*2)
   M1: 1871 = (829*2) + (19*7) + (17*3) + 13 + 11 + 5
   E1: 1871 = 1489 + (19^2) + (7*3)
@@ -670,7 +706,7 @@ itself a member, and closes at $0$.
   M1: 13001 = (5659*2) + (199*7) + (19*13) + (5*3) + 17 + 11
   E1: 13001 = 9439 + (19^2) + (13^3) + (109*7) + 107 + 101 + 17 + 11 + 5
   E2: 13001 = 9439 + (13^3) + (19^2) + (109*7) + 107 + 101 + 17 + 11 + 5
-  E3: 13001 = (109^2) + 829 + 193 + 19 + 17 + 13 + 11 + (7*5) + 3
+  E3: 13001 = (109^2) + 829 + 193 + 19-- + (7*5) + 3
 \end{verbatim}\end{small}
 
 \paragraph{Two consecutive quadruplets near $3.5\times10^7$.}
@@ -743,6 +779,16 @@ checked $170{,}340$ equations ($6$ per first member, the four members of
 $\Q_1$ included), $3{,}421$ royal expressions, $85{,}158$ fixed forms and
 $3{,}411$ re-derived additive equations ($3{,}409$ closed by $0$ or a
 plain royal sum, $2$ needing a product), and found $0$ errors.
+
+
+\paragraph{Digit-sum verification.}
+The independent checker also tests $p\equiv11\pmod{30}$ and
+$s_{10}(p)\equiv2\pmod3$ for every stored first member.
+All $28{,}387$ first members below $10^9$, from $11$ to $999{,}986{,}171$,
+satisfy both conditions, with zero violations. Their decimal digit sums
+range from $2$ to $65$. The released CSV was checked separately and gives
+the same count and range. This finite verification illustrates the
+proposition above; its proof applies beyond the dataset as well.
 
 \paragraph{Minimal lengths.}
 \code{stats.py} recomputes, for every distinct gap and independently of the
@@ -1083,7 +1129,8 @@ their fixed form. The control chains of Section~\ref{sec:density} are generated 
 \code{density.py} from a fixed seed, so its table is reproducible without
 any further data. Interactive use: \code{python3 lc.py} asks for a number of
 quadruplets; \code{-M}, \code{-E}, \code{-AME} select the ways;
-\code{--all} lists all four members in each heading; \code{-v} shows which
+\code{--all} lists all four members in each heading; \code{--full} spells out
+the members behind a \code{19--}; \code{-v} shows which
 quadruplet each term comes from; \code{-d N} prints a derivation of any
 integer $N$ as in Section~\ref{sec:cover}, extending the chain first if $N$
 lies beyond the cache.
@@ -1179,7 +1226,8 @@ Zenodo, \url{https://doi.org/10.5281/zenodo.20575084}.
 \label{app:table}
 
 For each member: the quad index $k$, the member $t$, the base $m_k$, the gap
-$D$, the additive equation stored by the utility (base first), its length
+$D$, the additive equation stored by the utility (base first; a fully used
+quadruplet folded to \code{19--} as in Section~\ref{sec:defs}), its length
 including the base, the minimal pure length $K$ of the gap
 (``--'' for the exceptional gaps), and, when the gap was met before, the quad where its
 equation was first found. $\Q_1$ is written from royal members only; the
@@ -1217,8 +1265,8 @@ $D$ & $k$ & $t$ & A & M & E1 \\
 \midrule
 22  & 169 & 1006331 & \code{19 + 3} & \code{(11*2)} & \code{(3\^{}2) + 13} \\
 82  & 2   & 101     & \code{17 + 13 + 11 + (5*7) + (2*3)} & \code{(17*3) + (13*2) + 5} & \code{(7\^{}2) + (11*3)} \\
-172 & 435 & 3512231 & \code{109 + 19 + 17 + 13 + 11 + 3} & \code{(19*7) + (17*2) + 5} & \code{(13\^{}2) + 3} \\
-382 & 6   & 1871    & \code{199 + 109 + 19 + 17 + 13 + 11 + 7 + 5 + 2} & \code{(191*2)} & \code{(19\^{}2) + (7*3)} \\
+172 & 435 & 3512231 & \code{109 + 19-- + 3} & \code{(19*7) + (17*2) + 5} & \code{(13\^{}2) + 3} \\
+382 & 6   & 1871    & \code{199 + 109 + 19-- + 7 + 5 + 2} & \code{(191*2)} & \code{(19\^{}2) + (7*3)} \\
 \bottomrule
 \end{tabular}
 \end{scriptsize}
@@ -1236,6 +1284,7 @@ $D=p_k-m_k$ & the gap of the first member of $\Q_k$ \\
 $\Pool_k=\Q_1\cup\dots\cup\Q_{k-1}$ & the pool available to $\Q_k$ \\
 $\R$, $\Radd$ & royal values: all ($30$, every one flat), additive ($11$) \\
 $\R^{\pm}$ & non-negative royal values with $+,-,\times$ ($83$) \\
+\code{19--}, \code{7--} & one whole quadruplet, $19+17+13+11$; the royal quad, $7+5+3+2$ \\
 $K$ & minimal pure length of a gap \\
 $C_k$, $T_k$ & integers with a derivation over $\Q_0..\Q_k$; largest $T$ with $[0,T]\subseteq C_k$ \\
 $S_k$ & $S_3=T_3$, $S_k=S_{k-1}+4p_k+16$: the proven lower bound for $T_k$ \\

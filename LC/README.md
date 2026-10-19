@@ -31,7 +31,7 @@ python3 lc.py 1 200 -c 3 8     # ... three to eight columns (-cols, --columns to
 python3 lc.py -g 20 200        # every quad with the gap 22 or 202 (-g 20,200 too)
 python3 lc.py 1 500 -g 82      # of quads 1 to 500, only those with the gap 82
 python3 lc.py 25 --all         # list all four primes in each heading (equations are the first prime's)
-python3 lc.py 25 --compact     # show a fully used quad as its top prime and --, e.g. 19-- for 19 + 17 + 13 + 11 (display only)
+python3 lc.py 25 --full        # spell out every term; by default a fully used quad is its top prime and --, 19-- for 19 + 17 + 13 + 11
 python3 lc.py -d 53            # derive any integer from the quad members below it
 python3 lc.py -d 53 83         # every integer from 53 to 83, one line each
 python3 lc.py 25 --recompute   # ignore qarray.json and rebuild
@@ -104,7 +104,10 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    `11 = (2*3) + 5`. Alternatives, including the ones that use `-`, are
    listed under it. Minus is not used anywhere else.
    Layout: products are wrapped in parentheses and larger terms come first,
-   so `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`.
+   so `101 = 19-- + (5*7) + (2*3)`. A quad whose four primes are all used
+   is shown as its top prime and `--`: `19--` is `19 + 17 + 13 + 11`, `7--`
+   is the royal `7 + 5 + 3 + 2`. That is display only (the stored equation
+   keeps every term, and so does the column count); `--full` spells them out.
 4. The first prime `p` of quad k (k >= 2) is written as
 
    ```
@@ -145,7 +148,7 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
                                                     back up to 11 and close 5 + 3
    13001 = 9439 + 3461 + 101                        3467 and 3463 leave no plain
                                                     closing; 3461 leaves 101
-   101   = 19 + 17 + 13 + 11 + (5*7) + (2*3)        products, because no sum
+   101   = 19-- + (5*7) + (2*3)                      products, because no sum
                                                     of primes reaches 82
    ```
 
@@ -158,7 +161,7 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    prime, only the base and the difference, e.g. `191 = 109 + 82` is
    stored as base 109, diff 82, and `193 = 191 + 2` as base 191, diff 2.
    A separate `diffs` table holds one equation per unique difference
-   (`82 = 19 + 17 + 13 + 11 + (3*5) + 7`; the entries `2` and `6` are the fixed
+   (`82 = 19-- + (3*5) + 7`; the entries `2` and `6` are the fixed
    forms shared by every quad's later primes). When a later quad produces
    a difference already in the table, its equation is reused and the output
    says so; only a new difference triggers a new search. The next run loads
@@ -168,9 +171,9 @@ you have named. `-s` only matters with `-o`. Everything else combines freely.
    the base included, because any quad reusing it has a base larger than its
    own difference. A member whose base is *below* its difference cannot use the
    base in any of its ways, so it keeps its own equations in the derivation
-   record instead: quad 2 writes `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`
+   record instead: quad 2 writes `101 = 19-- + (5*7) + (2*3)`
    while quad 3, reusing the same difference 82 with the base 109, writes
-   `191 = 109 + 19 + 17 + 13 + 11 + (3*5) + 7`. Below 10^9 exactly two
+   `191 = 109 + 19-- + (3*5) + 7`. Below 10^9 exactly two
    members need their own equations, 101 (quad 2, base among the terms of
    82) and 821 (quad 4, base in the M way of 622).
 6. The display shows one line per quad, the prime ending in 1 with its full
@@ -275,6 +278,9 @@ counting the base and each top-level piece of the royal expression:
         ^base   ^1   ^2   ^3   ^4   ^5      ^6
 ```
 
+(The default display shows that line as `15731 = 15649 + 19-- + (3*5) + 7`;
+the four members behind `19--` still count as four columns.)
+
 `-c N M` keeps a range, so `-c 3 8` is three to eight columns. The footer says
 how many quads survived out of how many were scanned, and `-v` prints the whole
 distribution:
@@ -290,7 +296,7 @@ never can be: the gap is even and every quadruplet member is odd, so the base
 plus an even number of members lands on an odd column count unless the royal
 part contributes a second piece, as `5 + 3` does in the 8-column lines. And
 the single 6-column equation among the first 200 quads is quad 2 itself,
-`101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`: it is the only quad there whose
+`101 = 19-- + (5*7) + (2*3)`: it is the only quad there whose
 base lies below its own difference, so it cannot use 19 as a term, while
 every later quad with the gap 82 can and shows seven columns.
 
@@ -454,7 +460,7 @@ appear only among 2, 3, 5, 7. The largest quad prime that fits is taken
 first, then the next, and the remainder is closed with a royal expression
 in the same vocabulary as the chain equations: royal members added if that
 suffices, else one product of two members, else two. Primes are re-chosen
-between those passes if that is what it takes, so `53 = 19 + 17 + 7 + 5 + 3 + 2`
+between those passes if that is what it takes, so `53 = 19 + 17 + 7--`
 rather than `19 + 17 + 13 + 7 - 3`, and `928 = 823 + 103 + 2` rather than
 `829 + 19 + 13 + (2*5*7) - 3`. Only when no choice of primes closes with
 `+` and `*` does a minus enter, and only when even that fails a product of
@@ -463,11 +469,11 @@ three; below 300,000 that is nine integers (0, 1, 4, 92, 93, 94, 96, 99,
 
 ```
 python3 lc.py -d 16     16 = 13 + 3
-python3 lc.py -d 53     53 = 19 + 17 + 7 + 5 + 3 + 2
+python3 lc.py -d 53     53 = 19 + 17 + 7--
 python3 lc.py -d 55     55 = 19 + 17 + 11 + 5 + 3
 python3 lc.py -d 76     76 = 19 + 17 + (5*7) + 3 + 2
 python3 lc.py -d 99     99 = 19 + 13 + (2*5*7) - 3
-python3 lc.py -d 101    101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)
+python3 lc.py -d 101    101 = 19-- + (5*7) + (2*3)
 python3 lc.py -d 0      0 = 3 + 2 - 5
 python3 lc.py -d 5      5 = 2 + 3
 python3 lc.py -d 7      7 = 2 + 5
@@ -582,3 +588,35 @@ its own folder. Rebuild it after editing `lc.py`.
 | `qarray_one_per_quad.json` | same, for `--one-per-quad` (created on first use) |
 | `paper/` | the paper, its dataset and the reproduction scripts (see "Paper") |
 | `videos/` | two explainer videos, on YouTube at https://youtu.be/_XSOJ0Yj77Q (the conjecture, 28 min) and https://youtu.be/JNWvt3hS540 (build any number, 11 min); `videos/LINKS.md` has the links and thumbnails, plus the narration scripts, the YouTube upload package and the `build/` pipeline that rendered them (the MP4 files are too large for GitHub) |
+
+
+## Version 13: decimal digit sums
+
+For every first member `p` of a chain quadruplet `(p, p+2, p+6, p+8)`
+with `p >= 11`, the sum of its decimal digits is `2 + 3n`, where `n` is
+an integer at least zero: `2, 5, 8, 11, ...`.
+For example, `101 -> 2`, `191 -> 11`, and `821 -> 11`.
+
+This follows unconditionally from `p = 11 (mod 30)` and the fact that a
+number and its decimal digit sum agree modulo 3. It holds beyond the
+computed range. It applies to the first member, excluding the royal seed
+and `(5,7,11,13)`. It is necessary but not sufficient: `131` satisfies the
+digit-sum condition, but `133 = 7*19` is composite.
+
+Run `python3 check.py qarray_1e9.json` from this release's files directory
+to verify the equations and the first-member congruence and digit-sum
+conditions. All 28,387 first members below 10^9 pass; their digit sums
+range from 2 to 65. The dataset and representation rules are unchanged.
+
+
+## Version 14: whole quads shown as `19--`
+
+A quad whose four primes are all used in an equation is displayed as its
+top prime followed by `--`: `19--` is `19 + 17 + 13 + 11`, `199--` is
+`199 + 197 + 193 + 191`, and `7--` is the royal quad `7 + 5 + 3 + 2`.
+So `165701 = 157279 + 5659 + 2089 + 199 + 197 + 109 + 107 + 19 + 17 + 13 + 11 + 2`
+reads `165701 = 157279 + 5659 + 2089 + 199 + 197 + 109 + 107 + 19-- + 2`.
+This is a display convention only: `qarray.json`, `qarray_1e9.json` and
+`quads_1e9.csv` store every term, the column count is unchanged, and
+`--full` prints the spelled-out form. The LE-Games app shows the same
+notation (Compact switch on the Quad chain screen).

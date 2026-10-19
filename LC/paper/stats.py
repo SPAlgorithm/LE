@@ -67,6 +67,7 @@ def main(path):
     data = json.load(open(path))
     quads, diffs = data["quads"], data["diffs"]
     deriver = lc.Deriver()
+    owner, members = lc.quad_maps(data)      # 19-- folding, appendix rows only
     print(f"dataset: {os.path.basename(path)}")
     print(f"quads after the royal quad: {len(quads):,}")
     print(f"largest first prime: {quads[-1]['primes'][0]:,}")
@@ -249,7 +250,7 @@ def main(path):
             if q["n"] <= 25:
                 rows_tex.append(
                     f"{q['n']} & {der['target']} & {base} & {diff} & "
-                    f"\\texttt{{{eq.replace('*', '*')}}} & {nt} & {kp} & {src} \\\\")
+                    f"\\texttt{{{lc.compact_rhs(eq, owner, members)}}} & {nt} & {kp} & {src} \\\\")
     with open(os.path.join(folder, "appendix_rows.tex"), "w") as fh:
         fh.write("\n".join(rows_tex) + "\n")
     with open(os.path.join(folder, "quads_1e9.csv"), "w", newline="") as fh:
