@@ -23,7 +23,7 @@
 \newtheorem{question}{Question}
 \newtheorem{theorem}{Theorem}
 \newtheorem{hypothesis}{Hypothesis}
-\newtheorem*{digitsumproposition}{Proposition (Decimal digit sum)}
+\newtheorem*{digitsumproposition}{Proposition (Last digit and digit sum)}
 
 \newcommand{\Q}{\mathcal{Q}}
 \newcommand{\Pool}{\mathcal{P}}
@@ -43,7 +43,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 14, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 15, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -102,9 +102,10 @@ unlike in the conjecture itself, $-$ is allowed alongside $+$ and
 $\times$; this is unconditional below $10^9$ and rests beyond that
 only on a mild growth condition. We explain carefully what the conjecture
 does and does not say about locating the next quadruplet, give a heuristic
-for why such representations are plentiful, and state open questions. We also make explicit the decimal digit-sum consequence of the first-member
-congruence: every first member has digit sum $2+3n$, for some nonnegative
-integer $n$, a property verified for all $28{,}387$ first members below $10^9$.
+for why such representations are plentiful, and state open questions. We also make explicit the decimal consequences of the first-member
+congruence: every first member ends in the digit $1$, and both the member
+itself and its digit sum have the form $2+3n$ for nonnegative integers $n$,
+properties verified for all $28{,}387$ first members below $10^9$.
 The utility that builds the chain and
 the full dataset are available at
 \url{https://github.com/SPAlgorithm/LE}.
@@ -185,19 +186,25 @@ prime \emph{quadruplets} and is self-contained.
 \begin{digitsumproposition}
 Let $(p,p+2,p+6,p+8)$ be a prime quadruplet with $p\ge11$, and let
 $s_{10}(p)$ denote the sum of the decimal digits of $p$. Then
-\[
-  s_{10}(p)\equiv2\pmod3,
-  \qquad s_{10}(p)=2+3n\quad\text{for some }n\in\mathbb Z_{\ge0}.
-\]
+\begin{enumerate}
+\item[(i)] $p\equiv1\pmod{10}$: the first member ends in the digit $1$,
+  and the four members end in $1,3,7,9$;
+\item[(ii)] $p\equiv2\pmod3$, that is, $p=2+3m$ for some integer $m\ge3$;
+\item[(iii)] $s_{10}(p)\equiv2\pmod3$, that is, $s_{10}(p)=2+3n$ for some
+  $n\in\mathbb Z_{\ge0}$.
+\end{enumerate}
 \end{digitsumproposition}
 \begin{proof}
-The first-member congruence $p\equiv11\pmod{30}$ gives $p\equiv2\pmod3$.
+The first-member congruence $p\equiv11\pmod{30}$ gives $p\equiv1\pmod{10}$
+and $p\equiv2\pmod3$, which are (i) and (ii); the other members
+$p+2$, $p+6$, $p+8$ are then $3,7,9\pmod{10}$.
 Write $p=\sum_{j=0}^{r}a_j10^j$, where $a_j$ are its decimal digits.
 Since $10\equiv1\pmod3$, we have
 $s_{10}(p)=\sum_{j=0}^{r}a_j\equiv p\equiv2\pmod3$.
-The digit sum is positive, so it is $2+3n$ with $n\ge0$.
+The digit sum is positive, so it is $2+3n$ with $n\ge0$; this is (iii).
 \end{proof}
-For example, $s_{10}(101)=2$, $s_{10}(191)=11$, and $s_{10}(821)=11$.
+For example, $101=2+3\cdot33$ with $s_{10}(101)=2$, $191=2+3\cdot63$ with
+$s_{10}(191)=11$, and $821=2+3\cdot273$ with $s_{10}(821)=11$.
 This is an unconditional consequence of the existing congruence, valid at
 any size, rather than a further conjecture limited to the computed range.
 It concerns the first member of each $\Q_k$, $k\ge1$; the royal seed and
@@ -782,7 +789,8 @@ plain royal sum, $2$ needing a product), and found $0$ errors.
 
 
 \paragraph{Digit-sum verification.}
-The independent checker also tests $p\equiv11\pmod{30}$ and
+The independent checker also tests $p\equiv11\pmod{30}$, which carries
+the last digit $1$ and $p\equiv2\pmod3$ with it, and
 $s_{10}(p)\equiv2\pmod3$ for every stored first member.
 All $28{,}387$ first members below $10^9$, from $11$ to $999{,}986{,}171$,
 satisfy both conditions, with zero violations. Their decimal digit sums

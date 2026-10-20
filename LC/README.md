@@ -597,8 +597,13 @@ with `p >= 11`, the sum of its decimal digits is `2 + 3n`, where `n` is
 an integer at least zero: `2, 5, 8, 11, ...`.
 For example, `101 -> 2`, `191 -> 11`, and `821 -> 11`.
 
-This follows unconditionally from `p = 11 (mod 30)` and the fact that a
-number and its decimal digit sum agree modulo 3. It holds beyond the
+Two companions come from the same congruence `p = 11 (mod 30)`: every
+first member ends in the digit `1` (the four members end in 1, 3, 7, 9),
+and the first member itself is `2 + 3n` as well: `11 = 2 + 3*3`,
+`101 = 2 + 3*33`, `821 = 2 + 3*273`.
+
+The digit-sum form follows unconditionally from `p = 11 (mod 30)` and the
+fact that a number and its decimal digit sum agree modulo 3. It holds beyond the
 computed range. It applies to the first member, excluding the royal seed
 and `(5,7,11,13)`. It is necessary but not sufficient: `131` satisfies the
 digit-sum condition, but `133 = 7*19` is composite.
@@ -620,3 +625,15 @@ This is a display convention only: `qarray.json`, `qarray_1e9.json` and
 `quads_1e9.csv` store every term, the column count is unchanged, and
 `--full` prints the spelled-out form. The LE-Games app shows the same
 notation (Compact switch on the Quad chain screen).
+
+
+## Version 15: last digit and the `2 + 3n` form
+
+The digit-sum proposition of Version 13 now states all three decimal
+consequences of `p = 11 (mod 30)` for the first member `p` of every chain
+quadruplet: `p` ends in the digit `1` (the four members end in 1, 3, 7, 9),
+`p` itself is `2 + 3n`, and its decimal digit sum is `2 + 3n`. The proof,
+the examples (`101 = 2 + 3*33` with digit sum 2, `191 = 2 + 3*63` with
+digit sum 11) and the verification paragraph are updated to match. The
+dataset, the representation rules and the utility are unchanged (format 19).
+The LE-Games app states the same facts on its About sheet and in shared text.
