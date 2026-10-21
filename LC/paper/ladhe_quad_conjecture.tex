@@ -43,7 +43,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 15, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 16, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -576,6 +576,42 @@ Proposition~\ref{prop:cover} is unconditional below $10^9$; an
 unconditional proof for all $k$ would follow from any Bertrand-type bound
 for prime quadruplets, which is open, although far more than what is
 needed here.
+
+\begin{remark}[A Bertrand-type doubling, and whole quadruplets in a representation]
+\label{rem:doubling}
+Let $t_k=p_k+8$ be the top member of $\Q_k$. Bertrand's postulate puts a
+prime between $n$ and $2n$; the data show the same for quadruplets once
+the chain is under way. For every $k\ge4$ the whole of $\Q_{k+1}$ lies
+between the top member of $\Q_k$ and its double,
+\[
+  t_k<p_{k+1}<t_{k+1}<2t_k\qquad(k\ge4),
+\]
+and the same holds at $k=2$ ($199<218$), while the royal quad has only
+its first member below the double ($11<14<19$). The only failures in the
+whole chain are $k=1$ ($p_2=101>38$) and $k=3$ ($p_4=821>398$). For
+$k\ge4$ the ratio $t_{k+1}/t_k$ never exceeds $1.796$ (at $k=4$,
+$1489/829$). This was checked for all $28{,}386$ consecutive pairs below
+$10^9$ and, in a separate run of the utility, for all $180{,}527$ pairs
+below $10^{10}$.
+
+The rule of Section~\ref{sec:defs} takes the largest unused member not
+above the remainder, so it takes $t_k$ only when the remainder lies below
+the smallest unused member above $t_k$; while $\Q_{k+1}$ is untouched that
+member is $p_{k+1}$, and a second member of $\Q_k$ can then follow only if
+$p_{k+1}\ge 2t_k-2$. The doubling statement therefore confines whole
+quadruplets to the start of the chain, and the data agree: below
+$10^{10}$ no representation uses two members of the same quadruplet
+beyond $\Q_3$, $\Q_2$ contributes at most three of its four members, and
+a quadruplet folds whole, in the notation \code{19--} of
+Section~\ref{sec:defs}, only for $\Q_0$, $\Q_1$ and $\Q_3$. Below $10^9$,
+\code{7--} occurs in $789$ representations, \code{19--} in $3{,}161$,
+\code{199--} in $644$, and \code{19--} together with \code{7--} in a
+further $51$ (below $10^{10}$: $6{,}074$, $19{,}005$, $3{,}994$ and
+$502$); the counts fold the base with its quadruplet, as the display does.
+Whether $p_{k+1}<2t_k$ holds for every $k\ge4$ is a Bertrand-type
+question for quadruplets, open like the growth condition above, although
+under the Hardy--Littlewood heuristic the ratio tends to~$1$.
+\end{remark}
 
 \begin{remark}
 Coverage is a statement about \emph{all} integers with subtraction

@@ -637,3 +637,28 @@ the examples (`101 = 2 + 3*33` with digit sum 2, `191 = 2 + 3*63` with
 digit sum 11) and the verification paragraph are updated to match. The
 dataset, the representation rules and the utility are unchanged (format 19).
 The LE-Games app states the same facts on its About sheet and in shared text.
+
+
+## Version 16: doubling, and whole quads in a sum
+
+Two observations about the chain, both verified below 10^9 and, in a
+separate run of `lc.py --upto 9999999999`, below 10^10 (180,528 quads).
+
+**Doubling, Bertrand style.** Bertrand's postulate puts a prime between
+`n` and `2n`. Write `t` for the top member `p + 8` of a quad. From Q4 on
+the whole next quad lies between `t` and `2 t`: `t < p(next) < t(next) < 2 t`
+for every quad below 10^10. Q2 passes too (`199 < 218`), and the royal
+quad has its first member below the double (`11 < 14`). The only failures
+in the whole chain are Q1 (`19 * 2 = 38`, next quad at 101) and Q3
+(`199 * 2 = 398`, next quad at 821). From Q4 on the ratio `t(next) / t`
+never exceeds 1.796 (`1489 / 829`).
+
+**Whole quads.** The sum takes the largest unused prime that fits, so it
+can use two members of one quad only when the next quad starts above
+about twice the top member. Doubling therefore confines whole quads to
+the start of the chain: no sum uses two members of the same quad beyond
+Q3, Q2 contributes at most three of its four members, and only `7--`,
+`19--` and `199--` ever appear (base folded with its quad, as displayed).
+Below 10^9: `19--` in 3,161 sums, `7--` in 789, `199--` in 644, and
+`19--` with `7--` in a further 51; below 10^10: 19,005, 6,074, 3,994 and
+502. The paper states both as a remark after the covering proposition.
