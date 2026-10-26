@@ -662,3 +662,20 @@ Q3, Q2 contributes at most three of its four members, and only `7--`,
 Below 10^9: `19--` in 3,161 sums, `7--` in 789, `199--` in 644, and
 `19--` with `7--` in a further 51; below 10^10: 19,005, 6,074, 3,994 and
 502. The paper states both as a remark after the covering proposition.
+
+
+## Version 17: neutral title
+
+The paper is now titled *An Additive Closure in the Chain of Prime
+Quadruplets*. The conjecture is stated as "Conjecture 1 (existence form)"
+and referred to as the closure conjecture in the text; the availability
+section says that the utility, the dataset, the Zenodo record and the app
+refer to it as Ladhe's Quad Conjecture, which they continue to do.
+
+A table next to the doubling remark sets Bertrand's postulate for primes
+(a prime between `n` and `2n`: 2 -> 3, 3 -> 5, 5 -> 7, 7 -> 11 and 13, ...)
+beside its quadruplet analogue (a quad whose first member lies between the
+top member `t` and `2 t`): the royal quad finds Q1, Q1 finds nothing, Q2
+finds Q3, Q3 finds nothing, Q4 finds 1481, and from there on every one of
+the 102,946 intervals below 10^10 holds a quad, 75,469 of them by Q100000.
+No mathematical content, data or code changed.

@@ -32,9 +32,7 @@
 \newcommand{\Radd}{\mathcal{R}_{+}}
 \newcommand{\code}[1]{\texttt{#1}}
 
-\title{Ladhe's Quad Conjecture:\\
-Every Prime Quadruplet Is an Additive/Multiplicative/Exponential\\
-Combination of Its Predecessors\thanks{Correspondence:
+\title{An Additive Closure in the Chain of Prime Quadruplets\thanks{Correspondence:
 \texttt{spalgorithm@gmail.com}. Paper and dataset are archived on Zenodo,
 \url{https://doi.org/10.5281/zenodo.22286846} (this DOI always
 resolves to the latest version), and released under
@@ -43,7 +41,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 16, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 17, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -84,7 +82,7 @@ one such expression in every gap brings the bound down to six terms with no
 exception at all. Under a uniform form of the Hardy--Littlewood conjecture
 for eight linear forms we prove that every sufficiently large integer in the
 five residue classes modulo $210$ that a gap can occupy is a sum of two
-first members, so that two terms eventually suffice. We call this \emph{Ladhe's Quad Conjecture} and verify it
+first members, so that two terms eventually suffice. We verify the closure conjecture
 for all $28{,}387$ prime quadruplets below $10^9$ with an independent
 checker. Two further
 representations of each gap, one that prefers multiplication and one that
@@ -416,7 +414,7 @@ We state the observation in three forms. The first is the one the utility
 works with; the second and third are the ones we consider interesting,
 because they bound the number of terms.
 
-\begin{conjecture}[Ladhe's Quad Conjecture, existence form]
+\begin{conjecture}[existence form]
 \label{conj:A}
 The first member $p_k$ of every prime quadruplet $\Q_k$ with $k\ge2$ has an
 additive representation over the chain: $p_k=m_k+\sum_i s_i+r$ with
@@ -581,7 +579,7 @@ needed here.
 \label{rem:doubling}
 Let $t_k=p_k+8$ be the top member of $\Q_k$. Bertrand's postulate puts a
 prime between $n$ and $2n$; the data show the same for quadruplets once
-the chain is under way. For every $k\ge4$ the whole of $\Q_{k+1}$ lies
+the chain is under way (Table~\ref{tab:bertrand}). For every $k\ge4$ the whole of $\Q_{k+1}$ lies
 between the top member of $\Q_k$ and its double,
 \[
   t_k<p_{k+1}<t_{k+1}<2t_k\qquad(k\ge4),
@@ -612,6 +610,41 @@ Whether $p_{k+1}<2t_k$ holds for every $k\ge4$ is a Bertrand-type
 question for quadruplets, open like the growth condition above, although
 under the Hardy--Littlewood heuristic the ratio tends to~$1$.
 \end{remark}
+
+\begin{table}[h]
+\centering
+\footnotesize\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{rrl@{\quad}lrrrl}
+\toprule
+\multicolumn{3}{c}{primes: $n$ to $2n$} & \multicolumn{5}{c}{quadruplets: top member $t_k$ to $2t_k$} \\
+\cmidrule(r){1-3}\cmidrule(l){4-8}
+$n$ & $2n$ & primes between & & $t_k$ & $2t_k$ & how many & first members between \\
+\midrule
+ 2 &  4 & 3          & $\Q_0$ (royal) & 7 & 14 & 1 & 11 \\
+ 3 &  6 & 5          & $\Q_1$ & 19 & 38 & \textbf{0} & none \\
+ 5 & 10 & 7          & $\Q_2$ & 109 & 218 & 1 & 191 \\
+ 7 & 14 & 11, 13     & $\Q_3$ & 199 & 398 & \textbf{0} & none \\
+11 & 22 & 13, 17, 19 & $\Q_4$ & 829 & 1{,}658 & 1 & 1{,}481 \\
+13 & 26 & 17, 19, 23 & $\Q_5$ & 1{,}489 & 2{,}978 & 2 & 1{,}871, 2{,}081 \\
+   &    &            & $\Q_6$ & 1{,}879 & 3{,}758 & 3 & 2{,}081, 3{,}251, 3{,}461 \\
+   &    &            & $\Q_{9}$ & 3{,}469 & 6{,}938 & 1 & 5{,}651 \\
+   &    &            & $\Q_{10}$ & 5{,}659 & 11{,}318 & 1 & 9{,}431 \\
+   &    &            & $\Q_{20}$ & 22{,}279 & 44{,}558 & 4 & 25{,}301, 31{,}721, \dots \\
+   &    &            & $\Q_{100}$ & 477{,}019 & 954{,}038 & 59 & 490{,}571, 495{,}611, \dots \\
+   &    &            & $\Q_{1000}$ & 11{,}740{,}039 & 23{,}480{,}078 & 640 & 11{,}765{,}051, \dots \\
+   &    &            & $\Q_{10000}$ & 265{,}227{,}499 & 530{,}454{,}998 & 7{,}080 & 265{,}381{,}211, \dots \\
+   &    &            & $\Q_{100000}$ & 4{,}825{,}866{,}979 & 9{,}651{,}733{,}958 & 75{,}469 & 4{,}825{,}896{,}611, \dots \\
+\bottomrule
+\end{tabular}
+\caption{Bertrand's postulate for primes, and its quadruplet analogue read
+off the chain: the quadruplets whose first member lies strictly between
+the top member $t_k=p_k+8$ of $\Q_k$ and its double. The analogue fails
+at $\Q_1$ and $\Q_3$ and nowhere else below $10^{10}$: all $102{,}946$
+intervals with $k\ge4$ and $2t_k\le10^{10}$ contain a quadruplet, exactly
+one only at $k=4,9,10$, exactly two at $k=5,7,8$, and at least ten from
+$k=24$ on. Beyond $10^{10}$ the question is open.}
+\label{tab:bertrand}
+\end{table}
 
 \begin{remark}
 Coverage is a statement about \emph{all} integers with subtraction
@@ -1154,7 +1187,10 @@ members at the moment they are first met, for the general constellation?
 The utility, the checker and the statistics script are released in the
 folder \code{LC} of the repository
 \begin{center}\url{https://github.com/SPAlgorithm/LE}\end{center}
-The commands below rebuild everything reported here from scratch.
+The utility, the dataset, the Zenodo record and the companion app refer
+to the conjecture as \emph{Ladhe's Quad Conjecture}; this note uses the
+neutral name. The commands below rebuild everything reported here from
+scratch.
 \begin{small}\begin{verbatim}
   python3 lc.py --upto 999999999 --cache paper/qarray_1e9.json   # 35 s
   python3 paper/check.py paper/qarray_1e9.json                   # 0 bad
@@ -1180,7 +1216,8 @@ integer $N$ as in Section~\ref{sec:cover}, extending the chain first if $N$
 lies beyond the cache.
 
 \paragraph{Videos.}
-Two narrated explanations accompany this note: \emph{Ladhe's Quad
+Two narrated explanations accompany this note, under the name the
+utility and the app use: \emph{Ladhe's Quad
 Conjecture: A New Pattern in Prime Quadruplets} (28~min,
 \url{https://youtu.be/_XSOJ0Yj77Q}), which covers Sections
 \ref{sec:conj}--\ref{sec:next}, and \emph{Build Any Number From Prime
