@@ -9,7 +9,7 @@ the first prime of every quad is derived from earlier ones.
 
 ## $2,000 bounty: break the pattern
 
-**LeSecure AI Inc. pays US $2,000 to the first person who sends a verifiable
+**Shubham and Pankaj Ladhe pay US $2,000 to the first person who sends a verifiable
 counterexample to any one of the five open items below.** Everything we claim
 has been checked by machine only as far as the tables say (10^9 or 10^10). The
 chain can be generated as far as you like with `lc.py`; pick a range where you
