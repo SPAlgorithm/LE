@@ -7,6 +7,89 @@
 `lc.py` grows a q-array of prime "quads" from the royal quad and shows how
 the first prime of every quad is derived from earlier ones.
 
+## $2,000 bounty: break the pattern
+
+**LeSecure AI Inc. pays US $2,000 to the first person who sends a verifiable
+counterexample to any one of the five open items below.** Everything we claim
+has been checked by machine only as far as the tables say (10^9 or 10^10). The
+chain can be generated as far as you like with `lc.py`; pick a range where you
+think the pattern fails, and show us.
+
+### The open items (the bounty applies to each)
+
+1. **The conjecture breaks at some quad.** A prime quadruplet `(p, p+2, p+6, p+8)`
+   whose first member `p` cannot be written as the top member of the previous
+   quad plus a sum of *distinct* earlier quad members, closed by at most one
+   expression in 2, 3, 5, 7 under the rules below (`+` and `*` only, each royal
+   member at most once, at most two in a product). Verified for all 28,387
+   quads below 10^9.
+2. **A gap that needs more than 8 earlier members.** For every quad below 10^9
+   the gap (first member minus the previous quad's top member) is a sum of at
+   most **8** distinct earlier members (`K_pure` in `paper/quads_1e9.csv`:
+   6,475 gaps need 2, 19,472 need 4, 2,065 need 6, 276 need 8, never more).
+   The *stored* equation is longer for many quads, because it follows the
+   largest-first rule rather than the shortest sum; that is not a
+   counterexample. The bound to break is the shortest representation.
+3. **A gap that needs a royal closing other than 22, 82, 172 or 382.** Exactly
+   98 quads below 10^9 have no pure sum of earlier members, and every one of
+   them has one of these four gaps. A congruence argument modulo 210 proves
+   these are the only exceptions in the admissible range below 10^9; beyond
+   that the set is open.
+4. **The doubling fails.** Write `t = p + 8` for a quad's top member. From Q4 on
+   the whole next quad lies between `t` and `2 t`. Checked for all 180,527
+   consecutive pairs below 10^10; the only failures in the chain are Q1
+   (`2 * 19 = 38`, next quad at 101) and Q3 (`2 * 199 = 398`, next quad at 821).
+   Find a quad Qn with n >= 4 and no quad between its top member and twice it.
+5. **A later quad used whole.** Below 10^10 only `7--`, `19--` and `199--` ever
+   appear in a stored equation, and no equation uses two members of the same
+   quad beyond Q3. Find a stored equation that uses all four members of a later
+   quad. (It would break item 4 as well.)
+
+### Proved, no bounty
+
+Listed so that nobody spends time on them. Every first member after 5 ends in
+the digit 1, is of the form `2 + 3n`, and has decimal digit sum `2 + 3n`; this
+is a two-line consequence of `p = 11 (mod 30)` (the proposition in Section 1 of
+the paper), so it cannot fail. For the same reason every gap ends in 2.
+
+### Generate quads as far as you like
+
+```
+git clone https://github.com/SPAlgorithm/LE && cd LE/LC
+python3 lc.py --upto 9999999999 --cache qarray_1e10.json     # every quad below 10^10: ~6 min, ~160 MB, resumes if interrupted
+python3 lc.py --upto 99999999999 --cache qarray_1e11.json    # 11 digits: hours, and a large cache
+python3 lc.py 180000 180010 --cache qarray_1e10.json         # look at quads by number (items 1 and 3: the A line and its closing)
+python3 lc.py -g 22 82 172 382 --cache qarray_1e10.json      # item 3: every quad with an exceptional gap
+python3 paper/stats.py qarray_1e10.json                      # item 2: writes quads_1e10.csv with K_pure, the shortest pure sum, per quad
+python3 lc.py 1 180528 --full --cache qarray_1e10.json | grep -E "[0-9]+--" | grep -v -E "(^|[ =+(])(7|19|199)--"   # item 5: prints nothing below 10^10
+python3 lc.py 1658 -o --near --cache qarray_1e10.json        # item 4: the quads on either side of any value (here 2 * 829)
+python3 lc.py 25 --recompute --cache fresh.json              # rebuild from nothing if you doubt the tool
+python3 paper/check.py qarray_1e10.json                      # independent checker: every line must report 0 bad
+```
+
+`--upto` is the largest first member to include. `./lc` is the prebuilt binary
+for people without Python. The published dataset below 10^9 ships in `paper/`,
+so a claim inside that range can be checked against it in seconds.
+
+### How to claim
+
+Email **spalgorithm@gmail.com** with the quad (all four primes), the exact
+command and cache that produced it, the output, and, for items 1 to 3, the
+argument that no representation under the rules exists. The tool failing to
+find one is not enough on its own: the rules allow backing up and trying
+another member, so a claim must show that the search space is exhausted, or
+attach the exhaustive search script (`paper/stats.py` does this for item 2).
+We re-run every claim with `--recompute`, verify primality independently, and
+answer within 14 days. One prize in total; the first valid claim by email
+timestamp wins; the authors and their families are not eligible; the offer is
+open-ended and may be withdrawn with 30 days' notice on this page. A valid
+counterexample is published here with full credit and the paper is amended in
+its next version.
+
+The statements are those of the paper, *An Additive Closure in the Chain of
+Prime Quadruplets*, https://doi.org/10.5281/zenodo.22286846 (always the latest
+version); the rules are spelled out under "The rules" below.
+
 ## Run it
 
 ```
