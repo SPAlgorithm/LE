@@ -15,6 +15,10 @@ has been checked by machine only as far as the tables say (10^9 or 10^10). The
 chain can be generated as far as you like with `lc.py`; pick a range where you
 think the pattern fails, and show us.
 
+Watch the 4-minute explainer of the rules, the evidence and the five items:
+https://youtu.be/wNvZUdAoExU. The pen-paper-calculator writing challenge is at
+https://youtu.be/swOzyTNOSFQ.
+
 ### The open items (the bounty applies to each)
 
 1. **The conjecture breaks at some quad.** A prime quadruplet `(p, p+2, p+6, p+8)`
@@ -632,6 +636,8 @@ Two explainer videos, narrated and captioned:
 
 - Ladhe's Quad Conjecture: A New Pattern in Prime Quadruplets (28 min): https://youtu.be/_XSOJ0Yj77Q
 - Build Any Number From Prime Quadruplets, Part 2 (11 min): https://youtu.be/JNWvt3hS540
+- Can you write quads with just pen, paper and a calculator? (3½ min): https://youtu.be/swOzyTNOSFQ
+- A $2,000 bounty on a prime-quadruplet pattern: five ways to break it (4 min): https://youtu.be/wNvZUdAoExU
 
 Companion iOS app (the authors' free LE-Games app: the chain, the QuadQuest matching game and a printable practice sheet): https://apps.apple.com/app/id6767880385
 
