@@ -23,13 +23,18 @@ think the pattern fails, and show us.
    expression in 2, 3, 5, 7 under the rules below (`+` and `*` only, each royal
    member at most once, at most two in a product). Verified for all 28,387
    quads below 10^9.
-2. **A gap that needs more than 8 earlier members.** For every quad below 10^9
-   the gap (first member minus the previous quad's top member) is a sum of at
-   most **8** distinct earlier members (`K_pure` in `paper/quads_1e9.csv`:
-   6,475 gaps need 2, 19,472 need 4, 2,065 need 6, 276 need 8, never more).
-   The *stored* equation is longer for many quads, because it follows the
-   largest-first rule rather than the shortest sum; that is not a
-   counterexample. The bound to break is the shortest representation.
+2. **A gap with no sum of 8 or fewer earlier members.** For every quad below
+   10^9 the gap (first member minus the previous quad's top member) can be
+   written as a sum of at most **8** distinct earlier quad members, with no
+   royal value at all (`K_pure` in `paper/quads_1e9.csv`: 6,475 gaps can be
+   done with 2, 19,472 with 4, 2,065 with 6, 276 with 8, none needs more).
+   To break it, exhibit a gap for which *every* pure sum of distinct earlier
+   members needs 9 or more. Two things do not count: the stored equation,
+   which follows the largest-first rule and is often longer than the shortest
+   sum (`1137881 = 1126669 + 9439 + 1489 + 109 + 107 + 19-- + 5 + 3` spells
+   out to 8 members plus the royal value `5 + 3`, and its gap 11,212 has a
+   pure sum of only 4 members); and royal values, which are not members.
+   `19--` counts as four members, `7--` as none.
 3. **A gap that needs a royal closing other than 22, 82, 172 or 382.** Exactly
    98 quads below 10^9 have no pure sum of earlier members, and every one of
    them has one of these four gaps. A congruence argument modulo 210 proves
