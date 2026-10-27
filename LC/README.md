@@ -15,6 +15,10 @@ has been checked by machine only as far as the tables say (10^9 or 10^10). The
 chain can be generated as far as you like with `lc.py`; pick a range where you
 think the pattern fails, and show us.
 
+This is a challenge for every human mind, and for every AI. Bring a pencil, a
+program or a prompt; nobody has broken it yet, and only a counterexample we can
+check counts.
+
 Watch the 4-minute explainer of the rules, the evidence and the five items:
 https://youtu.be/wNvZUdAoExU. The pen-paper-calculator writing challenge is at
 https://youtu.be/swOzyTNOSFQ.
