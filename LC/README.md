@@ -184,7 +184,7 @@ Ctrl-D or Ctrl-C leaves without building anything.
 | `-c N`, `-cols`, `--columns` | keep only equations with N columns; `-c N M` for a range |
 | `-g G`, `-gap`, `--gap` | keep only quads with the gap G, or the next valid gap above it; list several as `-g 20 200` or `-g 20,200` |
 | `-A`, `-M`, `-E` | which ways to print; lower case works too, combine as `-AME` or `-aem` |
-| `--no-royals` | under each equation, a second line with the gap as the shortest sum of earlier quad members and no royal value (`K_pure`); 22, 82, 172 and 382 have none and say so |
+| `--no-royals` | under each equation, a second line with the gap as the shortest sum of earlier quad members and no royal value (`K_pure`); 22, 82, 172 and 382 have none and say so; an equation already free of royals gets the line only when a shorter sum exists |
 | `--all` | list all four primes of a quad in its heading (the equations are always the first prime's) |
 | `-v`, `--verbose` | where each term came from, plus the column distribution |
 | `-d N`, `--derive` | derive any integer; `-d N M` for a range of them |

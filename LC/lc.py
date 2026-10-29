@@ -1661,7 +1661,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     line (display only; the stored equations are unchanged).  no_royals adds,
     under every A line, the same difference as the shortest sum of earlier
     quad members with no royal value (Deriver.shortest_pure, the K_pure of
-    the paper), or a note for the four gaps that have none."""
+    the paper), or a note for the four gaps that have none; a stored line
+    that is already royal-free gets it only when a shorter sum exists."""
     quads, diffs = data["quads"], data["diffs"]
     owner, members = quad_maps(data) if compact else ({}, {})
 
@@ -1707,14 +1708,19 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     pure_solver = Deriver(one_per_quad=data.get("mode") == "one-per-quad")
     allp = sorted(quad_of) if no_royals else None
 
-    def pure_line(d):
+    def pure_line(d, entry):
         terms = pure_solver.shortest_pure(d["diff"], allp, d["base"], quad_of)
         if terms is None:
             return (f"  no royals: none, gap {d['diff']} has no sum of up to 8 "
                     f"earlier quad members (below 10^9 only 22, 82, 172 and "
                     f"382 are like that)\n")
+        label = "no royals"
+        if not entry["royal"]:          # the stored line is already royal-free
+            if len(terms) >= len(entry["terms"]):
+                return ""               # nothing new to say
+            label = "no royals, shorter"
         rhs = " + ".join(map(str, [d["base"]] + terms))
-        return f"  no royals: {d['target']} = {fold(rhs)}\n"
+        return f"  {label}: {d['target']} = {fold(rhs)}\n"
 
     def sources(d, entry, members, royal_note, fallback):
         src = [f"diff {d['diff']}"]
@@ -1823,7 +1829,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                                     if entry["royal"] else "no royal part needed")
                             w(sources(d, entry, entry["terms"], note, False))
                         if no_royals:
-                            w(pure_line(d))
+                            w(pure_line(d, entry))
                         continue
                     e = (d if first else entry).get(key)
                     if e is None:
@@ -1854,8 +1860,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
           "7 + 5 + 3 + 2; display only, --full spells out every term)\n")
     if no_royals:
         w("(no royals: the gap as the shortest sum of earlier quad members, "
-          "largest first, with no 2, 3, 5, 7 value; the stored equation above "
-          "it is unchanged)\n")
+          "largest first, with no 2, 3, 5, 7 value; shown only where the "
+          "stored equation has a royal part or a shorter sum exists)\n")
     if verbose and tally:
         spread = ", ".join(f"{n}: {tally[n]}" for n in sorted(tally))
         w(f"(columns in the additive equation -> how many members: {spread})\n")
@@ -2036,7 +2042,9 @@ def main(argv=None):
                     help="under each equation, also show the gap as a sum of "
                          "earlier quad members alone, no 2, 3, 5, 7 value: the "
                          "shortest such sum, largest member first (K_pure in the "
-                         "paper); 22, 82, 172 and 382 have none and say so")
+                         "paper); 22, 82, 172 and 382 have none and say so; an "
+                         "equation that already has no royal part gets the line "
+                         "only when a shorter sum exists")
     ap.add_argument("--all", action="store_true",
                     help="list all four primes of a quad in its heading "
                          "(default: only the first one, e.g. 101); the "
