@@ -45,7 +45,7 @@ https://youtu.be/swOzyTNOSFQ.
    `19--` counts as four members, `7--` as none. `./lc 1 200 --no-royals`
    prints that shortest pure sum under every stored equation
    (`1022501 = 1022389 + 109 + 3` is followed by
-   `no royals: 1022501 = 1022389 + 101 + 11`).
+   `No Royals: 1022501 = 1022389 + 101 + 11`).
 3. **A gap that needs a royal closing other than 22, 82, 172 or 382.** Exactly
    98 quads below 10^9 have no pure sum of earlier members, and every one of
    them has one of these four gaps. A congruence argument modulo 210 proves

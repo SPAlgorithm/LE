@@ -1711,14 +1711,14 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     def pure_line(d, entry):
         terms = pure_solver.shortest_pure(d["diff"], allp, d["base"], quad_of)
         if terms is None:
-            return (f"  no royals: none, gap {d['diff']} has no sum of up to 8 "
+            return (f"  No Royals: none, gap {d['diff']} has no sum of up to 8 "
                     f"earlier quad members (below 10^9 only 22, 82, 172 and "
                     f"382 are like that)\n")
-        label = "no royals"
+        label = "No Royals"
         if not entry["royal"]:          # the stored line is already royal-free
             if len(terms) >= len(entry["terms"]):
                 return ""               # nothing new to say
-            label = "no royals, shorter"
+            label = "No Royals, shorter"
         rhs = " + ".join(map(str, [d["base"]] + terms))
         return f"  {label}: {d['target']} = {fold(rhs)}\n"
 
@@ -1808,7 +1808,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                         if first:
                             w(f"  {pre}{d['target']} = {fold(d['royal'])}\n")
                             if no_royals:
-                                w("  no royals: none, quad 1 has no earlier quad members\n")
+                                w("  No Royals: none, quad 1 has no earlier quad members\n")
                             if d.get("alternatives"):
                                 w("      also (+,*): "
                                   + "  |  ".join(d["alternatives"]) + "\n")
@@ -1859,7 +1859,7 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
         w("(19-- is the whole quad 19 + 17 + 13 + 11 and 7-- the royal quad "
           "7 + 5 + 3 + 2; display only, --full spells out every term)\n")
     if no_royals:
-        w("(no royals: the gap as the shortest sum of earlier quad members, "
+        w("(No Royals: the gap as the shortest sum of earlier quad members, "
           "largest first, with no 2, 3, 5, 7 value; shown only where the "
           "stored equation has a royal part or a shorter sum exists)\n")
     if verbose and tally:
