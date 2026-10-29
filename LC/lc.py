@@ -1649,7 +1649,7 @@ def gap_picks(quads, values):
 
 def show(data, start=None, end=None, upto=None, picks=None, cols=None,
          chain=False, verbose=False, all_members=False, ways="A", only=False,
-         gaps=None, compact=True, out=sys.stdout):
+         gaps=None, compact=True, no_royals=False, out=sys.stdout):
     """start / end are quad numbers (1-based, inclusive); either may be None.
     One number N from the command line means end=N, the first N quads.
     picks is the -o list: show exactly those quads, in that order.
@@ -1658,7 +1658,10 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     the quads in scope.  Returns False when -g found no gap at all.
     chain adds, under every A line, the equation of each term at or above
     CHAIN_MIN.  compact folds a fully used quad to 'top--' in every equation
-    line (display only; the stored equations are unchanged)."""
+    line (display only; the stored equations are unchanged).  no_royals adds,
+    under every A line, the same difference as the shortest sum of earlier
+    quad members with no royal value (Deriver.shortest_pure, the K_pure of
+    the paper), or a note for the four gaps that have none."""
     quads, diffs = data["quads"], data["diffs"]
     owner, members = quad_maps(data) if compact else ({}, {})
 
@@ -1697,6 +1700,21 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                for d in q["derivations"]} if chain else {})
     reused = new = 0
     labeled = len(ways) > 1
+    # --no-royals: every quad member in the cache, ascending.  shortest_pure
+    # keeps only members not above the difference, and every member not above
+    # a quad's difference belongs to an earlier quad (the difference is below
+    # the quad's own first prime), so one sorted list serves every quad.
+    pure_solver = Deriver(one_per_quad=data.get("mode") == "one-per-quad")
+    allp = sorted(quad_of) if no_royals else None
+
+    def pure_line(d):
+        terms = pure_solver.shortest_pure(d["diff"], allp, d["base"], quad_of)
+        if terms is None:
+            return (f"  no royals: none, gap {d['diff']} has no sum of up to 8 "
+                    f"earlier quad members (below 10^9 only 22, 82, 172 and "
+                    f"382 are like that)\n")
+        rhs = " + ".join(map(str, [d["base"]] + terms))
+        return f"  no royals: {d['target']} = {fold(rhs)}\n"
 
     def sources(d, entry, members, royal_note, fallback):
         src = [f"diff {d['diff']}"]
@@ -1783,6 +1801,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                     if way == "A":
                         if first:
                             w(f"  {pre}{d['target']} = {fold(d['royal'])}\n")
+                            if no_royals:
+                                w("  no royals: none, quad 1 has no earlier quad members\n")
                             if d.get("alternatives"):
                                 w("      also (+,*): "
                                   + "  |  ".join(d["alternatives"]) + "\n")
@@ -1802,6 +1822,8 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
                             note = (f"royal: {entry['royal']} = {entry['royal_value']}"
                                     if entry["royal"] else "no royal part needed")
                             w(sources(d, entry, entry["terms"], note, False))
+                        if no_royals:
+                            w(pure_line(d))
                         continue
                     e = (d if first else entry).get(key)
                     if e is None:
@@ -1830,6 +1852,10 @@ def show(data, start=None, end=None, upto=None, picks=None, cols=None,
     if compact:
         w("(19-- is the whole quad 19 + 17 + 13 + 11 and 7-- the royal quad "
           "7 + 5 + 3 + 2; display only, --full spells out every term)\n")
+    if no_royals:
+        w("(no royals: the gap as the shortest sum of earlier quad members, "
+          "largest first, with no 2, 3, 5, 7 value; the stored equation above "
+          "it is unchanged)\n")
     if verbose and tally:
         spread = ", ".join(f"{n}: {tally[n]}" for n in sorted(tally))
         w(f"(columns in the additive equation -> how many members: {spread})\n")
@@ -1955,8 +1981,8 @@ def ask_number(only=False):
 def main(argv=None):
     ap = argparse.ArgumentParser(
         usage="lc [-h] [--upto VALUE] [-d N [M]] [-v] [-A] [-M] [-E] [-o] [-s] "
-              "[-c N [M]] [-g G [G ...]] [-n] [--chain] [--all] [--one-per-quad] "
-              "[--recompute] [--cache FILE] [N [M]]",
+              "[-c N [M]] [-g G [G ...]] [-n] [--chain] [--no-royals] [--all] "
+              "[--one-per-quad] [--recompute] [--cache FILE] [N [M]]",
         description="Quad chain builder (royal quad 2,3,5,7).")
     ap.add_argument("count", nargs="*", type=int, metavar="N",
                     help="N: the first N quads after the royal quad.  "
@@ -2005,6 +2031,12 @@ def main(argv=None):
                     help="read the numbers as values, not quad numbers, and show "
                          "the quad at or below each one and the quad above it "
                          "(1210872 -o --near shows quads 205 and 206); needs -o")
+    ap.add_argument("--no-royals", "--NoRoyals", "--noroyals", dest="no_royals",
+                    action="store_true",
+                    help="under each equation, also show the gap as a sum of "
+                         "earlier quad members alone, no 2, 3, 5, 7 value: the "
+                         "shortest such sum, largest member first (K_pure in the "
+                         "paper); 22, 82, 172 and 382 have none and say so")
     ap.add_argument("--all", action="store_true",
                     help="list all four primes of a quad in its heading "
                          "(default: only the first one, e.g. 101); the "
@@ -2118,6 +2150,7 @@ def main(argv=None):
     # unlocks --chain, the gaps decide which quads are shown
     found = show(data, start=start, end=end, upto=upto, picks=picks, cols=cols,
                  chain=args.chain, verbose=args.verbose,
+                 no_royals=args.no_royals,
                  all_members=args.all, ways=ways or "A",
                  only=args.only and not whole, gaps=gaps, compact=not args.full)
     if args.verbose:

@@ -42,7 +42,10 @@ https://youtu.be/swOzyTNOSFQ.
    sum (`1137881 = 1126669 + 9439 + 1489 + 109 + 107 + 19-- + 5 + 3` spells
    out to 8 members plus the royal value `5 + 3`, and its gap 11,212 has a
    pure sum of only 4 members); and royal values, which are not members.
-   `19--` counts as four members, `7--` as none.
+   `19--` counts as four members, `7--` as none. `./lc 1 200 --no-royals`
+   prints that shortest pure sum under every stored equation
+   (`1022501 = 1022389 + 109 + 3` is followed by
+   `no royals: 1022501 = 1022389 + 101 + 11`).
 3. **A gap that needs a royal closing other than 22, 82, 172 or 382.** Exactly
    98 quads below 10^9 have no pure sum of earlier members, and every one of
    them has one of these four gaps. A congruence argument modulo 210 proves
@@ -128,6 +131,7 @@ python3 lc.py -g 20 200        # every quad with the gap 22 or 202 (-g 20,200 to
 python3 lc.py 1 500 -g 82      # of quads 1 to 500, only those with the gap 82
 python3 lc.py 25 --all         # list all four primes in each heading (equations are the first prime's)
 python3 lc.py 25 --full        # spell out every term; by default a fully used quad is its top prime and --, 19-- for 19 + 17 + 13 + 11
+python3 lc.py 25 --no-royals   # under each equation, the gap as a sum of earlier quad members alone (no 2, 3, 5, 7 value)
 python3 lc.py -d 53            # derive any integer from the quad members below it
 python3 lc.py -d 53 83         # every integer from 53 to 83, one line each
 python3 lc.py 25 --recompute   # ignore qarray.json and rebuild
@@ -180,6 +184,7 @@ Ctrl-D or Ctrl-C leaves without building anything.
 | `-c N`, `-cols`, `--columns` | keep only equations with N columns; `-c N M` for a range |
 | `-g G`, `-gap`, `--gap` | keep only quads with the gap G, or the next valid gap above it; list several as `-g 20 200` or `-g 20,200` |
 | `-A`, `-M`, `-E` | which ways to print; lower case works too, combine as `-AME` or `-aem` |
+| `--no-royals` | under each equation, a second line with the gap as the shortest sum of earlier quad members and no royal value (`K_pure`); 22, 82, 172 and 382 have none and say so |
 | `--all` | list all four primes of a quad in its heading (the equations are always the first prime's) |
 | `-v`, `--verbose` | where each term came from, plus the column distribution |
 | `-d N`, `--derive` | derive any integer; `-d N M` for a range of them |
