@@ -247,10 +247,22 @@ def main(path):
                 src = e["first"][0] if der["reused"] else ""
             csv_rows.append([q["n"], q["primes"][0], der["target"], base, diff,
                              eq, m, e1, e2, kp, ka, kf])
-            if q["n"] <= 25:
+            # Appendix A: the first member of each of the first 25 quads, with
+            # the stored equation and, under it, the shortest pure sum (no
+            # royal value) as lc.py's shortest_pure and the app compute it.
+            if q["n"] <= 25 and i == 0:
+                if q["n"] == 1:
+                    pure = ""
+                else:
+                    terms = deriver.shortest_pure(der["diff"], avail[:4 * (q["n"] - 1)],
+                                                  der["base"], quad_of)
+                    pure = ("none" if terms is None else lc.compact_rhs(
+                        f"{der['base']} + " + " + ".join(str(t) for t in terms), owner, members))
+                cell = f"\\texttt{{{lc.compact_rhs(eq, owner, members)}}}"
+                if pure:
+                    cell += f"\\newline {{\\itshape no royals:}} \\texttt{{{pure}}}"
                 rows_tex.append(
-                    f"{q['n']} & {der['target']} & {base} & {diff} & "
-                    f"\\texttt{{{lc.compact_rhs(eq, owner, members)}}} & {nt} & {kp} & {src} \\\\")
+                    f"{q['n']} & {der['target']} & {base} & {diff} & {cell} & {nt} & {kp} & {src} \\\\")
     with open(os.path.join(folder, "appendix_rows.tex"), "w") as fh:
         fh.write("\n".join(rows_tex) + "\n")
     with open(os.path.join(folder, "quads_1e9.csv"), "w", newline="") as fh:

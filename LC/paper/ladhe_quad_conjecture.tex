@@ -41,7 +41,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 17, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 18, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -72,7 +72,7 @@ any choice of members allows it.
 The precise form of the observation is that the gap $D$ between a
 first member and its base is a sum of at most $8$ distinct earlier
 members, with exactly four exceptional gaps, $22$, $82$, $172$ and $382$,
-that need a small expression in the royal members $2,3,5,7$. Members of
+that need a small expression in the royal members $2,3,5,7$. Every other gap has a form with no royal value at all, which the utility and the app call its \emph{no-royals} form. Members of
 earlier quadruplets are only ever added; $+$ and $\times$ act on nothing
 but the royal members, each used at most once and never more than two of
 them in a product. A congruence lemma modulo $210$ shows that these four
@@ -443,6 +443,25 @@ classes being excluded by the lemma. The last occurrence of an exceptional
 gap below $10^9$ is at $\Q_{28063}$ (first member $985{,}124{,}051$). In
 all, $98$ of the $28{,}386$ gaps are exceptional.
 \end{conjecture}
+
+\paragraph{No-royals forms.}
+A sum of pool members alone, with no royal value, is what the utility
+(\code{lc.py}, switch \code{--no-royals}) and the companion app call the
+\emph{no-royals} form of a gap. Conjecture~\ref{conj:B} says that every
+gap except $22$, $82$, $172$ and $382$ has one of at most eight terms,
+even though the stored equation, which closes largest first with a royal
+value whenever one fits, usually shows a royal value. For $\Q_{30}$ the
+stored equation is
+$72221 = 69499 + 2089 + 199 + 197 + 193 + 19 + 17 + 5 + 3$ and the
+shortest no-royals form is $72221 = 69499 + 1877 + 821 + 13 + 11$; for
+$\Q_{15}$, $16061 = 15739 + 199 + 109 + 11 + 3$ becomes
+$16061 = 15739 + 197 + 101 + 13 + 11$. The shortest such form, with the
+larger members first among forms of the same length, is listed under the
+stored equation of every first member in Appendix~\ref{app:table};
+\code{none} marks the four exceptional gaps. Below $10^9$, $23{,}749$ of
+the $28{,}386$ stored first-member equations close with a royal value
+although a no-royals form exists, $4{,}539$ are already pure, and the
+remaining $98$ are the occurrences of the four exceptional gaps.
 
 \begin{conjecture}[bounded form with one flat royal value]
 \label{conj:C}
@@ -1306,14 +1325,18 @@ Zenodo, \url{https://doi.org/10.5281/zenodo.20575084}.
 \section{The first 25 quadruplets}
 \label{app:table}
 
-For each member: the quad index $k$, the member $t$, the base $m_k$, the gap
-$D$, the additive equation stored by the utility (base first; a fully used
-quadruplet folded to \code{19--} as in Section~\ref{sec:defs}), its length
-including the base, the minimal pure length $K$ of the gap
-(``--'' for the exceptional gaps), and, when the gap was met before, the quad where its
-equation was first found. $\Q_1$ is written from royal members only; the
-second, third and fourth member of every later quadruplet appear in their
-fixed form $p+2$, $p+(2\times3)$, $(p+6)+2$, which has no $K$ and no source.
+For the first member $t$ of each quadruplet: the quad index $k$, the base
+$m_k$, the gap $D$, the additive equation stored by the utility (base
+first; a fully used quadruplet folded to \code{19--} as in
+Section~\ref{sec:defs}) with, under it, the shortest \emph{no-royals} form
+of the same member (base plus pool members only, the larger members first
+among forms of the same length; \code{none} for the four exceptional
+gaps), the length of the stored equation including the base, the minimal
+pure length $K$ of the gap (``--'' for the exceptional gaps), and, when
+the gap was met before, the quad where its equation was first found.
+$\Q_1$ is written from royal members only. The second, third and fourth
+member of every quadruplet are $p+2$, $p+(2\times3)$ and $(p+6)+2$ and are
+not listed.
 
 \begin{footnotesize}
 \begin{longtable}{rrrr>{\raggedright\arraybackslash}p{2.9in}rrr}

@@ -782,3 +782,25 @@ top member `t` and `2 t`): the royal quad finds Q1, Q1 finds nothing, Q2
 finds Q3, Q3 finds nothing, Q4 finds 1481, and from there on every one of
 the 102,946 intervals below 10^10 holds a quad, 75,469 of them by Q100000.
 No mathematical content, data or code changed.
+
+
+## Version 18: no-royals forms, and a shorter Appendix A
+
+A sum of earlier quad members alone, with no 2, 3, 5, 7 value, is the
+*no-royals* form of a gap (`lc.py --no-royals`; the app's "No Royals"
+switch). Conjecture 2 of the paper says every gap except 22, 82, 172 and
+382 has one of at most eight terms, even though the stored equation, which
+closes largest first with a royal value whenever one fits, usually shows a
+royal value: `72221 = 69499 + 2089 + 199 + 197 + 193 + 19 + 17 + 5 + 3`
+is stored for Q30, and its shortest no-royals form is
+`72221 = 69499 + 1877 + 821 + 13 + 11`. Below 10^9, 23,749 of the 28,386
+first-member equations close with a royal value although a no-royals form
+exists, 4,539 are already pure, and 98 are the exceptional gaps. The paper
+now says this in the abstract and in a paragraph after Conjecture 2, and
+Appendix A lists only the first member of each of the first 25 quads (the
+other three members are `p + 2`, `p + 6`, `p + 8` and were dropped), with
+the stored equation and, under it, the shortest no-royals form as
+`stats.py` now writes it with `lc.py`'s `shortest_pure`. `lc.py` gains the
+`--no-royals` switch described above (the stored equations, the data and
+the rules are unchanged, format 19); `stats.py` changed only in what it
+writes to `appendix_rows.tex`, and `quads_1e9.csv` is byte-identical.
