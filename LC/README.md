@@ -31,7 +31,7 @@ https://youtu.be/swOzyTNOSFQ.
    expression in 2, 3, 5, 7 under the rules below (`+` and `*` only, each royal
    member at most once, at most two in a product). Verified for all 28,387
    quads below 10^9.
-2. **A gap with no sum of 8 or fewer earlier members.** For every quad below
+2. **Every gap is a sum of 8 or fewer distinct earlier members with no royal in it, except 22, 82, 172 and 382. Find a fifth exception.** For every quad below
    10^9 the gap (first member minus the previous quad's top member) can be
    written as a sum of at most **8** distinct earlier quad members, with no
    royal value at all (`K_pure` in `paper/quads_1e9.csv`: 6,475 gaps can be
