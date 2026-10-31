@@ -31,7 +31,7 @@ https://youtu.be/swOzyTNOSFQ.
    expression in 2, 3, 5, 7 under the rules below (`+` and `*` only, each royal
    member at most once, at most two in a product). Verified for all 28,387
    quads below 10^9.
-2. **Every gap is a sum of 8 or fewer distinct earlier members with no royal in it, except 22, 82, 172 and 382. Find a fifth exception.** For every quad below
+2. **Every gap is a sum of 8 or fewer distinct earlier members with no royal in it, except the Royal gaps 22, 82, 172 and 382. Find a fifth Royal gap.** For every quad below
    10^9 the gap (first member minus the previous quad's top member) can be
    written as a sum of at most **8** distinct earlier quad members, with no
    royal value at all (`K_pure` in `paper/quads_1e9.csv`: 6,475 gaps can be
@@ -46,7 +46,7 @@ https://youtu.be/swOzyTNOSFQ.
    prints that shortest pure sum under every stored equation
    (`1022501 = 1022389 + 109 + 3` is followed by
    `No Royals: 1022501 = 1022389 + 101 + 11`).
-3. **A gap that needs a royal closing other than 22, 82, 172 or 382.** Exactly
+3. **A gap that needs a royal closing besides the Royal gaps 22, 82, 172 and 382.** Exactly
    98 quads below 10^9 have no pure sum of earlier members, and every one of
    them has one of these four gaps. A congruence argument modulo 210 proves
    these are the only exceptions in the admissible range below 10^9; beyond
