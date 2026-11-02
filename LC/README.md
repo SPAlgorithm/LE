@@ -1,6 +1,6 @@
 # LC - quad chain builder
 
-> **Ladhe's Quad Conjecture: every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.**
+> **Ladhe's Quad Conjecture: the gap between consecutive prime quadruplets is a sum of at most eight distinct members of earlier quadruplets, with four small exceptions, the Royal gaps 22, 82, 172 and 382.**
 >
 > (Every first member's gap is written by one rule: after the base, always the largest earlier prime that still leaves a solvable remainder, again and again, a royal value covering only what no prime can, and a plain sum of royal members preferred over a product wherever any choice of primes allows it. That is a literal sum for all but 30 of the 28,386 gaps below 10^9; the 30 with the gap 82 close with one product, e.g. `101 = 19 + 17 + 13 + 11 + (5*7) + (2*3)`. The other three primes of a quad follow from the first one: `p + 2`, `p + (2*3)`, `(p+6) + 2`.)
 
@@ -804,3 +804,23 @@ the stored equation and, under it, the shortest no-royals form as
 `--no-royals` switch described above (the stored equations, the data and
 the rules are unchanged, format 19); `stats.py` changed only in what it
 writes to `appendix_rows.tex`, and `quads_1e9.csv` is byte-identical.
+
+## Version 19: a precise one-liner, examples up front, and the Royal gaps
+
+The one-line slogan "every prime quadruplet after 2, 3, 5, 7 is a sum of the
+ones before it" could be read with repetition allowed, and then it is empty
+(every integer is a sum of copies of 2 and 3). It is replaced everywhere, in
+the paper's title page, abstract and introduction, on this page, in the app
+and in the bounty text, by the precise statement: the gap between consecutive
+prime quadruplets is a sum of at most eight distinct members of earlier
+quadruplets, with four small exceptions. The introduction now shows five gaps
+written out before anything is explained (`622 = 197 + 193 + 191 + 17 + 13 +
+11` for Q4, `652 = 197 + 191 + 103 + 101 + 19 + 17 + 13 + 11` for Q5, `2182 =
+2081 + 101` for Q10, `6412 = 3257 + 1483 + 1481 + 191` for Q22 and `112 = 101
++ 11` for Q173) and says why the four exceptions are forced: they are small
+gaps with too few members below them (for Q2, 82 is the gap and the only
+earlier members 11, 13, 17 and 19 sum to 60). The four exceptional gaps 22,
+82, 172 and 382 are now called the **Royal gaps** (the app says "Ladhe's
+Royal gaps"), in the abstract, Conjecture 2, the remark on them and Appendix
+B. Nothing else changes: the utility, the dataset, the counts and the rules
+are as in version 18 (format 19).

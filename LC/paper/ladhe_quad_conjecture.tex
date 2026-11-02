@@ -41,19 +41,18 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 18, October 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 19, November 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
 \maketitle
 
 \begin{center}
-\large\itshape ``Every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.''
+\large\itshape ``The gap between consecutive prime quadruplets is a sum of at most eight distinct members of earlier quadruplets, with four small exceptions.''
 \end{center}
 
 \begin{abstract}
-\emph{Every prime quadruplet after $2,3,5,7$ is a sum of the ones before
-it.}
+\emph{The gap between consecutive prime quadruplets is a sum of at most eight distinct members of earlier quadruplets, with four small exceptions.}
 Prime quadruplets are the constellations $(p,\,p+2,\,p+6,\,p+8)$ of four
 primes, the densest possible packing of four primes beyond $(5,7,11,13)$.
 We order them into a chain $\Q_1=(11,13,17,19)$, $\Q_2=(101,103,107,109)$,
@@ -71,7 +70,8 @@ can, and a plain sum of royal members preferred over a product wherever
 any choice of members allows it.
 The precise form of the observation is that the gap $D$ between a
 first member and its base is a sum of at most $8$ distinct earlier
-members, with exactly four exceptional gaps, $22$, $82$, $172$ and $382$,
+members, with exactly four exceptional gaps, which we call the \emph{royal
+gaps}, $22$, $82$, $172$ and $382$,
 that need a small expression in the royal members $2,3,5,7$. Every other gap has a form with no royal value at all, which the utility and the app call its \emph{no-royals} form. Members of
 earlier quadruplets are only ever added; $+$ and $\times$ act on nothing
 but the royal members, each used at most once and never more than two of
@@ -140,8 +140,25 @@ distinct members of earlier quadruplets, and the other three members of
 $\Q_k$ are that first member plus $2$, plus $2\times3$, and plus
 $2\times3+2$. In one line:
 \begin{center}
-\emph{Every prime quadruplet after 2, 3, 5, 7 is a sum of the ones before it.}
+\emph{The gap between consecutive prime quadruplets is a sum of at most eight distinct members of earlier quadruplets, with four small exceptions.}
 \end{center}
+Distinctness carries the content: with repetition allowed the sentence
+would be empty, since every integer is a sum of copies of $2$ and $3$.
+Writing $D$ for the gap between the first member of $\Q_k$ and the largest
+member of $\Q_{k-1}$, a few cases read
+\begin{align*}
+\Q_4:\quad & 821-199 = 622 = 197+193+191+17+13+11,\\
+\Q_5:\quad & 1481-829 = 652 = 197+191+103+101+19+17+13+11,\\
+\Q_{10}:\quad & 5651-3469 = 2182 = 2081+101,\\
+\Q_{22}:\quad & 31721-25309 = 6412 = 3257+1483+1481+191,\\
+\Q_{173}:\quad & 1022501-1022389 = 112 = 101+11,
+\end{align*}
+each member used at most once and none of $2,3,5,7$ among them. Exactly
+four gaps below $10^9$ have no such sum, the \emph{royal gaps} $22$, $82$,
+$172$ and $382$; they are small gaps with too few members below them (for
+$\Q_2$, $D=101-19=82$, and the only earlier members $11,13,17,19$ sum to
+$60$) and are closed with a small expression in $2,3,5,7$
+(Section~\ref{sec:conj}, Appendix~\ref{app:exc}).
 Some representation by a plain sum of earlier members, with at most one
 added royal value, exists for every first member below $10^9$ except $11$
 and the $30$ first members whose gap is $82$, which need one product of
@@ -426,7 +443,8 @@ then follow as $p_k+2$, $p_k+(2\times3)$ and $(p_k+6)+2$.
 \label{conj:B}
 There is an absolute constant $K$ such that, apart from finitely many gaps,
 every gap $D=p_k-m_k$ ($k\ge2$) is a sum of at most $K$ distinct members of
-$\Pool_k$. The data support $K=8$, with exactly four exceptional gaps:
+$\Pool_k$. The data support $K=8$, with exactly four exceptional gaps, which
+we call the \emph{royal gaps}:
 \[
 D\in\{22,\;82,\;172,\;382\},
 \]
@@ -486,7 +504,7 @@ sum; the natural falsification test is a very large gap between
 consecutive quadruplets.
 \end{remark}
 
-\begin{remark}[The exceptional gaps]
+\begin{remark}[The royal gaps]
 All four exceptions are small and appear early. The gap $82$ belongs to
 $\Q_2$ (and reappears whenever two consecutive quadruplets are $90$ apart,
 as at $\Q_3$, $\Q_{14}$, $\Q_{437}$, \dots); at that point the pool is
@@ -1354,7 +1372,7 @@ $k$ & $t$ & $m_k$ & $D$ & additive equation & len & $K$ & from \\
 \end{longtable}
 \end{footnotesize}
 
-\section{The four exceptional gaps}
+\section{The four royal gaps}
 \label{app:exc}
 
 Gaps that are not a sum of distinct pool members at the moment they are
