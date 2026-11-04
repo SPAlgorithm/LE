@@ -1,0 +1,98 @@
+Two-term forms by first members: Hardy--Littlewood prediction against the chain, n <= 10,000,000
+first members below 10,000,000: 898
+building the smallest-prime-factor table ...
+generic product over 11 <= l <= 10,000,020: 0.232419 (tail beyond it ~ -1.7e-07 in the log)
+local factors at 2,3,5,7 on the admissible classes: 22: 639.1535, 82: 1278.3070, 112: 1278.3070, 172: 639.1535, 202: 1917.4605
+C4 from the same factors: 4.1512
+first members below x against C4 * int_11^x dt/(log t)^4:
+   x =       10,000:    11 observed,     12.7 predicted, ratio 0.863
+   x =      100,000:    37 observed,     41.5 predicted, ratio 0.893
+   x =    1,000,000:   165 observed,    172.3 predicted, ratio 0.958
+   x =   10,000,000:   898 observed,    851.5 predicted, ratio 1.055
+
+decade        admissible n   sum r(n) observed   sum predicted   ratio   semi-empirical   ratio   share r=0 observed   Poisson exp(-R/2)
+[    1,000,     10,000)       215             92            111.6   0.825            135.9   0.677     0.7860               0.7786
+[   10,000,    100,000)     2,143            925          1,168.5   0.792          1,147.4   0.806     0.8031               0.7698
+[  100,000,  1,000,000)    21,428         17,198         19,447.1   0.884         18,692.9   0.920     0.6812               0.6561
+[1,000,000, 10,000,000)   214,286        512,765        457,133.0   1.122        486,308.9   1.054     0.3629               0.4064
+
+LaTeX rows:
+$[10^{3},10^{4})$ & 215 & 92 & 112 & 0.82 & 136 & 0.68 & 0.786 & 0.779 \\
+$[10^{4},10^{5})$ & 2,143 & 925 & 1,169 & 0.79 & 1,147 & 0.81 & 0.803 & 0.770 \\
+$[10^{5},10^{6})$ & 21,428 & 17,198 & 19,447 & 0.88 & 18,693 & 0.92 & 0.681 & 0.656 \\
+$[10^{6},10^{7})$ & 214,286 & 512,765 & 457,133 & 1.12 & 486,309 & 1.05 & 0.363 & 0.406 \\
+
+gaps of qarray_1e9.json: 28,386 gaps, 3,409 distinct, largest 395,512
+gaps with a two-term pure form (distinct first members): observed 6,475, predicted sum(1 - exp(-R/2)) = 8,084, ratio 0.801
+distinct gaps with a two-term pure form: 687 of 3,409
+gaps below 1000 (value, two-term form?, predicted R):
+     22  no   R = 0.0000   <- royal gap
+     82  no   R = 1.4782   <- royal gap
+    112  yes  R = 0.8636
+    172  no   R = 0.6520   <- royal gap
+    202  yes  R = 1.3260
+    232  no   R = 0.7696
+    292  yes  R = 0.7853
+    322  no   R = 1.2979
+    382  no   R = 0.5801   <- royal gap
+    412  no   R = 1.5750
+    442  no   R = 0.3062
+    502  no   R = 0.7769
+    532  no   R = 0.5991
+    592  no   R = 0.5232
+    622  no   R = 1.0168
+    652  no   R = 0.4424
+    712  no   R = 0.9018
+    742  no   R = 0.9008
+    802  no   R = 0.3596
+    832  yes  R = 0.8410
+    862  no   R = 0.2291
+    922  yes  R = 0.8748
+    952  no   R = 0.7443
+royal gaps among them: 98
+
+gaps of qarray_1e10.json: 180,527 gaps, 7,259 distinct, largest 846,052
+gaps with a two-term pure form (distinct first members): observed 41,684, predicted sum(1 - exp(-R/2)) = 52,660, ratio 0.792
+distinct gaps with a two-term pure form: 1,610 of 7,259
+gaps below 1000 (value, two-term form?, predicted R):
+     22  no   R = 0.0000   <- royal gap
+     82  no   R = 1.4782   <- royal gap
+    112  yes  R = 0.8636
+    172  no   R = 0.6520   <- royal gap
+    202  yes  R = 1.3260
+    232  no   R = 0.7696
+    292  yes  R = 0.7853
+    322  no   R = 1.2979
+    382  no   R = 0.5801   <- royal gap
+    412  no   R = 1.5750
+    442  no   R = 0.3062
+    502  no   R = 0.7769
+    532  no   R = 0.5991
+    592  no   R = 0.5232
+    622  no   R = 1.0168
+    652  no   R = 0.4424
+    712  no   R = 0.9018
+    742  no   R = 0.9008
+    802  no   R = 0.3596
+    832  yes  R = 0.8410
+    862  no   R = 0.2291
+    922  yes  R = 0.8748
+    952  no   R = 0.7443
+royal gaps among them: 348
+
+four-term pure forms (any members, distinct) of the admissible integers below 20,000:
+   admissible D with none: 22, 82, 112, 172, 202, 292, 382, 442, 532, 622, 652, 712, 742, 802, 832, 922, 1012, 1072, 1162, 1252, 1282, 1342, 1372, 1432, 1462, 1492, 1552, 1582, 1642, 2542, 2632, 2752, 2842, 2962, 3052, 3442, 4012, 4222, 4432, 4522, 4702, 4732, 4822, 5482, 5902, 5992, 6082, 6112, 6202, 6292, 7372, 7462, 7582, 7672, 7792, 7882, 8272, 8842, 9052, 9262, 9352, 9532, 10312, 10522, 10732, 10822, 10912, 11152, 11362, 11572, 11782, 11962, 11992, 12202, 12292, 12622, 12832, 13252, 13342, 13462, 13552, 13672, 13762, 13972, 14092, 14152, 14302, 14722, 14812, 14932, 15022, 15142, 15232, 15352, 15442, 15532, 15562, 15742, 16402, 16612, 16702, 16822, 16882, 17032, 17122, 17212, 17872, 18292, 18502, 18592, 19972
+   [ 1,000,  2,000): min     0, median      0, max      18
+   [ 2,000,  5,000): min     0, median      8, max      46
+   [ 5,000, 10,000): min     0, median     23, max      74
+   [10,000, 20,000): min     0, median     17, max     195
+   r4(382) = 0
+   r4(412) = 8
+   r4(442) = 0
+   r4(622) = 0
+   r4(652) = 0
+   r4(1552) = 0
+   r4(1762) = 6
+   r4(2182) = 18
+   r4(5242) = 46
+   r4(11542) = 6

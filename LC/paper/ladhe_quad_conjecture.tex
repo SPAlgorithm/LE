@@ -41,7 +41,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 19, November 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 20, November 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -82,9 +82,28 @@ one such expression in every gap brings the bound down to six terms with no
 exception at all. Under a uniform form of the Hardy--Littlewood conjecture
 for eight linear forms we prove that every sufficiently large integer in the
 five residue classes modulo $210$ that a gap can occupy is a sum of two
-first members, so that two terms eventually suffice. We verify the closure conjecture
+first members, so that two terms eventually suffice. That hypothesis, and
+with it the asymptotic content of the conjecture, is an instance of the
+generalised Hardy--Littlewood conjecture of Green and Tao for systems of
+linear forms in primes; the system contains the pattern $(0,2,6,8)$, so it
+has infinite complexity in their sense and lies outside their theorem, as
+does every statement about a fixed prime constellation. We therefore do not
+present the asymptotic statement as new. What is new is the explicit
+finite structure, the four royal gaps, the bound of eight, the quadruplet
+from which a Bertrand-type doubling holds, and a numerical test of the
+prediction itself: for every admissible integer below $10^7$ we count the
+representations as a sum of two first members and compare the count with
+the singular-series prediction. Decade by decade the ratio of observed to
+predicted is $0.82$, $0.79$, $0.88$ and $1.12$; the count of quadruplets
+itself stands at $0.86$, $0.89$, $0.96$ and $1.06$ of its asymptotic over
+the same range, and after dividing out the square of that deviation the
+ratio is $1.11$, $0.99$, $0.96$ and $1.01$. The prediction is thus
+confirmed, at the first scale at which it is of order one, for a system
+that no theorem reaches. We also prove that the doubling, if it
+holds, forces the largest-first rule to take at most one member from each
+quadruplet beyond the third and at most $\log_2 D+4$ members in all. We verify the closure conjecture
 for all $28{,}387$ prime quadruplets below $10^9$ with an independent
-checker. Two further
+checker, and the royal gaps and the doubling for all $180{,}528$ below $10^{10}$. Two further
 representations of each gap, one that prefers multiplication and one that
 prefers powers of chain members, are also computed and released. We test
 the objection that the pattern is a consequence of density rather than of
@@ -177,9 +196,57 @@ property witnessed by an explicit certificate for every element. Wirsing
 \cite{Wirsing1986} showed that the primes contain thin sub-bases of every
 order $h\ge3$, but by an existence argument; we know of no explicit natural
 set of comparable sparsity for which a basis property of order two has been
-formulated and tested at this scale. Section~\ref{sec:next} proves that
-property under a uniform form of the Hardy--Littlewood conjecture
-(Theorem~\ref{thm:two}).
+tested numerically at this scale, although the property itself is, as we
+explain next, an instance of a general conjecture. Section~\ref{sec:next}
+proves it under a uniform form of the Hardy--Littlewood conjecture
+(Theorem~\ref{thm:two}) and tests the prediction against the data.
+
+\paragraph{Relation to the general conjectures.}
+The asymptotic content of the conjecture is not new, and we want to be exact
+about where it comes from. The circle method of Hardy and Littlewood predicts
+the number of solutions of any system of linear equations in primes; Green and
+Tao \cite{GreenTao2010} state the prediction in full generality as their
+Conjecture~1.2, the \emph{generalised Hardy--Littlewood conjecture}, for any
+finite system of affine-linear forms, and prove it for systems of \emph{finite
+complexity}, those in which no two forms have proportional linear parts, the
+proof being completed by the inverse theorem of Green, Tao and Ziegler
+\cite{GreenTaoZiegler2012}. Writing an integer $n$ as a sum of $m$ first
+members of quadruplets is the system of the $4m$ forms
+$p_i,\,p_i+2,\,p_i+6,\,p_i+8$ ($1\le i<m$) and $n-\sum_{i<m}p_i+\{0,2,6,8\}$
+in $m-1$ variables. It contains pairs of forms with the same linear part,
+$p_1$ and $p_1+2$ for instance, and so has infinite complexity for every $m$,
+exactly as the twin prime conjecture has. Conjecture~1.2 nevertheless
+predicts, for every fixed $m\ge2$ and every $n$ in the admissible residue
+classes, a number of representations that tends to infinity with $n$, and
+therefore predicts that all but finitely many gaps are sums of two first
+members; Theorem~\ref{thm:two} is this case $m=2$ written out with its
+singular series. The same conjecture, for the single system
+$(p,p+2,p+6,p+8)$, predicts a quadruplet between $t$ and $2t$ for all
+large $t$. The reader should therefore regard Conjectures~\ref{conj:A}
+to~\ref{conj:C} and the doubling of Remark~\ref{rem:doubling} as instances
+of a conjecture already in the literature, and far out of reach of proof: no
+single pattern $(0,2k)$ is known to contain infinitely many prime pairs,
+despite \cite{Zhang2014,Maynard2015}, and the nearest theorem to our
+statement is that of Matom\"aki and Shao \cite{MatomakiShao2017}, that
+every large odd integer is a sum of three primes each of which has another
+prime at a bounded distance; for a single prime, $m=1$ in the notation
+above, the statement is Vinogradov's three primes theorem
+\cite{Vinogradov1937}, completed by Helfgott \cite{Helfgott2013}. We are
+grateful to a number theorist who pointed this out to us.
+
+What the general conjecture does not give is the finite part: which small
+gaps fail, how many terms suffice in practice, and from which quadruplet on
+the doubling holds. Those are what this note computes. They are statements
+of the same kind as Dubner's conjecture that every even number above $4208$
+is a sum of two primes each having a twin \cite{Dubner2000}, or Richert's
+theorem that every integer above $6$ is a sum of distinct primes
+\cite{Richert1949} and Brown's criterion for such completeness
+\cite{Brown1961}: an explicit exceptional set, found by computation, in
+front of an asymptotic statement that is known or expected. We also test the
+asymptotic prediction itself, which the general conjecture invites and
+which, to our knowledge, has not been done for this system: Section~\ref{sec:next}
+compares the predicted and the observed number of two-term representations
+for every admissible integer below $10^7$ and for every gap below $10^{10}$.
 
 Section~\ref{sec:conj} states this
 precisely in three forms of increasing strength, Section~\ref{sec:cover}
@@ -459,7 +526,10 @@ chain members below themselves. Four further small values, $52$, $262$,
 $472$ and $772$, are equally unreachable but can never occur as gaps, their
 classes being excluded by the lemma. The last occurrence of an exceptional
 gap below $10^9$ is at $\Q_{28063}$ (first member $985{,}124{,}051$). In
-all, $98$ of the $28{,}386$ gaps are exceptional.
+all, $98$ of the $28{,}386$ gaps are exceptional. A separate run of the
+utility to $10^{10}$ ($180{,}528$ quadruplets, $180{,}527$ gaps, the
+largest $846{,}052$) finds the same four royal gaps, $348$ occurrences in
+all, and no fifth.
 \end{conjecture}
 
 \paragraph{No-royals forms.}
@@ -682,6 +752,89 @@ one only at $k=4,9,10$, exactly two at $k=5,7,8$, and at least ten from
 $k=24$ on. Beyond $10^{10}$ the question is open.}
 \label{tab:bertrand}
 \end{table}
+
+The second paragraph of Remark~\ref{rem:doubling} can be made exact. It is
+the one place in this note where the doubling statement implies something
+about the representations, and the implication is unconditional once the
+doubling is assumed.
+
+\begin{proposition}[one member per quadruplet, under doubling]
+\label{prop:halving}
+Assume $p_{k+1}<2t_k$ for every $k\ge4$. Start from any integer $D\ge1$ and
+run the largest-first process over the members of $\Q_1,\Q_2,\dots$:
+while some unused member is at most the remainder, subtract the largest
+such member. Then
+\begin{enumerate}
+\item[(i)] no two members of the same quadruplet $\Q_j$ with $j\ge4$ are
+  subtracted;
+\item[(ii)] if the member subtracted belongs to $\Q_j$ with $j\ge4$ and the
+  remainder before it is $r$, the remainder after it is below $r/2+8$;
+\item[(iii)] at most $\log_2\bigl((D+16)/837\bigr)+1$ members of
+  $\Q_4,\Q_5,\dots$ are subtracted, hence fewer than $\log_2D+4$ members
+  in all when $D\ge821$.
+\end{enumerate}
+In particular no quadruplet beyond $\Q_3$ ever appears whole, and the
+process spends at most one term on each quadruplet beyond $\Q_3$.
+\end{proposition}
+\begin{proof}
+Write $m_1>m_2>\cdots$ for the members subtracted, in order, and
+$r_0=D$, $r_i=r_{i-1}-m_i$ for the remainders; the $m_i$ decrease because
+$m_{i+1}$ is an unused member not above $r_i\le r_{i-1}$ and $m_i$ was the
+largest such member. The remainders decrease as well. We first show:
+
+\smallskip\noindent
+$(\ast)$ \emph{If $m_i\in\Q_j$ with $j\ge4$ and $r_{i-1}\ge p_{j+1}$,
+then all four members of $\Q_{j+1}$ are among $m_1,\dots,m_{i-1}$.}
+
+\smallskip\noindent
+Indeed $p_{j+1}>t_j\ge m_i$ and $p_{j+1}\le r_{i-1}$, and $m_i$ is the
+largest unused member not above $r_{i-1}$; so $p_{j+1}$ is used,
+$p_{j+1}=m_h$ with $h<i$. Then $r_h\ge r_{i-1}\ge p_{j+1}$, so the
+remainder before $m_h$ was $r_{h-1}=r_h+p_{j+1}\ge2p_{j+1}>p_{j+1}+8$. The
+members $p_{j+1}+2$, $p_{j+1}+6$, $p_{j+1}+8$ lie in $(m_h,r_{h-1}]$, and
+$m_h$ was the largest unused member not above $r_{h-1}$; so they were used
+before $m_h$. This proves $(\ast)$.
+
+(i) Suppose two members of some $\Q_j$, $j\ge4$, are subtracted, and let
+$m_i$ be the first of them. The second, $m_g$ with $g>i$, satisfies
+$p_j\le m_g\le r_{g-1}\le r_i$, so $r_{i-1}=r_i+m_i\ge p_j+m_i\ge2p_j$.
+The hypothesis gives $p_{j+1}<2t_j=2p_j+16$, and $p_{j+1}\equiv
+p_j\equiv11\pmod{30}$ gives $p_{j+1}\equiv2p_j-11\pmod{30}$; the
+only such number below $2p_j+16$ and above $t_j$ is at most $2p_j-11$, so
+$p_{j+1}\le2p_j-11<r_{i-1}$. By $(\ast)$ all four members of $\Q_{j+1}$
+were subtracted before $m_i$; in particular two members of $\Q_{j+1}$
+were, the first of them at a step before $i$. Since $j+1\ge4$, the same
+argument applies to $\Q_{j+1}$ and produces two members of $\Q_{j+2}$
+subtracted earlier still, and so on without end, which is impossible, the
+steps being finitely many. Hence (i).
+
+(ii) Let $m_i\in\Q_j$, $j\ge4$, with $r=r_{i-1}$. If $r\ge p_{j+1}$ then
+by $(\ast)$ two members of $\Q_{j+1}$ were subtracted, against (i). So
+$r<p_{j+1}<2t_j=2p_j+16\le2m_i+16$, hence $m_i>r/2-8$ and
+$r_i=r-m_i<r/2+8$.
+
+(iii) Let the members of $\Q_4,\Q_5,\dots$ be subtracted at the steps
+$i_1<\dots<i_s$, with remainders $\rho_u=r_{i_u-1}$ before them. By (ii)
+and the monotonicity of the remainders, $\rho_{u+1}\le r_{i_u}<\rho_u/2+8$,
+that is $\rho_{u+1}+16<(\rho_u+16)/2$, so
+$\rho_s+16<(\rho_1+16)/2^{s-1}\le(D+16)/2^{s-1}$. A member of $\Q_4$ or
+later was subtracted at step $i_s$, so $\rho_s\ge821$ and
+$837<(D+16)/2^{s-1}$, which is the bound on $s$. The members of
+$\Q_1,\Q_2,\Q_3$ are twelve, and for $D\ge821$ one has
+$(D+16)/837\le D/821$, so the total is below
+$\log_2D-\log_2821+13<\log_2D+4$.
+\end{proof}
+
+The stored equations of the utility follow this process except where a
+closing fails and a smaller member is tried (Definition~\ref{def:canon}),
+and the data agree with the proposition for them as well: below $10^{10}$
+no stored equation uses two members of one quadruplet beyond $\Q_3$, and
+the only quadruplets used whole are $\Q_0$, $\Q_1$ and $\Q_3$, exactly the
+two at which the doubling fails together with the royal quad. The
+proposition does not say that the process ends at $0$; what it says is
+that the doubling, a statement about where the quadruplets lie, bounds the
+length of the largest-first representation of every integer by
+$\log_2D+4$, while the data put the bound for gaps at eight.
 
 \begin{remark}
 Coverage is a statement about \emph{all} integers with subtraction
@@ -1127,8 +1280,16 @@ r(n)\;\sim\;\mathfrak S(n)\,\frac{n}{(\log n)^8},\qquad
 \]
 where $\nu_n(\ell)$ is the number of residues $p \bmod \ell$ at which one of
 the eight forms vanishes. The forms vary with $n$, so this is a uniform
-version of the conjecture, as in Goldbach's problem; it is unproved, and we
-assume it in the following weak form.
+version of the conjecture, as in Goldbach's problem. It is the case of
+Conjecture~1.2 of Green and Tao \cite{GreenTao2010} for these eight forms,
+with the Archimedean factor written out as the integral
+\[
+I(n)=\int_{11}^{n-11}\frac{dt}{(\log t)^4\,(\log(n-t))^4},
+\qquad r(n)\sim\mathfrak S(n)\,I(n),
+\]
+so that $n/(\log n)^8$ above is $I(n)$ to leading order. The system has
+infinite complexity in their sense, so the conjecture is not a theorem
+here; it is unproved, and we assume it in the following weak form.
 
 \begin{hypothesis}
 \label{hyp:H}
@@ -1179,15 +1340,82 @@ that Conjecture~\ref{conj:B} allows.
 \end{proof}
 
 \begin{remark}
-The theorem is a limiting statement. The crude size $n/(\log n)^8$ stays
-below $1$ until $n$ is of the order of $10^{10}$; at the gap sizes met
-below $10^9$, typically a few tens of thousands, the count of first members
-is far above its asymptotic value, and the two-term share of about $23\%$
-reported in Section~\ref{sec:evidence} belongs to that pre-asymptotic
-range, where the heuristic above, not the theorem, is the relevant
-estimate. The theorem cannot be made unconditional: it would imply that
-there are infinitely many prime quadruplets.
+The theorem is a limiting statement and cannot be made unconditional: it
+would imply that there are infinitely many prime quadruplets. The two-term
+share of about $23\%$ reported in Section~\ref{sec:evidence} belongs to
+the pre-asymptotic range, where the prediction $\mathfrak S(n)I(n)$ is of
+order one; the next paragraph tests that prediction directly.
 \end{remark}
+
+\paragraph{A numerical test of the prediction.}
+Hypothesis~\ref{hyp:H} can be checked where it is of order one. For
+every admissible $n<10^7$ we computed $r(n)$ directly from the $898$ first
+members below $10^7$, and the prediction $\mathfrak S(n)\,I(n)$ as follows
+(\code{hltest.py}, two minutes, standard library only). For $\ell\ge11$
+exactly eight residues are excluded unless $\ell$ divides $n+a+b$ for some
+offsets $a,b\in\{0,2,6,8\}$, so
+\[
+\mathfrak S(n)=L(n)\;G\prod_{\substack{\ell\ge11\\ \ell\mid n+a+b}}
+\frac{\ell-\nu_n(\ell)}{\ell-8},\qquad
+G=\prod_{\ell\ge11}\frac{1-8/\ell}{(1-1/\ell)^8}=0.23242,
+\]
+where $L(n)$ is the exact factor at $2,3,5,7$, equal to $639.15$, $1278.31$,
+$1278.31$, $639.15$ and $1917.46$ on the classes $22,82,112,172,202
+\pmod{210}$, and the finite product runs over the prime divisors of the nine
+numbers $n,n+2,\dots,n+16$. The integral $I(n)$ was evaluated by Simpson's
+rule in $\log t$. Table~\ref{tab:hl} sums both sides over the admissible
+$n$ of each decade and also compares the share of $n$ with $r(n)=0$ with
+the Poisson value $\exp(-\mathfrak S(n)I(n)/2)$, the factor $\tfrac12$
+because $r$ counts each unordered pair twice.
+
+The raw ratio runs from $0.79$ to $1.12$. This is the slow convergence of
+the quadruplet count itself: the same constants give $4.1512$ for $C_4$,
+and the number of first members below $x$ stands at $0.863$, $0.893$,
+$0.958$ and $1.055$ of $C_4\int_{11}^x dt/(\log t)^4$ at
+$x=10^4,\dots,10^7$. A two-term count involves two first members, so the
+prediction inherits roughly the square of that deviation; dividing the
+ratio of each decade by the square of the single-quadruplet ratio at its
+upper end gives $1.11$, $0.99$, $0.96$ and $1.01$. The binary correlation
+that Conjecture~1.2 adds to the single-quadruplet count, the factor
+$\mathfrak S(n)/C_4^2$ with its dependence on the prime divisors of $n+a+b$,
+is therefore confirmed to within a few percent at $10^4$ to $10^7$, for a
+system of infinite complexity. The Poisson shares agree in the same way.
+
+For the gaps of the chain the same prediction gives the expected number of
+gaps with a two-term pure form, $\sum_D(1-e^{-\mathfrak S(D)I(D)/2})$:
+$8{,}084$ against $6{,}475$ observed below $10^9$ and $52{,}660$ against
+$41{,}684$ below $10^{10}$, ratios $0.80$ and $0.79$, as expected for gaps
+that mostly lie between $10^4$ and $10^5$. The four royal gaps are not
+singled out by this prediction: at $82$, $172$ and $382$ it gives $1.48$,
+$0.65$ and $0.58$, in line with the other twenty gap values below $1000$,
+of which $18$ have no two-term form either. What distinguishes them is
+that at these sizes the four-, six- and eight-term forms are missing too,
+because the pool is $\Q_1\cup\Q_2$ and nothing more; from $\Q_3$ on the
+longer forms take over, and the two-term forms that the theorem speaks of
+become the rule only far beyond the range of this note.
+
+\begin{table}[ht]
+\centering
+\caption{Two-term representations by first members against the prediction
+of Conjecture~1.2 of \cite{GreenTao2010} (Hypothesis~\ref{hyp:H} with the
+asymptotic $\mathfrak S(n)I(n)$), summed over the admissible $n$ of each
+decade below $10^7$. The column $\delta$ is the ratio of the number of
+first members below the upper end of the decade to
+$C_4\int_{11}^{x}dt/(\log t)^4$; the last two columns give the share of
+admissible $n$ with no two-term representation and its Poisson prediction.}
+\label{tab:hl}
+\small
+\begin{tabular}{lrrrrrrrr}
+\toprule
+$n$ & admissible $n$ & $\sum r(n)$ & $\sum\mathfrak S(n)I(n)$ & ratio & $\delta$ & ratio$/\delta^2$ & $r=0$ & Poisson \\
+\midrule
+$[10^{3},10^{4})$ & 215 & 92 & 112 & 0.82 & 0.863 & 1.11 & 0.786 & 0.779 \\
+$[10^{4},10^{5})$ & 2,143 & 925 & 1,169 & 0.79 & 0.893 & 0.99 & 0.803 & 0.770 \\
+$[10^{5},10^{6})$ & 21,428 & 17,198 & 19,447 & 0.88 & 0.958 & 0.96 & 0.681 & 0.656 \\
+$[10^{6},10^{7}]$ & 214,286 & 512,765 & 457,133 & 1.12 & 1.055 & 1.01 & 0.363 & 0.406 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{question}
 Is every sufficiently large gap a sum of \emph{two} distinct earlier
@@ -1235,6 +1463,7 @@ scratch.
   python3 lc.py 25 -AME --cache paper/qarray_1e9.json            # the examples
   python3 paper/residues.py paper/quads_1e9.csv      # Lemma 1, 4 s
   python3 paper/density.py 28387                     # Section 7, ~5 min
+  python3 paper/hltest.py --upto 10000000            # Section 8, Table 5, ~2 min
 \end{verbatim}\end{small}
 The dataset \code{qarray\_1e9.json} ($23{,}147{,}955$ bytes) has SHA-256
 \begin{center}\footnotesize\code{af4306fc1dfb616592366fc04b064570caa65c31444faa4fbe82406b49b36a89}\end{center}
@@ -1277,14 +1506,14 @@ compute and publish are the authors'. The utility \code{lc.py}, the checker
 assistance; the dataset was produced by the utility and re-verified by the
 independent checker. The prose of every section was drafted and edited with
 the model, and the proofs of Lemma~\ref{lem:residues},
-Proposition~\ref{prop:cover} and Theorem~\ref{thm:two} were drafted with its help and then
+Proposition~\ref{prop:cover}, Proposition~\ref{prop:halving} and Theorem~\ref{thm:two} were drafted with its help and then
 checked line by line by the authors, who take full responsibility for every
 statement, equation and number in the paper. No AI tool is an author.
 
 \paragraph{Conflict of interest.}
 The authors declare no competing interests related to this note.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 
 \bibitem{HardyLittlewood1923}
 G.~H. Hardy and J.~E. Littlewood,
@@ -1324,6 +1553,47 @@ Mathematics of Computation 68 (1999), no.~228, 1739--1747.
 E.~Wirsing,
 \emph{Thin subbases},
 Analysis 6 (1986), 285--306.
+
+\bibitem{GreenTao2010}
+B.~Green and T.~Tao,
+\emph{Linear equations in primes},
+Annals of Mathematics 171 (2010), no.~3, 1753--1850.
+
+\bibitem{GreenTaoZiegler2012}
+B.~Green, T.~Tao and T.~Ziegler,
+\emph{An inverse theorem for the Gowers $U^{s+1}[N]$-norm},
+Annals of Mathematics 176 (2012), no.~2, 1231--1372.
+
+\bibitem{MatomakiShao2017}
+K.~Matom\"aki and X.~Shao,
+\emph{Vinogradov's three primes theorem with almost twin primes},
+Compositio Mathematica 153 (2017), no.~6, 1220--1256.
+
+\bibitem{Vinogradov1937}
+I.~M. Vinogradov,
+\emph{Representation of an odd number as a sum of three primes},
+Doklady Akademii Nauk SSSR 15 (1937), 291--294.
+
+\bibitem{Helfgott2013}
+H.~A. Helfgott,
+\emph{The ternary Goldbach conjecture is true},
+preprint, \url{https://arxiv.org/abs/1312.7748} (2013).
+
+\bibitem{Dubner2000}
+H.~Dubner,
+\emph{Twin prime conjectures},
+Journal of Recreational Mathematics 30 (2000), no.~3, 199--205;
+OEIS A007534.
+
+\bibitem{Richert1949}
+H.-E. Richert,
+\emph{\"Uber Zerf\"allungen in ungleiche Primzahlen},
+Mathematische Zeitschrift 52 (1949), 342--343.
+
+\bibitem{Brown1961}
+J.~L. Brown, Jr.,
+\emph{Note on complete sequences of integers},
+American Mathematical Monthly 68 (1961), no.~6, 557--560.
 
 \bibitem{LadheConj}
 S.~Ladhe and P.~Ladhe,

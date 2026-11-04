@@ -10,7 +10,7 @@ the first prime of every quad is derived from earlier ones.
 ## $2,000 bounty: break the pattern
 
 **Shubham and Pankaj Ladhe pay US $2,000 to the first person who sends a verifiable
-counterexample to any one of the six open items below.** Everything we claim
+counterexample to any one of the four open items below.** Everything we claim
 has been checked by machine only as far as the tables say (10^9 or 10^10). The
 chain can be generated as far as you like with `lc.py`; pick a range where you
 think the pattern fails, and show us.
@@ -19,9 +19,17 @@ This is a challenge for every human mind, and for every AI. Bring a pencil, a
 program or a prompt; nobody has broken it yet, and only a counterexample we can
 check counts.
 
-Watch the 4-minute explainer of the rules, the evidence and the first five items:
+Watch the 4-minute explainer of the rules, the evidence and the items:
 https://youtu.be/wNvZUdAoExU. The pen-paper-calculator writing challenge is at
-https://youtu.be/swOzyTNOSFQ.
+https://youtu.be/swOzyTNOSFQ. (The video lists five items; two of them turned
+out to say the same thing and one follows from another, see "Why four" below.)
+
+Be warned before you start: the *asymptotic* form of every item below is an
+instance of the generalised Hardy-Littlewood conjecture (Conjecture 1.2 of Green
+and Tao, *Linear equations in primes*), which predicts that each pattern holds
+from some point on. A counterexample therefore has to be a *finite* failure: a
+specific quad, a specific gap. Nobody can prove that none exists, and that is
+what the prize is for.
 
 ### The open items (the bounty applies to each)
 
@@ -31,36 +39,29 @@ https://youtu.be/swOzyTNOSFQ.
    expression in 2, 3, 5, 7 under the rules below (`+` and `*` only, each royal
    member at most once, at most two in a product). Verified for all 28,387
    quads below 10^9.
-2. **Every gap is a sum of 8 or fewer distinct earlier members with no royal in it, except the Royal gaps 22, 82, 172 and 382. Find a fifth Royal gap.** For every quad below
-   10^9 the gap (first member minus the previous quad's top member) can be
-   written as a sum of at most **8** distinct earlier quad members, with no
-   royal value at all (`K_pure` in `paper/quads_1e9.csv`: 6,475 gaps can be
-   done with 2, 19,472 with 4, 2,065 with 6, 276 with 8, none needs more).
+2. **A fifth Royal gap.** For every quad below 10^10 except the 348 whose gap is
+   22, 82, 172 or 382, the gap (first member minus the previous quad's top
+   member) is a sum of at most **8** distinct earlier quad members with no royal
+   value at all (`K_pure` in `paper/quads_1e9.csv`: below 10^9, 6,475 gaps can
+   be done with 2, 19,472 with 4, 2,065 with 6, 276 with 8, none needs more).
+   A congruence argument modulo 210 proves that 22, 82, 172 and 382 are the only
+   exceptions in the admissible range below 10^9; beyond that the set is open.
    To break it, exhibit a gap for which *every* pure sum of distinct earlier
-   members needs 9 or more. Two things do not count: the stored equation,
-   which follows the largest-first rule and is often longer than the shortest
-   sum (`1137881 = 1126669 + 9439 + 1489 + 109 + 107 + 19-- + 5 + 3` spells
-   out to 8 members plus the royal value `5 + 3`, and its gap 11,212 has a
-   pure sum of only 4 members); and royal values, which are not members.
+   members needs 9 or more, or none exists. Two things do not count: the stored
+   equation, which follows the largest-first rule and is often longer than the
+   shortest sum (`1137881 = 1126669 + 9439 + 1489 + 109 + 107 + 19-- + 5 + 3`
+   spells out to 8 members plus the royal value `5 + 3`, and its gap 11,212 has
+   a pure sum of only 4 members); and royal values, which are not members.
    `19--` counts as four members, `7--` as none. `./lc 1 200 --no-royals`
    prints that shortest pure sum under every stored equation
    (`1022501 = 1022389 + 109 + 3` is followed by
    `No Royals: 1022501 = 1022389 + 101 + 11`).
-3. **A gap that needs a royal closing besides the Royal gaps 22, 82, 172 and 382.** Exactly
-   98 quads below 10^9 have no pure sum of earlier members, and every one of
-   them has one of these four gaps. A congruence argument modulo 210 proves
-   these are the only exceptions in the admissible range below 10^9; beyond
-   that the set is open.
-4. **The doubling fails.** Write `t = p + 8` for a quad's top member. From Q4 on
+3. **The doubling fails.** Write `t = p + 8` for a quad's top member. From Q4 on
    the whole next quad lies between `t` and `2 t`. Checked for all 180,527
    consecutive pairs below 10^10; the only failures in the chain are Q1
    (`2 * 19 = 38`, next quad at 101) and Q3 (`2 * 199 = 398`, next quad at 821).
    Find a quad Qn with n >= 4 and no quad between its top member and twice it.
-5. **A later quad used whole.** Below 10^10 only `7--`, `19--` and `199--` ever
-   appear in a stored equation, and no equation uses two members of the same
-   quad beyond Q3. Find a stored equation that uses all four members of a later
-   quad. (It would break item 4 as well.)
-6. **Three quads in a row with the same gap.** Consecutive quads sometimes
+4. **Three quads in a row with the same gap.** Consecutive quads sometimes
    close the same gap: Q2 and Q3 both have gap 82 (`101 = 19 + 82`,
    `191 = 109 + 82`), Q200 and Q201 both have gap 1,882
    (`1170131 = 1168249 + 1882`, `1172021 = 1170139 + 1882`). Below 10^9 the
@@ -68,6 +69,21 @@ https://youtu.be/swOzyTNOSFQ.
    times in a row. Find three consecutive quads Qn, Qn+1, Qn+2 with the same
    gap (`p` minus the previous quad's top member), anywhere in the chain.
    `python3 lc.py 2 3 --cache paper/qarray_1e9.json` shows the first pair.
+   (Unlike items 1 to 3 this one is expected to happen eventually by chance
+   alone; below 10^10 the odds were about 1 in 30. It stays on the list because
+   nobody has found one.)
+
+### Why four
+
+Earlier versions of this page listed six items. "A gap that needs a royal
+closing besides 22, 82, 172 and 382" is the same thing as a fifth Royal gap,
+so the two are now one item. "A later quad used whole" (only `7--`, `19--` and
+`199--` ever appear) is a *consequence* of the doubling: the proposition "one member per
+quadruplet, under doubling" of the paper (version 20) proves that if every quad from Q4 on has the next one below
+twice its top member, then the largest-first rule can never take two members of
+the same quad beyond Q3, let alone all four, and uses at most `log2(D) + 4`
+members for any gap `D`. A whole later quad would therefore be a doubling
+failure in disguise, and is paid as item 3.
 
 ### Proved, no bounty
 
@@ -82,11 +98,11 @@ the paper), so it cannot fail. For the same reason every gap ends in 2.
 git clone https://github.com/SPAlgorithm/LE && cd LE/LC
 python3 lc.py --upto 9999999999 --cache qarray_1e10.json     # every quad below 10^10: ~6 min, ~160 MB, resumes if interrupted
 python3 lc.py --upto 99999999999 --cache qarray_1e11.json    # 11 digits: hours, and a large cache
-python3 lc.py 180000 180010 --cache qarray_1e10.json         # look at quads by number (items 1 and 3: the A line and its closing)
-python3 lc.py -g 22 82 172 382 --cache qarray_1e10.json      # item 3: every quad with an exceptional gap
+python3 lc.py 180000 180010 --cache qarray_1e10.json         # look at quads by number (items 1 and 2: the A line and its closing)
+python3 lc.py -g 22 82 172 382 --cache qarray_1e10.json      # item 2: every quad with a Royal gap
 python3 paper/stats.py qarray_1e10.json                      # item 2: writes quads_1e10.csv with K_pure, the shortest pure sum, per quad
-python3 lc.py 1 180528 --full --cache qarray_1e10.json | grep -E "[0-9]+--" | grep -v -E "(^|[ =+(])(7|19|199)--"   # item 5: prints nothing below 10^10
-python3 lc.py 1658 -o --near --cache qarray_1e10.json        # item 4: the quads on either side of any value (here 2 * 829)
+python3 lc.py 1 180528 --full --cache qarray_1e10.json | grep -E "[0-9]+--" | grep -v -E "(^|[ =+(])(7|19|199)--"   # whole later quads (see "Why four"): prints nothing below 10^10
+python3 lc.py 1658 -o --near --cache qarray_1e10.json        # item 3: the quads on either side of any value (here 2 * 829)
 python3 lc.py 25 --recompute --cache fresh.json              # rebuild from nothing if you doubt the tool
 python3 paper/check.py qarray_1e10.json                      # independent checker: every line must report 0 bad
 ```
@@ -98,7 +114,7 @@ so a claim inside that range can be checked against it in seconds.
 ### How to claim
 
 Email **spalgorithm@gmail.com** with the quad (all four primes), the exact
-command and cache that produced it, the output, and, for items 1 to 3, the
+command and cache that produced it, the output, and, for items 1 and 2, the
 argument that no representation under the rules exists. The tool failing to
 find one is not enough on its own: the rules allow backing up and trying
 another member, so a claim must show that the search space is exhausted, or
@@ -832,3 +848,61 @@ earlier members 11, 13, 17 and 19 sum to 60). The four exceptional gaps 22,
 Royal gaps"), in the abstract, Conjecture 2, the remark on them and Appendix
 B. Nothing else changes: the utility, the dataset, the counts and the rules
 are as in version 18 (format 19).
+
+## Version 20: where the conjecture sits, a test of the prediction, and a proof under doubling
+
+A number theorist who read version 19 pointed out that the asymptotic content
+of the conjecture is an instance of the generalised Hardy-Littlewood conjecture,
+Conjecture 1.2 of Green and Tao, *Linear equations in primes* (Annals of
+Mathematics 2010): writing an integer as a sum of m first members of
+quadruplets is a system of 4m linear forms in primes, and that conjecture
+predicts a number of representations that grows without bound, hence that all
+but finitely many gaps are sums of two first members, and likewise a quadruplet
+between t and 2t for all large t. The system contains the pattern (0, 2, 6, 8),
+so it has *infinite complexity* in their sense and lies outside their theorem,
+like the twin prime conjecture itself; the nearest theorem is Matomäki and
+Shao's (Compositio 2017), three primes each with another prime at bounded
+distance. Version 20 says all this in the abstract and in a new paragraph of the
+introduction, with the references (Green-Tao, Green-Tao-Ziegler, Vinogradov,
+Helfgott, Matomäki-Shao, Dubner, Richert, Brown), and states plainly that the
+asymptotic statement is not new. What is new, and what the paper now claims, is
+the finite part: which small gaps fail (the four Royal gaps), how many terms
+suffice in practice (eight), from which quadruplet on the doubling holds (Q4),
+and a numerical test of the prediction itself.
+
+**The test** (`paper/hltest.py`, report in `paper/hltest_1e7.txt`, two minutes,
+standard library only). For every admissible n below 10^7 (n = 22, 82, 112, 172,
+202 mod 210) the script counts the representations r(n) = #{p : p and n - p are
+first members} from the 898 first members below 10^7, and computes the
+prediction S(n) I(n) of Conjecture 1.2: the singular series S(n) over all
+primes (exact factors at 2, 3, 5, 7; the generic product G = 0.23242 over
+l >= 11; a correction (l - nu)/(l - 8) at every prime l >= 11 dividing one of
+n, n+2, ..., n+16) times the integral I(n) of dt / ((log t)^4 (log(n-t))^4).
+Summed over each decade, observed over predicted is 0.82, 0.79, 0.88 and 1.12
+for n in [10^3, 10^4), ..., [10^6, 10^7]. The quadruplet count itself stands at
+0.863, 0.893, 0.958 and 1.055 of C4 int dt/(log t)^4 at 10^4, ..., 10^7 (C4 =
+4.1512 from the same factors), and a two-term count inherits the square of that
+deviation; dividing it out gives 1.11, 0.99, 0.96 and 1.01. The share of n with
+no two-term form (0.786, 0.803, 0.681, 0.363) matches the Poisson value
+exp(-S I / 2) (0.779, 0.770, 0.656, 0.406) the same way. For the gaps of the
+chain the prediction gives 8,084 gaps with a two-term pure form against 6,475
+observed below 10^9 and 52,660 against 41,684 below 10^10 (ratios 0.80, 0.79,
+as expected for gaps that mostly lie between 10^4 and 10^5). The Royal gaps are
+not singled out by the two-term prediction (1.48, 0.65, 0.58 at 82, 172, 382,
+like the other small gaps); what makes them exceptional is that below 400 the
+pool is Q1 and Q2 alone and the longer forms are missing too. The paper reports
+this in Section 8 (new Table 5) and the abstract.
+
+**The proof.** The second half of the doubling remark is now a proposition with
+a proof: *if every quad from Q4 on has the next one below twice its top member,
+then the largest-first process never subtracts two members of the same quad
+beyond Q3, each such step at least halves the remainder (plus 8), and any
+integer D is written with fewer than log2(D) + 4 members.* So the fact that only
+`7--`, `19--` and `199--` ever fold whole is a consequence of the doubling, not
+a separate observation; the bounty list above shrinks accordingly (see "Why
+four"). The 10^10 run (180,528 quads, 348 Royal-gap occurrences, no fifth) is
+now cited in Conjecture 2.
+
+Nothing else changes: `lc.py`, the dataset, the counts and the rules are as in
+version 19 (format 19). New files in the record: `hltest.py` and
+`hltest_1e7.txt`.
