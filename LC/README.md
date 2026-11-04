@@ -10,7 +10,7 @@ the first prime of every quad is derived from earlier ones.
 ## $2,000 bounty: break the pattern
 
 **Shubham and Pankaj Ladhe pay US $2,000 to the first person who sends a verifiable
-counterexample to any one of the five open items below.** Everything we claim
+counterexample to any one of the six open items below.** Everything we claim
 has been checked by machine only as far as the tables say (10^9 or 10^10). The
 chain can be generated as far as you like with `lc.py`; pick a range where you
 think the pattern fails, and show us.
@@ -19,7 +19,7 @@ This is a challenge for every human mind, and for every AI. Bring a pencil, a
 program or a prompt; nobody has broken it yet, and only a counterexample we can
 check counts.
 
-Watch the 4-minute explainer of the rules, the evidence and the five items:
+Watch the 4-minute explainer of the rules, the evidence and the first five items:
 https://youtu.be/wNvZUdAoExU. The pen-paper-calculator writing challenge is at
 https://youtu.be/swOzyTNOSFQ.
 
@@ -60,6 +60,14 @@ https://youtu.be/swOzyTNOSFQ.
    appear in a stored equation, and no equation uses two members of the same
    quad beyond Q3. Find a stored equation that uses all four members of a later
    quad. (It would break item 4 as well.)
+6. **Three quads in a row with the same gap.** Consecutive quads sometimes
+   close the same gap: Q2 and Q3 both have gap 82 (`101 = 19 + 82`,
+   `191 = 109 + 82`), Q200 and Q201 both have gap 1,882
+   (`1170131 = 1168249 + 1882`, `1172021 = 1170139 + 1882`). Below 10^9 the
+   same gap follows itself 19 times, below 10^10 70 times, and never three
+   times in a row. Find three consecutive quads Qn, Qn+1, Qn+2 with the same
+   gap (`p` minus the previous quad's top member), anywhere in the chain.
+   `python3 lc.py 2 3 --cache paper/qarray_1e9.json` shows the first pair.
 
 ### Proved, no bounty
 
