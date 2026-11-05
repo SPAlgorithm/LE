@@ -55,7 +55,7 @@ remainders.
 ## $2,000 bounty: break the pattern
 
 **Shubham and Pankaj Ladhe pay US $2,000 to the first person who sends a verifiable
-counterexample to any one of the four open items below.** Everything we claim
+counterexample to any one of the three open items below.** Everything we claim
 has been checked by machine only as far as the tables say (10^9 or 10^10). The
 chain can be generated as far as you like with `lc.py`; pick a range where you
 think the pattern fails, and show us.
@@ -67,7 +67,7 @@ check counts.
 Watch the 4-minute explainer of the rules, the evidence and the items:
 https://youtu.be/wNvZUdAoExU. The pen-paper-calculator writing challenge is at
 https://youtu.be/swOzyTNOSFQ. (The video lists five items; two of them turned
-out to say the same thing and one follows from another, see "Why four" below.)
+out to say the same thing and one follows from another, see "Why three" below.)
 
 Be warned before you start: the *asymptotic* form of every item below is an
 instance of the generalised Hardy-Littlewood conjecture (Conjecture 1.2 of Green
@@ -108,19 +108,23 @@ what the prize is for.
    consecutive pairs below 10^10; the only failures in the chain are Q1
    (`2 * 19 = 38`, next quad at 101) and Q3 (`2 * 199 = 398`, next quad at 821).
    Find a quad Qn with n >= 4 and no quad between its top member and twice it.
-4. **Three quads in a row with the same gap.** Consecutive quads sometimes
-   close the same gap: Q2 and Q3 both have gap 82 (`101 = 19 + 82`,
-   `191 = 109 + 82`), Q200 and Q201 both have gap 1,882
-   (`1170131 = 1168249 + 1882`, `1172021 = 1170139 + 1882`). Below 10^9 the
-   same gap follows itself 19 times, below 10^10 70 times, and never three
-   times in a row. Find three consecutive quads Qn, Qn+1, Qn+2 with the same
-   gap (`p` minus the previous quad's top member), anywhere in the chain.
-   `python3 lc.py 2 3 --cache paper/qarray_1e9.json` shows the first pair.
-   (Unlike items 1 to 3 this one is expected to happen eventually by chance
-   alone; below 10^10 the odds were about 1 in 30. It stays on the list because
-   nobody has found one.)
 
-### Why four
+### Not for the bounty, but we want to know: three quads in a row with the same gap
+
+Consecutive quads sometimes close the same gap: Q2 and Q3 both have gap 82
+(`101 = 19 + 82`, `191 = 109 + 82`), Q200 and Q201 both have gap 1,882
+(`1170131 = 1168249 + 1882`, `1172021 = 1170139 + 1882`). Below 10^9 the same
+gap follows itself 19 times, below 10^10 70 times, and never three times in a
+row. We expect that a search far enough out will find three consecutive quads
+Qn, Qn+1, Qn+2 with the same gap (`p` minus the previous quad's top member):
+unlike the three items above, nothing stands in its way but chance, and below
+10^10 the odds were about 1 in 30. So it carries no prize. It does carry
+credit: the first person who sends us such a triple, with the command and
+cache that produced it, is named here and in the next version of the paper as
+its finder. `python3 lc.py 2 3 --cache paper/qarray_1e9.json` shows the first
+pair.
+
+### Why three
 
 Earlier versions of this page listed six items. "A gap that needs a royal
 closing besides 22, 82, 172 and 382" is the same thing as a fifth Royal gap,
@@ -130,7 +134,9 @@ quadruplet, under doubling" of the paper (version 20) proves that if every quad 
 twice its top member, then the largest-first rule can never take two members of
 the same quad beyond Q3, let alone all four, and uses at most `log2(D) + 4`
 members for any gap `D`. A whole later quad would therefore be a doubling
-failure in disguise, and is paid as item 3.
+failure in disguise, and is paid as item 3. "Three quads in a row with the
+same gap" was an item for a few days in version 20; it is expected by chance
+alone, so it is now a credit-only challenge, above.
 
 ### Proved, no bounty
 
