@@ -41,7 +41,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 20, November 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 21, November 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -101,7 +101,12 @@ ratio is $1.11$, $0.99$, $0.96$ and $1.01$. The prediction is thus
 confirmed, at the first scale at which it is of order one, for a system
 that no theorem reaches. We also prove that the doubling, if it
 holds, forces the largest-first rule to take at most one member from each
-quadruplet beyond the third and at most $\log_2 D+4$ members in all. We verify the closure conjecture
+quadruplet beyond the third and at most $\log_2 D+4$ members in all. The rule itself is stated as a
+three-step procedure in the manner of the Collatz conjecture: take the
+largest member that fits, close with a royal value when nothing fits,
+otherwise retreat one member. Below $10^{10}$ it closes every gap with at most
+$11$ members and at most $16$ retreats, while one pass without retreat fails for
+a third of the gaps, always at one of five remainders. We verify the closure conjecture
 for all $28{,}387$ prime quadruplets below $10^9$ with an independent
 checker, and the royal gaps and the doubling for all $180{,}528$ below $10^{10}$. Two further
 representations of each gap, one that prefers multiplication and one that
@@ -557,6 +562,44 @@ Every gap $D=p_k-m_k$ ($k\ge2$) is a sum of at most five distinct members
 of $\Pool_k$ plus at most one element of $\R$; that is, every first member
 has an additive representation of length at most six.
 \end{conjecture}
+
+\paragraph{The conjecture as a process.}
+The rule of Definition~\ref{def:canon} can be stated as a procedure in the
+manner of the Collatz conjecture, and the conjecture as the statement that
+the procedure never fails. Start with the remainder equal to the gap $D$ and
+the pool $\Pool_k$ (the base excluded).
+\begin{enumerate}
+\item[(1)] \emph{Take.} Subtract from the remainder the largest unused
+  member of the pool not above it; repeat while any member fits.
+\item[(2)] \emph{Close.} When no member fits, the remainder must be $0$ or
+  an element of $\R$; then $p_k=m_k+(\text{members taken})+(\text{royal value})$.
+\item[(3)] \emph{Retreat.} Otherwise undo the last member taken, take the
+  next smaller unused member that fits, and return to (1).
+\end{enumerate}
+\begin{conjecture}[process form]
+\label{conj:P}
+For every prime quadruplet $\Q_k$ with $k\ge2$ the process closes, taking at
+most $11$ members and retreating at most $16$ times.
+\end{conjecture}
+Closing is the same as the existence of an additive representation, so
+Conjecture~\ref{conj:P} without its two bounds is Conjecture~\ref{conj:A};
+the bounds are its content. Step (3) cannot be dropped: one pass alone,
+rules (1) and (2), closes $117{,}429$ of the $180{,}527$ gaps below $10^{10}$
+and fails for the other $63{,}098$, always with a remainder $1$ (parity: an
+odd number of odd members), $25$, $27$, $33$ or $36$, none of which lies in
+$\R$; the first failure is $\Q_{10}$, where $2182-2089-19-17-13-11=33$. With
+step (3) every gap below $10^{10}$ closes, and the number of retreats before
+the first closing is $0$ for $117{,}429$ gaps, $1$ for $47{,}466$, $2$ for
+$9{,}161$ and $16$ for $6{,}471$, never any other value ($18{,}051$, $7{,}861$,
+$1{,}360$ and $1{,}114$ below $10^9$); sixteen is the number of subsets of
+$\Q_1$, which the search exhausts before the largest member is exchanged.
+The number of members taken is at most $11$ (twelve gaps below $10^9$ reach
+it, $132$ below $10^{10}$). The stored representation follows the same three
+steps with the closing widened in the three passes of
+Definition~\ref{def:canon}, so for $\Q_{10}$ it is $2182=2081+101$ while the
+bare process first reaches $2182=2087+19+17+13+11+(5\times7)$; both are
+additive representations. The script \code{process.py} reproduces these
+counts.
 
 \begin{remark}[Why the existence form alone is weak]
 Once a few quadruplets exist, the pool is large and the sums of its subsets
@@ -1464,6 +1507,7 @@ scratch.
   python3 paper/residues.py paper/quads_1e9.csv      # Lemma 1, 4 s
   python3 paper/density.py 28387                     # Section 7, ~5 min
   python3 paper/hltest.py --upto 10000000            # Section 8, Table 5, ~2 min
+  python3 paper/process.py paper/qarray_1e9.json     # Section 3, process form, ~1 min
 \end{verbatim}\end{small}
 The dataset \code{qarray\_1e9.json} ($23{,}147{,}955$ bytes) has SHA-256
 \begin{center}\footnotesize\code{af4306fc1dfb616592366fc04b064570caa65c31444faa4fbe82406b49b36a89}\end{center}

@@ -7,6 +7,51 @@
 `lc.py` grows a q-array of prime "quads" from the royal quad and shows how
 the first prime of every quad is derived from earlier ones.
 
+## The conjecture as a process
+
+Like the Collatz conjecture, the pattern can be stated as a short procedure
+that is conjectured never to fail. Take a prime quadruplet `(p, p+2, p+6, p+8)`
+with `p >= 101`; its **base** is the top member of the quad before it and its
+**gap** is `D = p - base`. The members available are the primes of the earlier
+quads from `11, 13, 17, 19` on, the base excluded. A **royal value** is a
+number made from 2, 3, 5, 7 with `+` and `*` only, each used at most once, at
+most two in a product and at most two products; there are thirty of them:
+2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 26,
+28, 29, 31, 35, 37, 38, 40, 41. Start with the remainder equal to `D`.
+
+1. **Take.** Subtract from the remainder the largest unused member that does
+   not exceed it. Repeat while any member fits.
+2. **Close.** When no member fits, the remainder must be 0 or a royal value.
+   Then the equation is complete: `p = base + members taken + royal value`.
+3. **Retreat.** If it is neither, undo the last member taken, take the next
+   smaller unused member that fits instead, and go back to rule 1.
+
+**Conjecture (process form).** For every prime quadruplet the process closes.
+It never takes more than 11 members and never retreats more than 16 times. And
+a royal value is forced only by the order of the rules: every gap except 22,
+82, 172 and 382 also has a sum of at most 8 distinct members with no royal
+value at all.
+
+What the data say (`python3 paper/process.py`): all 180,527 gaps below 10^10
+close. Rule 3 is not optional: without it the process fails for 35% of the
+gaps, always stopping at one of the remainders 1, 25, 27, 33 or 36, the first
+time at Q10 (`5651`: gap 2182, one pass leaves 2089 + 19 + 17 + 13 + 11 and
+33). With it the retreats needed are 0 (117,429 gaps), 1 (47,466), 2 (9,161) or
+16 (6,471) and never any other number; sixteen is the number of subsets of
+`11, 13, 17, 19`, which the search exhausts before it swaps the large member.
+The utility's stored equations follow the same three rules with one
+refinement, described under "The rules": it looks first for a closing that is
+0 or a plain sum of royal members, then for one product, then two. That is why
+it stores `5651 = 3469 + 2081 + 101` for Q10, where the three rules alone first
+reach `2087 + 19 + 17 + 13 + 11 + (5*7)`; both are valid.
+
+Honesty note: "the process closes" is the same statement as the existence
+form of the conjecture (a search with unlimited retreat succeeds exactly when a
+representation exists), and its asymptotic part is expected from the
+generalised Hardy-Littlewood conjecture (see Version 20). What is new and
+testable here are the two bounds, 11 members and 16 retreats, and the five
+remainders.
+
 ## $2,000 bounty: break the pattern
 
 **Shubham and Pankaj Ladhe pay US $2,000 to the first person who sends a verifiable
@@ -38,7 +83,9 @@ what the prize is for.
    quad plus a sum of *distinct* earlier quad members, closed by at most one
    expression in 2, 3, 5, 7 under the rules below (`+` and `*` only, each royal
    member at most once, at most two in a product). Verified for all 28,387
-   quads below 10^9.
+   quads below 10^9. The same item in process form: a quad for which the
+   three rules above never close, or need a twelfth member, or a seventeenth
+   retreat (verified below 10^10).
 2. **A fifth Royal gap.** For every quad below 10^10 except the 348 whose gap is
    22, 82, 172 or 382, the gap (first member minus the previous quad's top
    member) is a sum of at most **8** distinct earlier quad members with no royal
@@ -906,3 +953,17 @@ now cited in Conjecture 2.
 Nothing else changes: `lc.py`, the dataset, the counts and the rules are as in
 version 19 (format 19). New files in the record: `hltest.py` and
 `hltest_1e7.txt`.
+
+## Version 21: the conjecture as a process
+
+The rules are now stated as a procedure, in the manner of the Collatz
+conjecture: take the largest unused earlier member that fits, repeat; when
+nothing fits the remainder must be 0 or a royal value; otherwise retreat one
+member and take the next smaller. The conjecture in process form says the
+procedure always closes, with at most 11 members and at most 16 retreats
+("The conjecture as a process" above; Section 3 of the paper). New script
+`paper/process.py` measures it: below 10^10 one pass alone fails for 63,098 of
+the 180,527 gaps, always at a remainder 1, 25, 27, 33 or 36 (first at Q10,
+5651), and with retreat every gap closes, the retreats being 0, 1, 2 or 16 and
+never another number. Bounty item 1 names the two new bounds. The utility,
+the dataset, the counts and the rules are unchanged (format 19).

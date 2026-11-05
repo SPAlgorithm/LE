@@ -1,0 +1,9 @@
+paper/qarray_1e9.json: 28,386 gaps
+one pass closes 18,051 (63.6%), fails 10,335; failing remainders 1 (7,861), 25 (1,171), 27 (189), 33 (937), 36 (177); first failure Q10 = 5651 (D = 2182, remainder 33)
+with retreat: unsolved within caps 0 ; retreats needed 0: 18,051, 1: 7,861, 2: 1,360, 16: 1,114
+members used 1: 683, 3: 6,962, 4: 6,045, 5: 1,823, 6: 8,733, 7: 472, 8: 3,317, 9: 97, 10: 242, 11: 12; max 11
+10Billion/qarray_1e10.json: 180,527 gaps
+one pass closes 117,429 (65.0%), fails 63,098; failing remainders 1 (47,466), 25 (8,098), 27 (1,063), 33 (4,706), 36 (1,765); first failure Q10 = 5651 (D = 2182, remainder 33)
+with retreat: unsolved within caps 0 ; retreats needed 0: 117,429, 1: 47,466, 2: 9,161, 16: 6,471
+members used 1: 3,525, 3: 42,182, 4: 38,748, 5: 9,489, 6: 57,102, 7: 2,677, 8: 23,776, 9: 1,028, 10: 1,868, 11: 132; max 11
+exit=0
