@@ -124,6 +124,36 @@ cache that produced it, is named here and in the next version of the paper as
 its finder. `python3 lc.py 2 3 --cache paper/qarray_1e9.json` shows the first
 pair.
 
+### Not for the bounty, but we want to know: a quad that no base reaches
+
+Every quad from Q4 on can be written as the top member of *some* earlier quad
+(a prime ending in 9, not necessarily the previous quad's) plus distinct
+earlier members below it, with no 2, 3, 5 or 7 at all. The app's detail sheet
+counts these on every quad as "N of the M bases ending in 9 reach it", one
+shortest form per base. The challenge: find a quad Qn, n >= 4, where that
+count is 0, that is, no top member `t < p` of an earlier quad has `p - t` as a
+sum of at most 8 distinct quad members below `t`.
+
+Below 10^9 only Q1, Q2 and Q3 fail (no earlier base at all, 0 of 1, 0 of 2).
+A Royal gap blocks only the quad's *own* base: of the 98 quads with a Royal gap,
+95 have a three-member form through another top member, for example
+`985124051 = 984965959 + 157271 + 821` for Q28063, the last of them below 10^9.
+The two thin cases are Q6, reached through 829 alone
+(`1871 = 829 + 827 + 191 + 13 + 11`, 1 of 5 bases), and Q14, reached through
+13009 and five smaller bases (`15731 = 13009 + 1877 + 821 + 13 + 11`, 6 of 13).
+Every other quad is reached through its own base, by item 2.
+
+Why no prize: a failure after Q3 is either a fifth Royal gap, which item 2
+already pays, or a Royal-gap quad whose every other base is blocked too, and
+for a large quad that means thousands of even remainders in the millions all
+missing a two-member sum, which chance rules out. Credit it carries: the first
+person who sends such a quad, with the command and cache that produced it, is
+named here and in the next version of the paper. To check a candidate, print it
+with `python3 lc.py <n> --cache paper/qarray_1e9.json`, then test each top
+member `t` below it against `p - t` with a short loop over
+`paper/quads_1e9.csv` (the `member` column lists every quad member in order),
+or open the quad in the app.
+
 ### Why three
 
 Earlier versions of this page listed six items. "A gap that needs a royal
@@ -136,7 +166,8 @@ the same quad beyond Q3, let alone all four, and uses at most `log2(D) + 4`
 members for any gap `D`. A whole later quad would therefore be a doubling
 failure in disguise, and is paid as item 3. "Three quads in a row with the
 same gap" was an item for a few days in version 20; it is expected by chance
-alone, so it is now a credit-only challenge, above.
+alone, so it is now a credit-only challenge, above, and "a quad that no base
+reaches" is credit-only for the same reason.
 
 ### Proved, no bounty
 
