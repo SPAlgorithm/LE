@@ -554,7 +554,14 @@ stored equation of every first member in Appendix~\ref{app:table};
 \code{none} marks the four exceptional gaps. Below $10^9$, $23{,}749$ of
 the $28{,}386$ stored first-member equations close with a royal value
 although a no-royals form exists, $4{,}539$ are already pure, and the
-remaining $98$ are the occurrences of the four exceptional gaps.
+remaining $98$ are the occurrences of the four exceptional gaps. The
+length of the shortest no-royals form of every gap, with $0$ marking the
+royal gaps, has been submitted to the OEIS as sequence A401788
+\cite{OEIS_A401788}, and the first members whose gap is a royal gap as
+sequence A401789 \cite{OEIS_A401789}; both are indexed as in A007530,
+where $(5,7,11,13)$ is the first term, so that A401788$(n)$ is the length
+for $\Q_n$. At the time of writing (November 2026) the two entries are
+under editorial review.
 
 \begin{conjecture}[bounded form with one flat royal value]
 \label{conj:C}
@@ -740,7 +747,13 @@ whole chain are $k=1$ ($p_2=101>38$) and $k=3$ ($p_4=821>398$). For
 $k\ge4$ the ratio $t_{k+1}/t_k$ never exceeds $1.796$ (at $k=4$,
 $1489/829$). This was checked for all $28{,}386$ consecutive pairs below
 $10^9$ and, in a separate run of the utility, for all $180{,}527$ pairs
-below $10^{10}$.
+below $10^{10}$. The number of quadruplets whose first member lies
+strictly between $t_k$ and $2t_k$ has been submitted to the OEIS as
+sequence A401787 \cite{OEIS_A401787}, indexed as in A007530, so that its
+$n$-th term belongs to $\Q_{n-1}$; below $10^{10}$ it is $0$ only for
+$(5,7,11,13)$, $\Q_1$ and $\Q_3$, and $1$ only for $\Q_2$, $\Q_4$,
+$\Q_9$ and $\Q_{10}$. The entry is under editorial review at the time of
+writing.
 
 The rule of Section~\ref{sec:defs} takes the largest unused member not
 above the remainder, so it takes $t_k$ only when the remainder lies below
@@ -1525,6 +1538,19 @@ quadruplet each term comes from; \code{-d N} prints a derivation of any
 integer $N$ as in Section~\ref{sec:cover}, extending the chain first if $N$
 lies beyond the cache.
 
+\paragraph{OEIS.}
+Three sequences drawn from this note were submitted to the On-Line
+Encyclopedia of Integer Sequences on November 5, 2026, and are under
+editorial review as this version goes out; the numbers are allocated and
+will not change. A401787 \cite{OEIS_A401787} counts the quadruplets
+between the top member of a quadruplet and its double (the doubling of
+Remark~\ref{rem:doubling}); A401788 \cite{OEIS_A401788} is the length of
+the shortest no-royals form of each gap, $0$ at the royal gaps
+(Conjecture~\ref{conj:B}); A401789 \cite{OEIS_A401789} lists the first
+members whose gap is a royal gap (Appendix~\ref{app:exc}). All three are
+indexed as A007530 is, with $(5,7,11,13)$ as the first quadruplet, and each
+carries a b-file computed from the dataset below.
+
 \paragraph{Videos.}
 Two narrated explanations accompany this note, under the name the
 utility and the app use: \emph{Ladhe's Quad
@@ -1577,6 +1603,29 @@ OEIS Foundation Inc.,
 $k+6$, $k+8$ are all prime},
 The On-Line Encyclopedia of Integer Sequences,
 \url{https://oeis.org/A007530}.
+
+\bibitem{OEIS_A401787}
+P.~Ladhe,
+\emph{Sequence A401787: number of prime quadruplets $(q,q+2,q+6,q+8)$ with
+$q$ strictly between $p+8$ and $2(p+8)$, where $p=$ A007530$(n)$},
+The On-Line Encyclopedia of Integer Sequences, submitted November 5, 2026,
+under editorial review, \url{https://oeis.org/A401787}.
+
+\bibitem{OEIS_A401788}
+P.~Ladhe,
+\emph{Sequence A401788: least number of distinct members of prime
+quadruplets $(q,q+2,q+6,q+8)$, $q\ge11$, whose sum is
+A007530$(n+1)-$A007530$(n)-8$; $0$ if no such sum exists},
+The On-Line Encyclopedia of Integer Sequences, submitted November 5, 2026,
+under editorial review, \url{https://oeis.org/A401788}.
+
+\bibitem{OEIS_A401789}
+P.~Ladhe,
+\emph{Sequence A401789: prime quadruplet starters $p=$ A007530$(n+1)$ such
+that $p-$A007530$(n)-8$ is not a sum of distinct members of prime
+quadruplets $(q,q+2,q+6,q+8)$ with $11\le q<p$},
+The On-Line Encyclopedia of Integer Sequences, submitted November 5, 2026,
+under editorial review, \url{https://oeis.org/A401789}.
 
 \bibitem{Zhang2014}
 Y.~Zhang,
@@ -1691,7 +1740,9 @@ $k$ & $t$ & $m_k$ & $D$ & additive equation & len & $K$ & from \\
 
 Gaps that are not a sum of distinct pool members at the moment they are
 first met, with the additive (A), multiplicative (M) and exponential (E1)
-representations of the gap stored by the utility.
+representations of the gap stored by the utility. The first members at
+which they occur, $98$ below $10^9$ and $348$ below $10^{10}$, are the
+terms of OEIS A401789 \cite{OEIS_A401789} (under review).
 
 \begin{scriptsize}
 \setlength{\tabcolsep}{3pt}

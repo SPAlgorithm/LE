@@ -727,6 +727,23 @@ Two explainer videos, narrated and captioned:
 
 Companion iOS app (the authors' free LE-Games app: the chain, the QuadQuest matching game and a printable practice sheet): https://apps.apple.com/app/id6767880385
 
+## OEIS
+
+Three sequences from the chain were submitted to the On-Line Encyclopedia of
+Integer Sequences on 2026-11-05. The A-numbers are allocated and final; the
+entries are under editorial review (status "proposed") until an editor
+approves them. All three are indexed like A007530, where (5, 7, 11, 13) is the
+first quadruplet, so A007530(n+1) is the paper's Q_n.
+
+| Sequence | What it is | Where in the paper |
+| --- | --- | --- |
+| [A401787](https://oeis.org/A401787) | number of quads whose first member lies strictly between the top member of A007530(n) and twice that top member; 0 only at n = 1, 2, 4 and 1 only at n = 3, 5, 10, 11 below 10^10 | the doubling, Remark in Section 4 |
+| [A401788](https://oeis.org/A401788) | least number of distinct earlier quad members (11 and up) summing to the gap A007530(n+1) - A007530(n) - 8; 0 at the Royal gaps; always even, at most 8 below 10^10 | Conjecture 2, "No Royals" |
+| [A401789](https://oeis.org/A401789) | first members whose gap is a Royal gap: 101, 191, 1871, 15731, ... (98 below 10^9, 348 below 10^10) | Appendix B |
+
+Each entry has a b-file (10,000 terms for the first two, all 348 for the
+third) computed from `paper/qarray_1e9.json` and the 10^10 run.
+
 ## Paper
 
 `paper/` holds the Zenodo preprint *Ladhe's Quad Conjecture* (DOI
@@ -971,5 +988,7 @@ procedure always closes, with at most 11 members and at most 16 retreats
 `paper/process.py` measures it: below 10^10 one pass alone fails for 63,098 of
 the 180,527 gaps, always at a remainder 1, 25, 27, 33 or 36 (first at Q10,
 5651), and with retreat every gap closes, the retreats being 0, 1, 2 or 16 and
-never another number. Bounty item 1 names the two new bounds. The utility,
-the dataset, the counts and the rules are unchanged (format 19).
+never another number. Bounty item 1 names the two new bounds. Three
+sequences were submitted to the OEIS (A401787, A401788, A401789, section
+"OEIS" above) and are cited in the paper as under review. The utility, the
+dataset, the counts and the rules are unchanged (format 19).
