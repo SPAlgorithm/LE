@@ -760,20 +760,24 @@ Companion iOS app (the authors' free LE-Games app: the chain, the QuadQuest matc
 
 ## OEIS
 
-Three sequences from the chain were submitted to the On-Line Encyclopedia of
-Integer Sequences on 2026-11-05. The A-numbers are allocated and final; the
-entries are under editorial review (status "proposed") until an editor
-approves them. All three are indexed like A007530, where (5, 7, 11, 13) is the
-first quadruplet, so A007530(n+1) is the paper's Q_n.
+One sequence from the chain is in the On-Line Encyclopedia of Integer
+Sequences. It is indexed like A007530, where (5, 7, 11, 13) is the first
+quadruplet, so A007530(n+1) is the paper's Q_n.
 
 | Sequence | What it is | Where in the paper |
 | --- | --- | --- |
 | [A401787](https://oeis.org/A401787) | number of quads whose first member lies strictly between the top member of A007530(n) and twice that top member; 0 only at n = 1, 2, 4 and 1 only at n = 3, 5, 10, 11 below 10^10 | the doubling, Remark in Section 4 |
-| [A401788](https://oeis.org/A401788) | least number of distinct earlier quad members (11 and up) summing to the gap A007530(n+1) - A007530(n) - 8; 0 at the Royal gaps; always even, at most 8 below 10^10 | Conjecture 2, "No Royals" |
-| [A401789](https://oeis.org/A401789) | first members whose gap is a Royal gap: 101, 191, 1871, 15731, ... (98 below 10^9, 348 below 10^10) | Appendix B |
 
-Each entry has a b-file (10,000 terms for the first two, all 348 for the
-third) computed from `paper/qarray_1e9.json` and the 10^10 run.
+Submitted 2026-11-05, approved 2026-11-12, with a b-file of 10,000 terms
+computed from `paper/qarray_1e9.json` and the 10^10 run.
+
+Two companion sequences submitted the same day, the length of the shortest
+no-royals form of each gap (0 at the Royal gaps) and the first members whose
+gap is a Royal gap, were not accepted; their A-numbers were recycled and must
+not be cited. Both quantities remain in the dataset: the no-royals length is
+the number of terms in the `K_pure` column of `quads_1e9.csv`, and the
+Royal-gap first members are the rows whose `K_pure` is `--` (98 below 10^9,
+348 below 10^10, Appendix B of the paper).
 
 ## Paper
 
@@ -1020,6 +1024,19 @@ procedure always closes, with at most 11 members and at most 16 retreats
 the 180,527 gaps, always at a remainder 1, 25, 27, 33 or 36 (first at Q10,
 5651), and with retreat every gap closes, the retreats being 0, 1, 2 or 16 and
 never another number. Bounty item 1 names the two new bounds. Three
-sequences were submitted to the OEIS (A401787, A401788, A401789, section
+sequences were submitted to the OEIS (A401787 and two companions, section
 "OEIS" above) and are cited in the paper as under review. The utility, the
 dataset, the counts and the rules are unchanged (format 19).
+
+## Version 22: OEIS outcome
+
+A401787 was approved on 2026-11-12 and is cited as such. The other two
+submissions were not accepted and their numbers recycled, so the paper no
+longer cites them: the Conjecture 2 paragraph, the Appendix B heading and the
+"OEIS" paragraph in Availability are shortened and the two bibliography
+entries removed (section "OEIS" above). From this version on, every printed
+and in-app link to the paper uses the concept DOI
+https://doi.org/10.5281/zenodo.22286846, which always resolves to the latest
+version, instead of a per-version record number. Nothing else changes: the
+utility, the dataset, the counts and the rules are as in version 19 (format
+19).
