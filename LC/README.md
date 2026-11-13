@@ -107,7 +107,12 @@ what the prize is for.
    the whole next quad lies between `t` and `2 t`. Checked for all 180,527
    consecutive pairs below 10^10; the only failures in the chain are Q1
    (`2 * 19 = 38`, next quad at 101) and Q3 (`2 * 199 = 398`, next quad at 821).
-   Find a quad Qn with n >= 4 and no quad between its top member and twice it.
+   Find a quad Qn, n >= 4, whose next quad does not lie wholly between its top
+   prime `t` and `2 t`. In equation terms: from Q5 on every quad's gap is
+   smaller than its base, the top prime of the quad before it, so find a quad
+   whose gap is at least its base. An equation that uses all four members of
+   the same quad beyond Q3 would be a failure in disguise; only 7, 19 and 199
+   ever fold whole.
 
 ### Not for the bounty, but we want to know: three quads in a row with the same gap
 
@@ -1037,6 +1042,7 @@ longer cites them: the Conjecture 2 paragraph, the Appendix B heading and the
 entries removed (section "OEIS" above). From this version on, every printed
 and in-app link to the paper uses the concept DOI
 https://doi.org/10.5281/zenodo.22286846, which always resolves to the latest
-version, instead of a per-version record number. Nothing else changes: the
-utility, the dataset, the counts and the rules are as in version 19 (format
-19).
+version, instead of a per-version record number. Bounty item 3 is restated
+in equation terms (from Q5 on the gap is smaller than the base; the same
+condition as the doubling). Nothing else changes: the utility, the dataset,
+the counts and the rules are as in version 19 (format 19).
