@@ -65,7 +65,9 @@ testable here is the bound of 11 members.
 ## $2,000 bounty: break the pattern
 
 **Shubham and Pankaj Ladhe pay US $2,000 to the first person who sends a verifiable
-counterexample to any one of the three open items below.** Everything we claim
+counterexample to all three of the open items below.** A claim must break
+items 1, 2 and 3 together; a counterexample to one of them alone is published
+here with full credit but does not win the prize. Everything we claim
 has been checked by machine only as far as the tables say (10^9 or 10^10). The
 chain can be generated as far as you like with `lc.py`; pick a range where you
 think the pattern fails, and show us.
@@ -86,7 +88,7 @@ from some point on. A counterexample therefore has to be a *finite* failure: a
 specific quad, a specific gap. Nobody can prove that none exists, and that is
 what the prize is for.
 
-### The open items (the bounty applies to each)
+### The open items (all three must be broken for the prize)
 
 1. **The conjecture breaks at some quad.** A prime quadruplet `(p, p+2, p+6, p+8)`
    whose first member `p` cannot be written as the top member of the previous
