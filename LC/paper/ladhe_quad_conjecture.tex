@@ -41,7 +41,7 @@ CC~BY~4.0; the code is released under the licence of the repository
 
 \author{Shubham Ladhe \and Saloni Ladhe \and Pankaj Ladhe}
 
-\date{Version 22, November 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
+\date{Version 23, November 2026\\[2pt] {\small DOI: \href{https://doi.org/10.5281/zenodo.22286846}{10.5281/zenodo.22286846}
 (all versions)}}
 
 \begin{document}
@@ -105,8 +105,10 @@ quadruplet beyond the third and at most $\log_2 D+4$ members in all. The rule it
 three-step procedure in the manner of the Collatz conjecture: take the
 largest member that fits, close with a royal value when nothing fits,
 otherwise retreat one member. Below $10^{10}$ it closes every gap with at most
-$11$ members and at most $16$ retreats, while one pass without retreat fails for
-a third of the gaps, always at one of five remainders. We verify the closure conjecture
+$11$ members, while one pass without retreat fails for a third of the gaps. The
+number of retreats, never above $16$ below $10^{10}$, reaches $48$ at a
+quadruplet near $2\times10^{12}$ found by Ibnu, so it is not bounded by the
+data; the member count is. We verify the closure conjecture
 for all $28{,}387$ prime quadruplets below $10^9$ with an independent
 checker, and the royal gaps and the doubling for all $180{,}528$ below $10^{10}$. Two further
 representations of each gap, one that prefers multiplication and one that
@@ -579,22 +581,37 @@ the pool $\Pool_k$ (the base excluded).
 \begin{conjecture}[process form]
 \label{conj:P}
 For every prime quadruplet $\Q_k$ with $k\ge2$ the process closes, taking at
-most $11$ members and retreating at most $16$ times.
+most $11$ members.
 \end{conjecture}
 Closing is the same as the existence of an additive representation, so
-Conjecture~\ref{conj:P} without its two bounds is Conjecture~\ref{conj:A};
-the bounds are its content. Step (3) cannot be dropped: one pass alone,
+Conjecture~\ref{conj:P} without its bound is Conjecture~\ref{conj:A};
+the bound is its content. Step (3) cannot be dropped: one pass alone,
 rules (1) and (2), closes $117{,}429$ of the $180{,}527$ gaps below $10^{10}$
-and fails for the other $63{,}098$, always with a remainder $1$ (parity: an
-odd number of odd members), $25$, $27$, $33$ or $36$, none of which lies in
-$\R$; the first failure is $\Q_{10}$, where $2182-2089-19-17-13-11=33$. With
-step (3) every gap below $10^{10}$ closes, and the number of retreats before
-the first closing is $0$ for $117{,}429$ gaps, $1$ for $47{,}466$, $2$ for
-$9{,}161$ and $16$ for $6{,}471$, never any other value ($18{,}051$, $7{,}861$,
-$1{,}360$ and $1{,}114$ below $10^9$); sixteen is the number of subsets of
-$\Q_1$, which the search exhausts before the largest member is exchanged.
-The number of members taken is at most $11$ (twelve gaps below $10^9$ reach
-it, $132$ below $10^{10}$). The stored representation follows the same three
+and fails for the other $63{,}098$, below $10^{10}$ always with a remainder $1$
+(parity: an odd number of odd members), $25$, $27$, $33$ or $36$, none of which
+lies in $\R$; the first failure is $\Q_{10}$, where $2182-2089-19-17-13-11=33$.
+With step (3) every gap below $10^{10}$ closes, and the number of retreats
+before the first closing is $0$ for $117{,}429$ gaps, $1$ for $47{,}466$, $2$
+for $9{,}161$ and $16$ for $6{,}471$, no other value below $10^{10}$
+($18{,}051$, $7{,}861$, $1{,}360$ and $1{,}114$ below $10^9$); sixteen is the
+number of subsets of $\Q_1$, which the search exhausts before the largest
+member is exchanged. Neither list is complete. For the quadruplet
+$2066817617741$, which follows $2066815729961$ with gap $D=1{,}887{,}772$, one
+pass leaves $30$, and the process closes only after $48$ retreats, three
+blocks of sixteen: after $1857679+25309+3469+829+199$ the remainder $287$
+admits $197$, $193$ and $191$ in turn, each exhausting the sixteen subsets of
+$\Q_1$, before $109$ closes it with $107+19+17+13+11$ and the royal value
+$11$, eleven members in all. This quadruplet was found by Ibnu
+(\href{https://github.com/ibnu76}{github.com/ibnu76}; private communication,
+15 November 2026). His method is of independent interest: the
+outcome of the process depends on $D$ alone, so he ran step (3) on every
+admissible gap value below $10^8$ and found $48$ retreats first at
+$D=1{,}498{,}732$, above every gap below $10^{10}$, then searched the
+consecutive quadruplets below $10^{13}$ for one whose gap is such a value.
+Version 21 of this paper stated sixteen as a bound; it was a statistic of the
+$10^{10}$ run and is withdrawn. The number of members taken is at most $11$
+(twelve gaps below $10^9$ reach it, $132$ below $10^{10}$), and that bound
+stands. The stored representation follows the same three
 steps with the closing widened in the three passes of
 Definition~\ref{def:canon}, so for $\Q_{10}$ it is $2182=2081+101$ while the
 bare process first reaches $2182=2087+19+17+13+11+(5\times7)$; both are

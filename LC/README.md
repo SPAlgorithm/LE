@@ -26,19 +26,30 @@ most two in a product and at most two products; there are thirty of them:
 3. **Retreat.** If it is neither, undo the last member taken, take the next
    smaller unused member that fits instead, and go back to rule 1.
 
-**Conjecture (process form).** For every prime quadruplet the process closes.
-It never takes more than 11 members and never retreats more than 16 times. And
+**Conjecture (process form).** For every prime quadruplet the process closes,
+and it never takes more than 11 members. And
 a royal value is forced only by the order of the rules: every gap except 22,
 82, 172 and 382 also has a sum of at most 8 distinct members with no royal
 value at all.
 
 What the data say (`python3 paper/process.py`): all 180,527 gaps below 10^10
 close. Rule 3 is not optional: without it the process fails for 35% of the
-gaps, always stopping at one of the remainders 1, 25, 27, 33 or 36, the first
-time at Q10 (`5651`: gap 2182, one pass leaves 2089 + 19 + 17 + 13 + 11 and
-33). With it the retreats needed are 0 (117,429 gaps), 1 (47,466), 2 (9,161) or
-16 (6,471) and never any other number; sixteen is the number of subsets of
+gaps, below 10^10 always stopping at one of the remainders 1, 25, 27, 33 or 36,
+the first time at Q10 (`5651`: gap 2182, one pass leaves 2089 + 19 + 17 + 13 +
+11 and 33). With it the retreats needed below 10^10 are 0 (117,429 gaps),
+1 (47,466), 2 (9,161) or 16 (6,471); sixteen is the number of subsets of
 `11, 13, 17, 19`, which the search exhausts before it swaps the large member.
+Neither list is complete beyond 10^10. On 2026-11-15 [Ibnu](https://github.com/ibnu76) sent the quad
+`2066817617741` (after `2066815729961`, gap 1,887,772): one pass leaves 30, and
+the process closes only after 48 retreats, three blocks of sixteen, because
+after `1857679 + 25309 + 3469 + 829 + 199` the remainder 287 admits 197, 193
+and 191 in turn and each dead-ends through all sixteen subsets before 109
+works. It then closes with 11 members, `... + 109 + 107 + 19 + 17 + 13 + 11`,
+and the royal value 11, so the 11-member bound and the conjecture itself hold;
+the gap is also a pure sum of two members, `881471 + 1006301`. Earlier versions
+of this page stated "at most 16 retreats" as a bound and offered the bounty for
+breaking it; that was a statistic of the 10^10 run, not the conjecture, and it
+is withdrawn (see "Settled, with credit" under the bounty).
 The utility's stored equations follow the same three rules with one
 refinement, described under "The rules": it looks first for a closing that is
 0 or a plain sum of royal members, then for one product, then two. That is why
@@ -49,8 +60,7 @@ Honesty note: "the process closes" is the same statement as the existence
 form of the conjecture (a search with unlimited retreat succeeds exactly when a
 representation exists), and its asymptotic part is expected from the
 generalised Hardy-Littlewood conjecture (see Version 20). What is new and
-testable here are the two bounds, 11 members and 16 retreats, and the five
-remainders.
+testable here is the bound of 11 members.
 
 ## $2,000 bounty: break the pattern
 
@@ -82,10 +92,7 @@ what the prize is for.
    whose first member `p` cannot be written as the top member of the previous
    quad plus a sum of *distinct* earlier quad members, closed by at most one
    expression in 2, 3, 5, 7 under the rules below (`+` and `*` only, each royal
-   member at most once, at most two in a product). Verified for all 28,387
-   quads below 10^9. The same item in process form: a quad for which the
-   three rules above never close, or need a twelfth member, or a seventeenth
-   retreat (verified below 10^10).
+   member at most once, at most two in a product).
 2. **A fifth Royal gap.** For every quad below 10^10 except the 348 whose gap is
    22, 82, 172 or 382, the gap (first member minus the previous quad's top
    member) is a sum of at most **8** distinct earlier quad members with no royal
@@ -173,6 +180,20 @@ failure in disguise, and is paid as item 3. "Three quads in a row with the
 same gap" was an item for a few days in version 20; it is expected by chance
 alone, so it is now a credit-only challenge, above, and "a quad that no base
 reaches" is credit-only for the same reason.
+
+### Settled, with credit: the retreat count
+
+Until 2026-11-15 item 1 also offered the prize for "a seventeenth retreat"
+of the process. [Ibnu](https://github.com/ibnu76) broke that clause the same day with the quad
+`2066817617741` (48 retreats, one-pass remainder 30; the equation is under
+"The conjecture as a process" above). The conjecture holds for the quad, with
+11 members and one royal value, so the clause was a statistic of the 10^10
+run that had no place among the items; it is removed, the claim was settled
+with the finder, and the finding is recorded here and in version 23 of the
+paper. Ibnu's method is worth knowing: the outcome of the process depends on
+the gap value alone, so one can run `paper/process.py`'s `retreat()` on every
+admissible gap value directly, without any quads, and then look for a real
+pair of consecutive quads whose gap is one of the values found.
 
 ### Proved, no bounty
 
@@ -1046,3 +1067,17 @@ version, instead of a per-version record number. Bounty item 3 is restated
 in equation terms (from Q5 on the gap is smaller than the base; the same
 condition as the doubling). Nothing else changes: the utility, the dataset,
 the counts and the rules are as in version 19 (format 19).
+
+## Version 23: the retreat bound withdrawn
+
+On 2026-11-15 [Ibnu](https://github.com/ibnu76) sent the first quad beyond the 16-retreat bound of version
+21: `2066817617741`, after `2066815729961`, gap 1,887,772, closes only after 48
+retreats, and one pass leaves the remainder 30, which was not among the five
+listed. The quad itself obeys the conjecture (11 members and the royal value
+11; the gap is also `881471 + 1006301`). The bound and the list of five
+remainders were statistics of the 10^10 run, so the process-form conjecture
+now carries only the 11-member bound, in the abstract and Section 3 of the
+paper and in "The conjecture as a process" above, and bounty item 1 is
+restated as the conjecture alone; the finding is recorded under "Settled, with
+credit". The utility, the dataset, the counts and the rules are unchanged
+(format 19).
